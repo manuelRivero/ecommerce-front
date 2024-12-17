@@ -20,8 +20,10 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <CartProvider>
+            <>
             <Header />
             <Box sx={{ marginTop: 4 }}>{children}</Box>
+            </>
           </CartProvider>
         </ThemeProvider>
       </body>
