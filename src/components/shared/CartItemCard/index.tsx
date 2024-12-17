@@ -11,7 +11,7 @@ export default function CartItemCard({ data, hasDelete = true }: Props) {
   return (
     <Box>
       <Stack direction="row" spacing={2}>
-        <img style={{ objectFit: "cover", maxWidth: 90 }} src={data.image} />
+        <img style={{ objectFit: "cover", maxWidth: 90 }} src={data.images[0].url} alt="Imagen del producto"/>
         <Box sx={{ width: "100%" }}>
           <Typography variant="h5">{data.name}</Typography>
           <Typography variant="body1" fontWeight="bold">
