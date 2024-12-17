@@ -12,12 +12,8 @@ interface Props {
   data: Product;
 }
 export default function Detail({ data }: Props) {
-  const { id } = useParams();
   const [, dispatch] = useCart();
   const [quantity, setQuantity] = useState<string>("1");
-  const targetProduct = products.findIndex(
-    (product: Product) => product._id === id
-  );
   return (
     <Box>
       <Typography variant="h3">{data.name}</Typography>
@@ -69,11 +65,16 @@ export default function Detail({ data }: Props) {
       <Stack direction="row" justifyContent="flex-end" sx={{ marginTop: 4 }}>
         <Button
           variant="contained"
-          onClick={() =>
-            setProductToCart(dispatch, {
-              ...products[targetProduct],
-              quantity: Number(quantity),
+          onClick={() =>{
+            window.scrollTo({
+              top:0,
+              left:0,
+              behavior: 'smooth'
             })
+            setProductToCart(dispatch, {
+              ...data,
+              quantity: Number(quantity),
+            })}
           }
         >
           Agregar al carrito

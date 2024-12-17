@@ -25,10 +25,15 @@ export default function Gallery({ images }: Props) {
         slidesPerView={1}
         onSlideChange={(swiper: any) => setActiveSlide(swiper.activeIndex)}
         onSwiper={(swiper) => console.log(swiper)}
+        style={{ position: "relative", zIndex: 0 }}
       >
         {images.map((image: string) => (
-          <SwiperSlide key={image}>
-            <Stack direction="row" justifyContent="center">
+          <SwiperSlide key={image} style={{ position: "relative", zIndex: 0 }}>
+            <Stack
+              direction="row"
+              justifyContent="center"
+              style={{ position: "relative", zIndex: 0 }}
+            >
               <Box
                 sx={{
                   borderRadius: 4,
@@ -36,6 +41,7 @@ export default function Gallery({ images }: Props) {
                   maxWidth: 400,
                   overflow: "hidden",
                 }}
+                style={{ position: "relative", zIndex: 0 }}
               >
                 <img
                   style={{ objectFit: "cover", maxWidth: "100%" }}
@@ -53,7 +59,7 @@ export default function Gallery({ images }: Props) {
           slidesPerView={"auto"}
           modules={[Thumbs]}
         >
-          {images.map((image: string, index:number) => (
+          {images.map((image: string, index: number) => (
             <SwiperSlide style={{ width: "fit-content" }} key={image}>
               <Box
                 sx={(theme) => ({
@@ -67,8 +73,7 @@ export default function Gallery({ images }: Props) {
                   width: 96,
                   borderRadius: 4,
                   overflow: "hidden",
-                  backgroundImage:
-                    `url(${image})`,
+                  backgroundImage: `url(${image})`,
                   backgroundPosition: "center",
                   backgroundSize: "contain",
                 })}

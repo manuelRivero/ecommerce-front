@@ -37,7 +37,6 @@ export default function Cart() {
       setShowBadged(true);
     }
   }, [products.length]);
-
   return (
     <Box sx={{ color: "#fff", position: "relative" }}>
       <IconButton onClick={handleOpen} sx={{ color: "#fff" }}>
@@ -56,6 +55,7 @@ export default function Cart() {
             background: theme.palette.error.main,
             right: 0,
             top: 0,
+            zIndex: 9999
           })}
         >
           {products.length}
