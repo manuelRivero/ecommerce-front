@@ -7,15 +7,16 @@ import RemoveIcon from "@mui/icons-material/Remove";
 interface Props {
   value: string;
   setValue: (value: string) => void;
+  max: number;
 }
-export default function QuantitySelector({ value, setValue }: Props) {
+export default function QuantitySelector({ value, setValue, max }: Props) {
   const handleDecrease = () => {
     if (Number(value) > 1) {
       setValue(String(Number(value) - 1));
     }
   };
   const handleIncrease = () => {
-    if (Number(value) < 10) {
+    if (Number(value) < max) {
       setValue(String(Number(value) + 1));
     }
   };

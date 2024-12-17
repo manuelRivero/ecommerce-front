@@ -1,10 +1,13 @@
 import ProductCard from "@/components/shared/productCard";
 import { Product } from "@/interfaces/products";
-import { products } from "@/mocks/product";
 import { Box, Pagination, Stack } from "@mui/material";
 import React from "react";
-
-export default function MainWrapper() {
+interface Props {
+  data: Product[];
+  totalPages: number;
+}
+export default function MainWrapper({ data, totalPages }: Props) {
+  console.log("data", data);
   return (
     <>
       <Box
@@ -15,12 +18,12 @@ export default function MainWrapper() {
           justifyContent: "space-around",
         }}
       >
-        {products.map((product: Product) => (
+        {data.map((product: Product) => (
           <ProductCard data={product} key={product._id} />
         ))}
       </Box>
       <Stack direction="row" justifyContent="center" sx={{ marginTop: 4 }}>
-        <Pagination count={10} color="primary" />
+        <Pagination count={totalPages} color="primary" />
       </Stack>
     </>
   );

@@ -3,10 +3,13 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  discountPercentage: number;
-  finalPrice: number;
+  discount: number;
   stock: number;
-  image: string;
+  images: string[];
+  mainImage: string;
+  status: {
+    available: boolean
+  }
 }
 
 export interface CartProduct extends Product {
