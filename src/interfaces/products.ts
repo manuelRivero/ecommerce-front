@@ -5,13 +5,15 @@ export interface Product {
   price: number;
   discount: number;
   stock: number;
-  images: string[];
+  images: {
+    url: string;
+  }[];
   mainImage: string;
   status: {
-    available: boolean
-  }
+    available: boolean;
+  };
 }
 
 export interface CartProduct extends Product {
-  quantity: number
+  quantity: number;
 }
