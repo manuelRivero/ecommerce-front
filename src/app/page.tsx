@@ -2,6 +2,8 @@ import { getProducts } from "@/client/products";
 import MainWrapper from "@/components/home/mainWrapper";
 import { Container, Paper, Typography } from "@mui/material";
 
+export const dynamic = 'force-dynamic'
+
 const getData = async () => {
   try {
     const { data } = await getProducts();
