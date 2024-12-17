@@ -11,7 +11,7 @@ const getData = async () => {
     return {products: data.products, totalPages: data.totalPages};
   } catch (error: any) {
     console.log("error", error)
-    throw error
+    throw "error"
   }
 };
 export default async function Home() {
