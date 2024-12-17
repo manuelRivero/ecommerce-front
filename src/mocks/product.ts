@@ -9,7 +9,7 @@ export const products: Product[] = [
     price: 250,
     discount: 10,
     stock: 10,
-    images: ["https://swiperjs.com/demos/images/nature-1.jpg"],
+    images: [{ url: "https://swiperjs.com/demos/images/nature-1.jpg" }],
     mainImage: "https://swiperjs.com/demos/images/nature-1.jpg",
     status: {
       available: true,
@@ -23,7 +23,7 @@ export const products: Product[] = [
     price: 250,
     discount: 10,
     stock: 10,
-    images: ["https://swiperjs.com/demos/images/nature-1.jpg"],
+    images: [{ url: "https://swiperjs.com/demos/images/nature-1.jpg" }],
     mainImage: "https://swiperjs.com/demos/images/nature-1.jpg",
     status: {
       available: true,
@@ -37,7 +37,7 @@ export const products: Product[] = [
     price: 250,
     discount: 10,
     stock: 10,
-    images: ["https://swiperjs.com/demos/images/nature-1.jpg"],
+    images: [{ url: "https://swiperjs.com/demos/images/nature-1.jpg" }],
     mainImage: "https://swiperjs.com/demos/images/nature-1.jpg",
     status: {
       available: true,
