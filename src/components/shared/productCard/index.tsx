@@ -49,7 +49,7 @@ export default function ProductCard({ data }: Props) {
               variant="body1"
               sx={(theme) => ({
                 fontSize: 20,
-                color: theme.palette.primary.main,
+                color: theme.palette.primary.contrastText,
               })}
             >
               ${finalPrice(data.price, data.discount) }

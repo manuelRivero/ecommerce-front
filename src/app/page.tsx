@@ -1,6 +1,7 @@
 import { getProducts } from "@/client/products";
 import MainWrapper from "@/components/home/mainWrapper";
-import { Container, Paper, Typography } from "@mui/material";
+import { Box, Container } from "@mui/material";
+import banner from "./../assets/images/banner.png"
 
 export const dynamic = 'force-dynamic'
 
@@ -17,13 +18,12 @@ const getData = async () => {
 export default async function Home() {
   const {products, totalPages} = await getData();
   return (
-    <Container sx={{ marginBottom: 4 }}>
-      <Typography variant="h1" textAlign="center">
-        Nombre de la tienda
-      </Typography>
-      <Paper sx={{ padding: 4, marginTop: 4 }}>
+    <Container sx={{ marginY: 6 }}>
+      <Box sx={{maxWidth: '100%', marginBottom: 2, borderRadius: 10, overflow: 'hidden'}}>
+      <img src={banner.src} alt="banner" style={{ width: '100%', maxWidth: '100%', objectFit: 'contain', maxHeight: 200}} />
+
+      </Box>
         <MainWrapper data={products} totalPages={totalPages} />
-      </Paper>
     </Container>
   );
 }

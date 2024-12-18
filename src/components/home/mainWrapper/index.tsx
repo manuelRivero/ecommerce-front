@@ -1,6 +1,6 @@
 import ProductCard from "@/components/shared/productCard";
 import { Product } from "@/interfaces/products";
-import { Box, Pagination, Stack } from "@mui/material";
+import { Box, Pagination, Stack, Typography } from "@mui/material";
 import React from "react";
 interface Props {
   data: Product[];
@@ -10,12 +10,16 @@ export default function MainWrapper({ data, totalPages }: Props) {
   console.log("data", data);
   return (
     <>
+    <Typography variant="h2">
+      Nustros productos más vendidos
+    </Typography>
       <Box
         sx={{
           display: "flex",
           gap: 2,
           flexWrap: "wrap",
-          justifyContent: "space-around",
+          justifyContent: "flex-start",
+          marginTop: 4
         }}
       >
         {data.map((product: Product) => (

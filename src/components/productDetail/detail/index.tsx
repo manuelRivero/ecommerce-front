@@ -42,7 +42,7 @@ export default function Detail({ data }: Props) {
                 padding: 0.5,
                 borderRadius: 2,
                 color: theme.palette.primary.contrastText,
-                background: theme.palette.primary.main,
+                background: theme.palette.primary.contrastText,
               })}
             >
               <Typography variant="body1" sx={{ fontSize: 10 }}>

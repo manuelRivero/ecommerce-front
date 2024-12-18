@@ -5,6 +5,7 @@ import Link from "next/link";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import { useColorScheme } from "@mui/material/styles";
+import logo from "./../../../assets/images/amate-logo.png"
 import Cart from "../cart";
 
 export default function Header() {
@@ -34,7 +35,10 @@ export default function Header() {
               <Box>
                 <Link href={"/"} style={{ textDecoration: "none" }}>
                   <Stack direction="row" alignItems="center">
-                    logo
+                    <Box sx={{width: 45, }}>
+                    <img src={logo.src} alt="Logo" style={{maxWidth: '100%', borderRadius: 9999, overflow: 'hideen'}} />
+
+                    </Box>
                   </Stack>
                 </Link>
               </Box>
@@ -45,7 +49,7 @@ export default function Header() {
                 spacing={4}
                 >
               <Cart />
-              <Stack
+              {/* <Stack
                 direction="row"
                 spacing={{ xs: 0, md: 4 }}
                 sx={{ alignItems: "center" }}
@@ -61,7 +65,7 @@ export default function Header() {
                   />
                   <DarkModeIcon sx={{ fontSize: 12 }} />
                 </Stack>
-              </Stack>
+              </Stack> */}
             </Stack>
           </Stack>
         </Toolbar>
