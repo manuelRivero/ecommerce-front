@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useCart } from "@/context/cart";
 import { CartProduct } from "@/interfaces/products";
 import { useRouter } from "next/navigation";
+import { finalPrice } from "@/utils/products";
 
 export default function Cart() {
   const router = useRouter();
@@ -29,7 +30,6 @@ export default function Cart() {
 
   const handleOpen = () => {
     setOpen(true);
-    setShowBadged(false);
   };
 
   useEffect(() => {
@@ -91,7 +91,7 @@ export default function Cart() {
                     <strong>
                       $
                       {products.reduce(
-                        (acc, item) => acc + item.price * item.quantity,
+                        (acc, item) => acc + finalPrice(item.price, item.discount)  * item.quantity,
                         0
                       )}
                     </strong>

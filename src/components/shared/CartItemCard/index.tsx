@@ -1,28 +1,40 @@
 import React from "react";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, IconButton, Stack, Typography } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { CartProduct } from "@/interfaces/products";
+import { removeProductToCart, useCart } from "@/context/cart";
+import { finalPrice } from "@/utils/products";
 
 interface Props {
   data: CartProduct;
   hasDelete?: boolean;
 }
 export default function CartItemCard({ data, hasDelete = true }: Props) {
+  const [, dispatch] = useCart();
+  const handleDelete = () => {
+    removeProductToCart(dispatch, data._id);
+  };
   return (
     <Box>
       <Stack direction="row" spacing={2}>
-        <img style={{ objectFit: "cover", maxWidth: 90 }} src={data.images[0].url} alt="Imagen del producto"/>
+        <img
+          style={{ objectFit: "cover", maxWidth: 90 }}
+          src={data.images[0].url}
+          alt="Imagen del producto"
+        />
         <Box sx={{ width: "100%" }}>
           <Typography variant="h5">{data.name}</Typography>
           <Typography variant="body1" fontWeight="bold">
-            ${data.price}
+          ${finalPrice(data.price, data.discount) * data.quantity }
           </Typography>
           <Typography variant="body1">
             Cant. <strong>{data.quantity}</strong>
           </Typography>
           {hasDelete && (
             <Stack direction="row" justifyContent="flex-end">
-              <DeleteForeverIcon />
+              <IconButton onClick={handleDelete}>
+                <DeleteForeverIcon />
+              </IconButton>
             </Stack>
           )}
         </Box>

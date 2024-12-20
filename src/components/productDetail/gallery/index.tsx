@@ -2,11 +2,12 @@
 import React, { useRef, useState } from "react";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Thumbs } from "swiper/modules";
+import { Thumbs, Navigation } from "swiper/modules";
 
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/thumbs";
+import "swiper/css/navigation";
 import { Box, Stack } from "@mui/material";
 
 interface Props {
@@ -19,8 +20,11 @@ export default function Gallery({ images }: Props) {
   return (
     <>
       <Swiper
-        modules={[Thumbs]}
+        modules={[Thumbs, Navigation]}
         thumbs={{ swiper: thumbsRef.current }}
+        navigation={
+          {enabled:true, }
+        }
         spaceBetween={50}
         slidesPerView={1}
         onSlideChange={(swiper: any) => setActiveSlide(swiper.activeIndex)}
@@ -63,7 +67,7 @@ export default function Gallery({ images }: Props) {
             <SwiperSlide style={{ width: "fit-content" }} key={image}>
               <Box
                 sx={(theme) => ({
-                  border: "solid 2px",
+                  border: "solid 3px",
                   borderColor:
                     activeSlide === index
                       ? theme.palette.primary.main

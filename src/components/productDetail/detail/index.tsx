@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import QuantitySelector from "@/components/shared/quantitySelector";
 import { setProductToCart, useCart } from "@/context/cart";
 import { Product } from "@/interfaces/products";
@@ -14,6 +14,10 @@ interface Props {
 export default function Detail({ data }: Props) {
   const [, dispatch] = useCart();
   const [quantity, setQuantity] = useState<string>("1");
+  const [formAlert, setFormAlert] = useState<boolean>(false);
+  useEffect(() => {
+    setFormAlert(false);
+  }, [quantity]);
   return (
     <Box>
       <Typography variant="h3">{data.name}</Typography>
@@ -29,7 +33,7 @@ export default function Detail({ data }: Props) {
           </Typography>
         )}
         <Box sx={{ position: "relative" }}>
-          <Typography variant="body1" sx={{ fontSize: 32, fontWeight: "bold" }}>
+          <Typography variant="body1" sx={(theme) =>({ fontSize: 32, fontWeight: "bold", color: theme.palette.primary.contrastText })}>
             ${finalPrice(data.price, data.discount)}
           </Typography>
           {data.discount > 0 && (
@@ -42,7 +46,7 @@ export default function Detail({ data }: Props) {
                 padding: 0.5,
                 borderRadius: 2,
                 color: theme.palette.primary.contrastText,
-                background: theme.palette.primary.contrastText,
+                background: theme.palette.primary.main,
               })}
             >
               <Typography variant="body1" sx={{ fontSize: 10 }}>
@@ -59,27 +63,42 @@ export default function Detail({ data }: Props) {
         </Typography>
       </Box>
       <Stack direction="row" justifyContent="flex-end" sx={{ marginTop: 2 }}>
-        <QuantitySelector setValue={setQuantity} value={quantity} max={data.stock} />
+        <QuantitySelector
+          setValue={setQuantity}
+          value={quantity}
+          max={data.stock}
+        />
       </Stack>
       <Divider sx={{ marginTop: 4 }} />
       <Stack direction="row" justifyContent="flex-end" sx={{ marginTop: 4 }}>
         <Button
           variant="contained"
-          onClick={() =>{
+          onClick={() => {
             window.scrollTo({
-              top:0,
-              left:0,
-              behavior: 'smooth'
-            })
+              top: 0,
+              left: 0,
+              behavior: "smooth",
+            });
+            setFormAlert(true);
             setProductToCart(dispatch, {
               ...data,
               quantity: Number(quantity),
-            })}
-          }
+            });
+          }}
         >
           Agregar al carrito
         </Button>
       </Stack>
+      {formAlert && (
+        <>
+        <Typography textAlign="right" sx={{ marginTop: 2 }}>
+          El producto se agregó al carrito, cantidad: <strong>{quantity}</strong>
+        </Typography>
+        <Typography textAlign="right" sx={{ marginTop: 2 }}>
+          Revisa tu carrito para finalizar la compra
+        </Typography>
+        </>
+      )}
     </Box>
   );
 }
