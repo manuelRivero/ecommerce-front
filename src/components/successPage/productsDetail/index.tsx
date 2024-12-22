@@ -1,6 +1,7 @@
 "use client";
 import CartItemCard from "@/components/shared/CartItemCard";
 import { Product } from "@/interfaces/products";
+import { finalPrice } from "@/utils/products";
 import {
   Box,
   Button,
@@ -18,8 +19,8 @@ export default function ProductsDetail({products}: Props) {
       {products
         .map((product: any) => (
           <>
-            <Box key={product._id} sx={{ marginBottom: 2 }}>
-              <CartItemCard hasDelete={false} data={{quantity: product.quantity, ...product.data}} />
+            <Box key={product.details[0]._id} sx={{ marginBottom: 2 }}>
+              <CartItemCard hasDelete={false} data={{quantity: product.quantity, ...product.details[0], price: product.data.price}} />
             </Box>
           </>
         ))}
@@ -30,8 +31,7 @@ export default function ProductsDetail({products}: Props) {
           <strong>
             $
             {products
-              .map((mockProduct: Product) => ({ ...mockProduct, quantity: 2 }))
-              .reduce((acc, item) => acc + item.price * item.quantity, 0)}
+              .reduce((acc, item) => acc + finalPrice( item.data.price, item.data.discount) * item.quantity, 0)}
           </strong>
         </Typography>
       </Box>{" "}
