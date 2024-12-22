@@ -1,12 +1,13 @@
 "use client";
-import { useCart } from "@/context/cart";
-import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+import { createSale } from "@/client/sales";
+import { cleanCart, useCart } from "@/context/cart";
+import { Box, Button, CircularProgress, Stack, TextField, Typography } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-interface IForm {
+export interface ISalesForm {
   name: string;
   lastName: string;
   email: string;
@@ -18,16 +19,27 @@ interface IForm {
 
 export default function Form() {
   const router = useRouter();
-  const [{ products }] = useCart();
+  const [{ products }, dispatch] = useCart();
   const [loading, setLoading] = useState<boolean>(false);
+  const [showFormAlert, setShowFormAlert] = useState<boolean>(false);
+
   const {
     control,
     handleSubmit,
     formState: { isDirty, isValid, errors },
-  } = useForm<IForm>({ mode: "onChange" });
-  const submit = (values: IForm) => {
+  } = useForm<ISalesForm>({ mode: "onChange" });
+  const submit = async (values: ISalesForm) => {
     console.log("values", values);
-    router.push("/compra-exitosa");
+    try {
+      setLoading(true);
+      const response = await createSale({ ...values, products });
+      setShowFormAlert(true);
+      window.location.href = response.data.init_point;
+    } catch (error: any) {
+      console.log("error");
+    } finally {
+      setLoading(false);
+    }
   };
   return products.length > 0 ? (
     <form onSubmit={handleSubmit(submit)}>
@@ -221,9 +233,14 @@ export default function Form() {
           type="submit"
           disabled={!isDirty || !isValid}
         >
-          Finalizar compra
+         {loading ? <CircularProgress /> : 'Finalizar compra'}
         </Button>
       </Stack>
+      {showFormAlert && (
+        <Typography variant="h5" sx={{ marginTop: 2, textAlign: "center" }}>
+          Estás siendo redirigido a Mercado Pago para completar tu compra.
+        </Typography>
+      )}
     </form>
   ) : (
     <>

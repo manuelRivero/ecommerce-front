@@ -37,7 +37,12 @@ export default function registerReducer(
         products: state.products.filter((product) => product._id !== productId),
       };
     }
-
+    case "CLEAN_CART":{
+      return {
+        ...state,
+        products: []
+      }
+    }
     default:
       return state;
   }

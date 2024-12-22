@@ -4,6 +4,7 @@ import ThemeProvider from "@/components/themeProvider";
 import Header from "@/components/layout/header";
 import { Box } from "@mui/material";
 import { CartProvider } from "@/context/cart";
+import Footer from "@/components/layout/footer";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -22,7 +23,8 @@ export default function RootLayout({
           <CartProvider>
             <>
             <Header />
-            <Box sx={{ marginTop: 4 }}>{children}</Box>
+            <Box sx={{ marginY: 4, minHeight: '60vh', height:'100%' }}>{children}</Box>
+            <Footer />
             </>
           </CartProvider>
         </ThemeProvider>

@@ -23,7 +23,7 @@ export default async function Home() {
         sx={{
           maxWidth: "100%",
           marginBottom: 2,
-          borderRadius: 10,
+          borderRadius: { xs: 4, md: 10 },
           overflow: "hidden",
         }}
       >

@@ -10,16 +10,14 @@ export default function MainWrapper({ data, totalPages }: Props) {
   console.log("data", data);
   return (
     <>
-    <Typography variant="h2">
-      Nustros productos más vendidos
-    </Typography>
+      <Typography variant="h2">Nustros productos más vendidos</Typography>
       <Box
         sx={{
           display: "flex",
           gap: 2,
           flexWrap: "wrap",
-          justifyContent: "flex-start",
-          marginTop: 4
+          justifyContent: { xs: "center", md: "flex-start" },
+          marginTop: 4,
         }}
       >
         {data.map((product: Product) => (

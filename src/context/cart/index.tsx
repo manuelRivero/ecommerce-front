@@ -58,3 +58,11 @@ export async function removeProductToCart(
     payload: id,
   });
 }
+
+export async function cleanCart(
+  dispatch: React.Dispatch<any>,
+) {
+  dispatch({
+    type: "CLEAN_CART",
+  });
+}
