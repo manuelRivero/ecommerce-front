@@ -1,27 +1,25 @@
 "use client";
 import CartItemCard from "@/components/shared/CartItemCard";
-import { CartProduct, Product } from "@/interfaces/products";
+import { Product } from "@/interfaces/products";
 import {
   Box,
   Button,
   Divider,
   Stack,
-  Tooltip,
   Typography,
 } from "@mui/material";
-import HelpIcon from "@mui/icons-material/Help";
-import { useCart } from "@/context/cart";
-import { products } from "@/mocks/product";
 
-export default function ProductsDetail() {
+interface Props {
+  products: any[]
+}
+export default function ProductsDetail({products}: Props) {
   return (
     <>
       {products
-        .map((mockProduct: Product) => ({ ...mockProduct, quantity: 2 }))
-        .map((product: CartProduct) => (
+        .map((product: any) => (
           <>
             <Box key={product._id} sx={{ marginBottom: 2 }}>
-              <CartItemCard hasDelete={false} data={product} />
+              <CartItemCard hasDelete={false} data={{quantity: product.quantity, ...product.data}} />
             </Box>
           </>
         ))}

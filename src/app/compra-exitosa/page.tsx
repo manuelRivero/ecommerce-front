@@ -38,7 +38,7 @@ export default async function Success({ searchParams }: any) {
           Consulta aquí un resumen de los productos adquiridos. También puedes
           revisar esta información en tu correo electrónico.
         </Typography>
-        <ProductsDetail />
+        <ProductsDetail products={detail.products} />
       </Paper>
     </Container>
   );
