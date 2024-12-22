@@ -36,7 +36,7 @@ export default function Form() {
       setShowFormAlert(true);
       window.location.href = response.data.init_point;
     } catch (error: any) {
-      console.log("error");
+      console.log("error", error);
     } finally {
       setLoading(false);
     }
