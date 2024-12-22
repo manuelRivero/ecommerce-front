@@ -7,7 +7,8 @@ const getData = async (payment_id: string) => {
   console.log("payment_id", payment_id);
   try {
     const { data } = await getSaleDetail(payment_id);
-    return { detail: data.targetEvent };
+    console.log('data', data)
+    return { detail: data.data };
   } catch (error) {
     console.log("error", error);
     throw error;
