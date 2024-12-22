@@ -14,7 +14,7 @@ const getData = async (payment_id: string) => {
   }
 };
 
-export default async function Success({ searchParams }) {
+export default async function Success({ searchParams }: any) {
   const { payment_id } = await searchParams;
   const { detail } = await getData(payment_id);
   console.log("detail", detail);
