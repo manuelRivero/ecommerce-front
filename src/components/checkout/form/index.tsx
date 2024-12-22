@@ -1,6 +1,6 @@
 "use client";
 import { createSale } from "@/client/sales";
-import { cleanCart, useCart } from "@/context/cart";
+import { useCart } from "@/context/cart";
 import { Box, Button, CircularProgress, Stack, TextField, Typography } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -88,6 +88,32 @@ export default function Form() {
                 },
               }}
               label="Apellido*"
+              value={field.value}
+              onChange={field.onChange}
+              helperText={fieldState.error?.message}
+            />
+          )}
+          rules={{
+            required: "Campo requerido",
+          }}
+        />
+      </Box>
+      <Box sx={{ marginBottom: 3 }}>
+        <Controller
+          control={control}
+          name="email"
+          render={({ field, fieldState }) => (
+            <TextField
+              sx={{ width: "100%" }}
+              slotProps={{
+                htmlInput: {
+                  style: {
+                    WebkitBoxShadow: "0 0 0 1000px white inset",
+                    "-webkit-text-fill-color": "#2f4858",
+                  },
+                },
+              }}
+              label="Email*"
               value={field.value}
               onChange={field.onChange}
               helperText={fieldState.error?.message}
