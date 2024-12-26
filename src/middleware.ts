@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { axiosInstance } from './client';
 
 export const config = {
   matcher: [
@@ -36,9 +37,9 @@ export async function middleware(req: NextRequest) {
   if (subdomain) {
     try {
       // Use fetch to verify if the subdomain exists
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tenant/verify-tenant?subdomain=${subdomain}`);
+      const response = await axiosInstance.get(`/tenant/verify-tenant?subdomain=${subdomain}`);
       
-      if (response.ok) {
+      if (response) {
         console.log('Middleware: Valid subdomain detected, rewriting URL');
         // Rewrite the URL to a dynamic route based on the subdomain
         return NextResponse.rewrite(new URL(`/${subdomain}${url.pathname}`, req.url));
