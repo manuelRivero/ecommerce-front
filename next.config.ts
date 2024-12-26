@@ -1,6 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/:path*',
+        destination: '/:path*',
+      },
+      {
+        source: '/',
+        destination: '/api/tenant',
+      },
+    ]
+  },
   /* config options here */
   eslint: {
     // Warning: This allows production builds to successfully complete even if
@@ -10,3 +22,6 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+
+

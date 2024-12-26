@@ -1,7 +1,7 @@
 import { getProducts } from "@/client/products";
 import MainWrapper from "@/components/home/mainWrapper";
 import { Box, Container } from "@mui/material";
-import banner from "./../assets/images/banner.png";
+import banner from "@/assets/images/banner.png";
 
 export const dynamic = "force-dynamic";
 
