@@ -1,3 +1,4 @@
+import { Product } from "@/interfaces/products";
 
 export function offPercentage(price: number, discount: number): number {
     if (price <= 0) {
@@ -19,3 +20,20 @@ export function offPercentage(price: number, discount: number): number {
     const finalPrice = price - discount;
     return parseFloat(finalPrice.toFixed(2)); // Redondea a 2 decimales
   }
+
+  export  function compareProducts (original: Product[], updated: Product[]): boolean  {
+    if (original.length !== updated.length) return false;
+
+    return original.every((o) => {
+      const updatedProduct = updated.find((u) => u._id === o._id);
+      if (!updatedProduct) return false;
+
+      // Compara cada campo del producto
+      return (
+        o.name === updatedProduct.name &&
+        o.price === updatedProduct.price &&
+        o.stock === updatedProduct.stock &&
+        o.discount === updatedProduct.discount
+      );
+    });
+  };

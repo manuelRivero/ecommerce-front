@@ -14,3 +14,11 @@ export const getProducts = (): Promise<AxiosResponse> => {
       }
     });
   };
+
+  export const getProductsById = (productIds: string[]): Promise<AxiosResponse> => {
+    return axiosInstance.get("/products/get-products-by-id", {
+      params:{
+        productIds
+      }
+    });
+  };

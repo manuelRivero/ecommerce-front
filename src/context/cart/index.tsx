@@ -59,6 +59,16 @@ export async function removeProductToCart(
   });
 }
 
+export async function setCart(
+  dispatch: React.Dispatch<any>,
+  data: CartProduct[]
+) {
+  dispatch({
+    type: "SET_CART",
+    payload: data
+  });
+}
+
 export async function cleanCart(
   dispatch: React.Dispatch<any>,
 ) {
