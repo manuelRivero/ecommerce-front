@@ -18,7 +18,7 @@ export default function CheckoutCart() {
 
       const mergedProducts = products.map((localProduct) => {
         const backendProduct = data.products.find(
-          (bp) => bp._id === localProduct._id
+          (bp: any) => bp._id === localProduct._id
         );
 
         return backendProduct
