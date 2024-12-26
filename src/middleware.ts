@@ -42,7 +42,7 @@ export async function middleware(req: NextRequest) {
       if (response) {
         console.log('Middleware: Valid subdomain detected, rewriting URL');
         // Rewrite the URL to a dynamic route based on the subdomain
-        return NextResponse.rewrite(new URL(`/${subdomain}${url.pathname}`, req.url));
+        return NextResponse.rewrite(new URL(`/${subdomain}${url.pathname}?${url.search}`, req.url));
       }
 
     } catch (error) {
