@@ -7,8 +7,8 @@ interface SalePayload extends ISalesForm {
   products: CartProduct[];
 }
 
-export const createSale = (data: SalePayload): Promise<AxiosResponse> => {
-  return axiosInstance.post("/sale/create-sale", data);
+export const createSale = (data: SalePayload, tenant: string): Promise<AxiosResponse> => {
+  return axiosInstance.post(`/sale/create-sale?tenant=${tenant}`, data);
 };
 
 export const getSaleDetail = (id: string): Promise<AxiosResponse> => {

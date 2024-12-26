@@ -3,7 +3,7 @@ import { createSale } from "@/client/sales";
 import { useCart } from "@/context/cart";
 import { Box, Button, CircularProgress, Stack, TextField, Typography } from "@mui/material";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
@@ -18,7 +18,7 @@ export interface ISalesForm {
 }
 
 export default function Form() {
-  const router = useRouter();
+  const params = useParams();
   const [{ products }, dispatch] = useCart();
   const [loading, setLoading] = useState<boolean>(false);
   const [showFormAlert, setShowFormAlert] = useState<boolean>(false);
@@ -32,7 +32,7 @@ export default function Form() {
     console.log("values", values);
     try {
       setLoading(true);
-      const response = await createSale({ ...values, products });
+      const response = await createSale({ ...values, products }, params.subdomain);
       setShowFormAlert(true);
       window.location.href = response.data.init_point;
     } catch (error: any) {
