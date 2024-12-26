@@ -32,7 +32,7 @@ export default function Form() {
     console.log("values", values);
     try {
       setLoading(true);
-      const response = await createSale({ ...values, products }, params.subdomain);
+      const response = await createSale({ ...values, products }, params.subdomain as string);
       setShowFormAlert(true);
       window.location.href = response.data.init_point;
     } catch (error: any) {
