@@ -26,10 +26,22 @@ export default function CheckoutCart() {
           : localProduct;
       });
 
+      // Verificar si algún producto tiene stock 0
+      const updatedProducts = mergedProducts.filter((product) => {
+        const localFeatures = product.features || [];
+        return !localFeatures.some(
+          (feature: any) => feature.stock === "0" || feature.stock === 0
+        );
+      });
+
+      // Compara los productos locales con los del backend
       const changesDetected = !compareProducts(products, mergedProducts);
       setHasChanges(changesDetected);
-      setCart(dispatch, mergedProducts);
+
+      // Actualizar el carrito solo con los productos que tengan stock disponible
+      setCart(dispatch, updatedProducts);
     };
+
     if (products.length > 0) {
       getData();
     }
@@ -40,6 +52,11 @@ export default function CheckoutCart() {
       {products.length === 0 ? (
         <>
           <Typography color="#97a2aa">El carrito está vacío</Typography>
+          {hasChanges && (
+            <Typography color="#97a2aa" sx={{ marginY: 2 }}>
+              Parece que ha pasado mucho tiempo y los productos de tu carrito ya no están disponibles
+            </Typography>
+          )}
           <Typography color="#97a2aa" sx={{ marginTop: 2 }}>
             Cuando agregues algún producto lo verás aquí y podrás continuar con
             la compra
