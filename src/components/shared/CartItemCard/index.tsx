@@ -18,7 +18,7 @@ export default function CartItemCard({ data, hasDelete = true }: Props) {
     <Box>
       <Stack direction="row" spacing={2}>
         <img
-          style={{ objectFit: "cover", maxWidth: 90 }}
+          style={{ objectFit: "cover", maxWidth: 100, maxHeight: 100 }}
           src={data.images[0].url}
           alt="Imagen del producto"
         />
@@ -30,6 +30,12 @@ export default function CartItemCard({ data, hasDelete = true }: Props) {
           <Typography variant="body1">
             Cant. <strong>{data.quantity}</strong>
           </Typography>
+          <Typography variant="body1">
+            Color: <strong>{data.color}</strong>
+          </Typography>
+          {data.size && <Typography variant="body1">
+            Talla: <strong>{data.size}</strong>
+          </Typography>}
           {hasDelete && (
             <Stack direction="row" justifyContent="flex-end">
               <IconButton onClick={handleDelete}>
