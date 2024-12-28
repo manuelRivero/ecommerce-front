@@ -18,7 +18,7 @@ export default async function RootLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { subdomain: string };
+  params: Promise<any>;
 }) {
   const {subdomain} = await params
   return (

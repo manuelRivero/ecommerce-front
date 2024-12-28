@@ -18,7 +18,7 @@ const getData = async (subdomain: string) => {
 export default async function Home({
   params,
 }: {
-  params: { subdomain: string };
+  params: Promise<any>;
 }){
   const {subdomain} = await params
   const { products, totalPages } = await getData(subdomain);
