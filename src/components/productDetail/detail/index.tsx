@@ -28,16 +28,22 @@ export default function Detail({ data }: Props) {
   const [stock, setStock] = useState<string | null>(null);
 
   // Agrupar las características del producto por color
-  const groupedFeatures = data.features.reduce((acc, feature) => {
-    const { color, size, stock, _id } = feature;
+// Corregir la estructura del acumulador para que acepte un índice de tipo string
+const groupedFeatures = data.features.reduce((acc, feature) => {
+  const { color, size, stock, _id } = feature;
 
+  // Asegurarnos de que color no sea undefined antes de usarlo
+  if (color) {
     if (!acc[color]) {
       acc[color] = [];
     }
 
     acc[color].push({ size, stock, _id });
-    return acc;
-  }, {} as Record<string, { size: string; stock: string; _id?: string }[]>);
+  }
+
+  return acc;
+}, {} as Record<string, { size: string | undefined; stock: string; _id?: string }[]>);
+
 
   // Verificar si el producto tiene solo variantes de color
   const isColorOnlyProduct = Object.keys(groupedFeatures).every(
@@ -168,7 +174,7 @@ export default function Detail({ data }: Props) {
                 control={
                   <Checkbox
                     checked={selectedSize === feature.size}
-                    onChange={() => setSelectedSize(feature.size)}
+                    onChange={() => setSelectedSize(feature.size ?? null)}
                   />
                 }
                 label={`Talle: ${feature.size}`}
