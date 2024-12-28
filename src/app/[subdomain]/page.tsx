@@ -5,9 +5,9 @@ import banner from "@/assets/images/banner.png";
 
 export const dynamic = "force-dynamic";
 
-const getData = async () => {
+const getData = async (subdomain: string) => {
   try {
-    const { data } = await getProducts();
+    const { data } = await getProducts(subdomain);
 
     return { products: data.products, totalPages: data.totalPages };
   } catch (error: any) {
@@ -15,8 +15,13 @@ const getData = async () => {
     throw "error";
   }
 };
-export default async function Home() {
-  const { products, totalPages } = await getData();
+export default async function Home({
+  params,
+}: {
+  params: { subdomain: string };
+}){
+  const {subdomain} = await params
+  const { products, totalPages } = await getData(subdomain);
   return (
     <Container sx={{ marginY: 6 }}>
       <Box

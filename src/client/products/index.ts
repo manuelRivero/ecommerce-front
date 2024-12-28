@@ -2,8 +2,10 @@ import { AxiosResponse } from "axios";
 import { axiosInstance } from "..";
 
 
-export const getProducts = (): Promise<AxiosResponse> => {
-    return axiosInstance.get("/products/web");
+export const getProducts = (tenant: string): Promise<AxiosResponse> => {
+    return axiosInstance.get("/products/web", {params:{
+      tenant
+    }});
   };
 
 
