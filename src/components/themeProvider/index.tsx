@@ -1,17 +1,13 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CssBaseline, Experimental_CssVarsProvider } from "@mui/material";
 import { extendTheme } from "@mui/material/styles";
 import { axiosInstance } from "@/client";
 import PageLoader from "..";
-import { ThemeContext } from "@emotion/react";
 
 declare module "@mui/material/styles/createPalette" {
-  interface PaletteOptions {
-    medalGold?: PaletteColorOptions;
-    disabledGray?: PaletteColorOptions;
-  }
+ 
 }
 
 export type State = {
