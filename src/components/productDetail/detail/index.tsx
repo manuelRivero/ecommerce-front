@@ -95,7 +95,8 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
 
   const isFormValid = () => {
     if (!selectedColor) return false; // El color es obligatorio
-    if (!isColorOnlyProduct && !selectedSize) return false; // La talla es obligatoria si no es solo color
+    if (!isColorOnlyProduct && !selectedSize) return false;
+    if(Number(stock) <= 0) return false // La talla es obligatoria si no es solo color
     return true;
   };
 
@@ -107,7 +108,7 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
       <Stack
         direction="row"
         spacing={1}
-        alignItems="center"
+        alignItems="baseline"
         sx={{ marginTop: 2 }}
       >
         {data.discount > 0 && (
@@ -121,7 +122,7 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
             sx={(theme) => ({
               fontSize: 32,
               fontWeight: "bold",
-              color: theme.palette.primary.contrastText,
+              color: theme.palette.primary.main,
             })}
           >
             ${finalPrice(data.price, data.discount)}
@@ -131,12 +132,13 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
               sx={(theme) => ({
                 position: "absolute",
                 top: 0,
-                right: 0,
+                right: -10,
                 transform: "translateX(100%)",
                 padding: 0.5,
                 borderRadius: 2,
                 color: theme.palette.primary.contrastText,
                 background: theme.palette.primary.main,
+                width: 'max-content'
               })}
             >
               <Typography variant="body1" sx={{ fontSize: 10 }}>
@@ -177,12 +179,12 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
                     onChange={() => setSelectedSize(feature.size ?? null)}
                   />
                 }
-                label={`Talle: ${feature.size}`}
+                label={`Talle: ${feature.size} ${Number(feature.stock) === 0 ? '(Sin stock)' : ''} `}
               />
             ))}
         </Box>
       </Box>
-      {stock && (
+      {Number(stock) > 0 && (
         <Box sx={{ marginTop: 2 }}>
           <Typography variant="body1" textAlign="right">
             Stock disponible: <strong>{stock || "N/A"} unidades</strong>

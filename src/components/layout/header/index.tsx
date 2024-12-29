@@ -1,16 +1,13 @@
 "use client";
-import { AppBar, Toolbar, Stack, Box, Switch } from "@mui/material";
+import { AppBar, Toolbar, Stack, Box } from "@mui/material";
 
 import Link from "next/link";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import WbSunnyIcon from "@mui/icons-material/WbSunny";
-import { useColorScheme } from "@mui/material/styles";
-import logo from "./../../../assets/images/amate-logo.png"
 import Cart from "../cart";
+import { useITheme } from "@/components/themeProvider";
 
 export default function Header() {
-  const { mode, setMode } = useColorScheme();
-
+const {state} = useITheme()
+  console.log('config', state.config.metadata.logo) 
   return (
     <>
       <AppBar
@@ -36,7 +33,7 @@ export default function Header() {
                 <Link href={"/"} style={{ textDecoration: "none" }}>
                   <Stack direction="row" alignItems="center">
                     <Box sx={{width: 45, }}>
-                    <img src={logo.src} alt="Logo" style={{maxWidth: '100%', borderRadius: 9999, overflow: 'hideen'}} />
+                    <img src={state.config.metadata.logo} alt="Logo" style={{maxWidth: '100%', borderRadius: 9999, overflow: 'hideen'}} />
 
                     </Box>
                   </Stack>

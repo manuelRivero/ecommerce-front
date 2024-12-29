@@ -1,48 +1,55 @@
 "use client";
 
-import React, { JSX, useMemo } from "react";
+import React, { useMemo, useReducer, useContext, ReactNode, JSX } from "react";
 import CartReducer from "./reducer";
 import { CartProduct } from "@/interfaces/products";
+import { useITheme } from "@/components/themeProvider";
 
-
-
+// Definición del estado inicial y tipos
 export type State = {
-  products: CartProduct[]
+  products: CartProduct[];
+  themeConfig?: any;
 };
 
 type Props = {
-  children: JSX.Element;
+  children: ReactNode;
 };
+
 const initialState: State = {
-  products: []
+  products: [],
 };
 
-const CartContext = React.createContext<[State, React.Dispatch<any>]>([
-  initialState,
-  () => {},
-]);
+const CartContext = React.createContext<[State, React.Dispatch<any>] | undefined>(undefined);
 
-export const CartProvider: React.FC<Props> = (props) => {
-  const [state, dispatch] = React.useReducer(CartReducer, initialState);
-  const value: [State, React.Dispatch<any>] = useMemo(()=>([state, dispatch]), [state]);
+export const CartProvider: React.FC<Props> = ({ children }) => {
+  const {state:ThemeState} = useITheme(); // Obtiene la configuración del tema desde el proveedor de tema
+  const [state, dispatch] = useReducer(CartReducer, {
+    ...initialState,
+    themeConfig: ThemeState.config,
+  });
 
-  return <CartContext.Provider value={value} {...props} />;
+  const value: [State, React.Dispatch<any>] = useMemo(
+    () => [{ ...state }, dispatch],
+    [state]
+  );
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
 
+// Hook para consumir el contexto del carrito
 export const useCart = () => {
-  const context = React.useContext(CartContext);
+  const context = useContext(CartContext);
   if (!context) {
-    throw new Error("useContext debe estar dentro del proveedor CartContext");
+    throw new Error("useCart debe ser utilizado dentro de un CartProvider");
   }
-
   return context;
 };
 
+// Funciones auxiliares para interactuar con el carrito
 export async function setProductToCart(
   dispatch: React.Dispatch<any>,
   product: CartProduct
 ) {
-  console.log('dispatch')
   dispatch({
     type: "SET_PRODUCT_TO_CART",
     payload: product,
@@ -65,13 +72,11 @@ export async function setCart(
 ) {
   dispatch({
     type: "SET_CART",
-    payload: data
+    payload: data,
   });
 }
 
-export async function cleanCart(
-  dispatch: React.Dispatch<any>,
-) {
+export async function cleanCart(dispatch: React.Dispatch<any>) {
   dispatch({
     type: "CLEAN_CART",
   });

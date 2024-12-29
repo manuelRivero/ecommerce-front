@@ -3,8 +3,11 @@ import { Box, Grid, Stack, Typography } from "@mui/material";
 import logo from "./../../../assets/images/amate-logo.png";
 import React from "react";
 import Link from "next/link";
+import { useITheme } from "@/components/themeProvider";
 
 export default function Footer() {
+  const { state } = useITheme();
+  console.log("config", state.config.metadata.logo);
   return (
     <footer>
       <Box
@@ -15,7 +18,7 @@ export default function Footer() {
             <Stack direction="row" alignItems="center" justifyContent="center">
               <Box sx={{ width: 120 }}>
                 <img
-                  src={logo.src}
+                  src={state.config.metadata.logo}
                   alt="Logo"
                   style={{
                     maxWidth: "100%",
@@ -25,9 +28,6 @@ export default function Footer() {
                 />
               </Box>
             </Stack>
-            <Typography color="#fff" textAlign="center">
-              A-MATE
-            </Typography>
           </Grid>
           <Grid item xs={12} md={4}>
             <Typography color="#fff" variant="h4" sx={{ marginBottom: 2 }}>
