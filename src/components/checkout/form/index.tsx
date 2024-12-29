@@ -29,7 +29,7 @@ export default function Form() {
     formState: { isDirty, isValid, errors },
   } = useForm<ISalesForm>({ mode: "onChange" });
   const submit = async (values: ISalesForm) => {
-    console.log("values", values);
+    console.log("values", values, products);
     try {
       setLoading(true);
       const response = await createSale({ ...values, products }, params.subdomain as string);

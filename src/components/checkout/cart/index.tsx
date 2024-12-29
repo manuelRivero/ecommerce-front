@@ -2,6 +2,7 @@
 import { getProductsById } from "@/client/products";
 import CartList from "@/components/shared/cartList";
 import { setCart, useCart } from "@/context/cart";
+import { Product } from "@/interfaces/products";
 import { compareProducts } from "@/utils/products";
 import { Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -15,37 +16,45 @@ export default function CheckoutCart() {
       const { data } = await getProductsById(
         products.map((product) => product._id)
       );
-
+  
       const mergedProducts = products.map((localProduct) => {
         const backendProduct = data.products.find(
-          (bp: any) => bp._id === localProduct._id
+          (bp: Product) => bp._id === localProduct._id
         );
-
+  
         return backendProduct
           ? { ...localProduct, ...backendProduct }
           : localProduct;
       });
-
-      // Verificar si algún producto tiene stock 0
+  
+      // Verificar si algún producto tiene stock 0 solo en la variante seleccionada
       const updatedProducts = mergedProducts.filter((product) => {
+        const { color: selectedColor, size: selectedSize } = product;
         const localFeatures = product.features || [];
-        return !localFeatures.some(
-          (feature: any) => feature.stock === "0" || feature.stock === 0
+  
+        // Buscar la feature seleccionada
+        const selectedFeature = localFeatures.find(
+          (feature: any) =>
+            feature.color === selectedColor && feature.size === selectedSize
         );
+  
+        // Si la feature seleccionada tiene stock 0, se elimina del carrito
+        return !(selectedFeature && (selectedFeature.stock === "0" || selectedFeature.stock === 0));
       });
-
+  
       // Compara los productos locales con los del backend
       const changesDetected = !compareProducts(products, mergedProducts);
       setHasChanges(changesDetected);
-
+  
       // Actualizar el carrito solo con los productos que tengan stock disponible
       setCart(dispatch, updatedProducts);
     };
-
+  
     if (products.length > 0) {
       getData();
     }
   }, []);
+  
 
   return (
     <>
