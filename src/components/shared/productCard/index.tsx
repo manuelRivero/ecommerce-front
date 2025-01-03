@@ -10,8 +10,8 @@ interface Props {
 export default function ProductCard({ data }: Props) {
 
   return (
-    <Paper sx={{ borderRadius: 0, marginTop: 0 }}>
-      <Box sx={{ maxWidth: 300, width: "100%", position: "relative" }}>
+    <Paper sx={{  maxWidth: 300,width: "100%", borderRadius: 0, marginTop: 0 }}>
+      <Box sx={{ width: "100%", position: "relative" }}>
         {data.discount > 0 && (
           <Box
             sx={(theme) => ({
@@ -30,7 +30,7 @@ export default function ProductCard({ data }: Props) {
           </Box>
         )}
         <img
-          style={{ objectFit: "cover", maxWidth: "100%", maxHeight: 300 }}
+          style={{ width: "100%", objectFit: "cover", maxWidth: "100%", maxHeight: 300 }}
           src={data.images[0].url}
         />
         <Box sx={{ padding: 2 }}>

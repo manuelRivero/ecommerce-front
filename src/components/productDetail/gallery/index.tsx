@@ -22,9 +22,7 @@ export default function Gallery({ images }: Props) {
       <Swiper
         modules={[Thumbs, Navigation]}
         thumbs={{ swiper: thumbsRef.current }}
-        navigation={
-          {enabled:true, }
-        }
+        navigation={{ enabled: true }}
         spaceBetween={50}
         slidesPerView={1}
         onSlideChange={(swiper: any) => setActiveSlide(swiper.activeIndex)}
@@ -48,7 +46,12 @@ export default function Gallery({ images }: Props) {
                 style={{ position: "relative", zIndex: 0 }}
               >
                 <img
-                  style={{ objectFit: "cover", maxWidth: "100%" }}
+                  style={{
+                    objectFit: "cover",
+                    height: "100%",
+                    width: "100%",
+                    maxWidth: "100%",
+                  }}
                   src={image}
                 />
               </Box>
@@ -79,7 +82,7 @@ export default function Gallery({ images }: Props) {
                   overflow: "hidden",
                   backgroundImage: `url(${image})`,
                   backgroundPosition: "center",
-                  backgroundSize: "contain",
+                  backgroundSize: "cover",
                 })}
               />
             </SwiperSlide>
