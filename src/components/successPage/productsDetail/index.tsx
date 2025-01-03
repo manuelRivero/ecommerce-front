@@ -16,17 +16,13 @@ interface Props {
 export default function ProductsDetail({products}: Props) {
 
   const WhatsAppLinkWithExternalURL = () => {
-    const phoneNumber = "513416694296"; // Número con código de país, sin símbolos
-    const message = `Hola. Acabo de realizar una compra (Nº de pedido: 123131313132131). Compré el producto "Zapatos Verdes" en cantidad de 2 unidades. Necesito coordinar el envío a mi dirección. Por favor, indícame cómo proceder.`;
+    const phoneNumber = "5493416694296"; // Número con código de país, sin símbolos
+    const message = `Hola. Acabo de realizar una compra (Nº de pedido: 123131313132131). Necesito coordinar el envío a mi dirección. Por favor, indícame cómo proceder.`;
   
     // Construir enlace de WhatsApp
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
   
-    return (
-      <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-        Enviar mensaje a WhatsApp con enlace externo
-      </a>
-    );
+    
   };
   return (
     <>
@@ -56,7 +52,7 @@ export default function ProductsDetail({products}: Props) {
         spacing={1}
         sx={{ marginTop: 2 }}
       >
-        <Button variant="contained" onClick={WhatsAppLinkWithExternalURL}>Coordinar envío</Button>
+        <Button component="a" target="_blank" variant="contained" href={WhatsAppLinkWithExternalURL()}>Coordinar envío</Button>
       </Stack>
       {products.length === 0 && <Typography>El carrito está vacío</Typography>}
     </>
