@@ -3,8 +3,8 @@ import { cleanCart, useCart } from "@/context/cart";
 import { Box, Container, Paper, Stack, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 
-export default async function Success() {
-  const { dispatch } = useCart();
+export default function InProgressSale() {
+  const [, dispatch] = useCart();
 
   useEffect(() => {
     cleanCart(dispatch);
@@ -47,6 +47,16 @@ export default async function Success() {
               },
             }}
           ></Box>
+        </Stack>
+        <Stack direction="row" justifyContent="flex-end">
+          <Button
+            variant="contained"
+            component={Link}
+            href="/"
+            sx={{ marginTop: 2 }}
+          >
+            Ir al inicio
+          </Button>
         </Stack>
       </Paper>
     </Container>
