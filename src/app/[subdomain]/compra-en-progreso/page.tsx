@@ -1,6 +1,7 @@
 "use client";
 import { cleanCart, useCart } from "@/context/cart";
-import { Box, Container, Paper, Stack, Typography } from "@mui/material";
+import { Box, Button, Container, Paper, Stack, Typography } from "@mui/material";
+import Link from "next/link";
 import React, { useEffect } from "react";
 
 export default function InProgressSale() {
