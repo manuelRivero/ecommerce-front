@@ -19,7 +19,8 @@ export interface ISalesForm {
 
 export default function Form() {
   const params = useParams();
-  const [{ products }, dispatch] = useCart();
+  const router = useRouter();
+  const [{ products }] = useCart();
   const [loading, setLoading] = useState<boolean>(false);
   const [showFormAlert, setShowFormAlert] = useState<boolean>(false);
 
@@ -34,6 +35,7 @@ export default function Form() {
       setLoading(true);
       const response = await createSale({ ...values, products }, params.subdomain as string);
       setShowFormAlert(true);
+      router.push('compra en progreso')
       window.location.href = response.data.init_point;
     } catch (error: any) {
       console.log("error", error);

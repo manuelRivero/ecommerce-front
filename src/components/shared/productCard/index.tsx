@@ -8,7 +8,6 @@ interface Props {
   data: Product;
 }
 export default function ProductCard({ data }: Props) {
-
   return (
     <Paper sx={{  maxWidth: 300,width: "100%", borderRadius: 0, marginTop: 0 }}>
       <Box sx={{ width: "100%", position: "relative" }}>
@@ -49,10 +48,10 @@ export default function ProductCard({ data }: Props) {
               variant="body1"
               sx={(theme) => ({
                 fontSize: 20,
-                color: theme.palette.primary.contrastText,
+                color: theme.palette.primary.main,
               })}
             >
-              ${finalPrice(data.price, data.discount) }
+              <strong>${finalPrice(data.price, data.discount) }</strong>
             </Typography>
           </Stack>
           <Stack
