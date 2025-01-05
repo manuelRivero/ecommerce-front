@@ -35,7 +35,7 @@ export default function Form() {
       setLoading(true);
       const response = await createSale({ ...values, products }, params.subdomain as string);
       setShowFormAlert(true);
-      router.push('compra-en-progreso')
+      // router.push('compra-en-progreso')
       window.location.href = response.data.init_point;
     } catch (error: any) {
       console.log("error", error);
