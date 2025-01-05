@@ -25,7 +25,7 @@ export default async function RootLayout({
 }) {
   const {subdomain} = await params
   return (
-    <html lang="en">
+    <html lang="en" translate="no">
       <body>
         <ThemeProvider tenant={subdomain}>
           <CartProvider>
