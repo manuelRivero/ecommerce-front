@@ -1,6 +1,7 @@
 import { getProductDetail } from "@/client/products";
 import Detail from "@/components/productDetail/detail";
 import Gallery from "@/components/productDetail/gallery";
+import BackButton from "@/components/shared/BackButton";
 import { Box, Container, Grid, Paper } from "@mui/material";
 import React from "react";
 
@@ -20,6 +21,7 @@ export default async function ProductDetail({ params }: any) {
   const images = detail.images.map((image: any) => image.url);
   return (
     <Container>
+      <BackButton />
       <Paper>
         <Grid container>
           <Grid item xs={12} md={6}>

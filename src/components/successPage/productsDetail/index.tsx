@@ -1,5 +1,6 @@
 "use client";
 import CartItemCard from "@/components/shared/CartItemCard";
+import { useITheme } from "@/components/themeProvider";
 import { Product } from "@/interfaces/products";
 import { finalPrice } from "@/utils/products";
 import {
@@ -11,13 +12,15 @@ import {
 } from "@mui/material";
 
 interface Props {
-  products: any[]
+  products: any[];
+  orderId: string
 }
-export default function ProductsDetail({products}: Props) {
+export default function ProductsDetail({products, orderId}: Props) {
+  const { state } = useITheme();
 
   const WhatsAppLinkWithExternalURL = () => {
-    const phoneNumber = "5493416694296"; // Número con código de país, sin símbolos
-    const message = `Hola. Acabo de realizar una compra (Nº de pedido: 123131313132131). Necesito coordinar el envío a mi dirección. Por favor, indícame cómo proceder.`;
+    const phoneNumber = state.config.phone; // Número con código de país, sin símbolos
+    const message = `Hola. Acabo de realizar una compra (Nº de pedido: ${orderId}). Necesito coordinar el envío a mi dirección. Por favor, indícame cómo proceder.`;
   
     // Construir enlace de WhatsApp
     return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;

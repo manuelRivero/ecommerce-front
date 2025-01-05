@@ -1,4 +1,5 @@
 "use client";
+import BackButton from "@/components/shared/BackButton";
 import { useCart } from "@/context/cart";
 import { Button, Container, Paper, Stack, Typography } from "@mui/material";
 import Link from "next/link";
@@ -8,6 +9,7 @@ export default function DeliveryInfo() {
   const [{ products }] = useCart();
   return (
     <Container>
+      <BackButton />
       <Paper sx={{ padding: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Envíos desde la ciudad de Rosario

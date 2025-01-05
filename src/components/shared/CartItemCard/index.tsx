@@ -18,7 +18,7 @@ export default function CartItemCard({ data, hasDelete = true }: Props) {
     <Box>
       <Stack direction="row" spacing={2}>
         <img
-          style={{ objectFit: "cover", maxWidth: 100, maxHeight: 100 }}
+          style={{ objectFit: "cover", maxWidth: 100, maxHeight: 100, width: '100%' }}
           src={data.images[0].url}
           alt="Imagen del producto"
         />

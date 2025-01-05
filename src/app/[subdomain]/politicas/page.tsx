@@ -1,6 +1,14 @@
 "use client";
+import BackButton from "@/components/shared/BackButton";
 import { cleanCart, useCart } from "@/context/cart";
-import { Box, Button, Container, Paper, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import Link from "next/link";
 import React, { useEffect } from "react";
 
@@ -12,6 +20,7 @@ export default function PrivacyPolicies() {
   }, []);
   return (
     <Container>
+      <BackButton />
       <Paper sx={{ padding: 4, marginY: 4 }}>
         <Typography variant="h2" sx={{ marginBottom: 2 }}>
           Pagina en construcción

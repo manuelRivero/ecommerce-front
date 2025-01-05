@@ -1,10 +1,12 @@
 import CheckoutCart from "@/components/checkout/cart";
 import Form from "@/components/checkout/form";
+import BackButton from "@/components/shared/BackButton";
 import { Box, Container, Grid, Paper } from "@mui/material";
 
 export default function Checkout() {
   return (
     <Container sx={{ marginY: 4 }}>
+      <BackButton />
       <Box>
         <Grid
           container

@@ -39,6 +39,9 @@ export default async function Success({ searchParams }: any) {
           revisar esta información en tu correo electrónico.
         </Typography>
         <Typography sx={{ marginBottom: 2 }}>
+          Numero de order: <strong>{detail._id}</strong>
+        </Typography>
+        <Typography sx={{ marginBottom: 2 }}>
           Nombre: <strong>{`${detail.name} ${detail.lastName}`}</strong>
         </Typography>
         <Typography sx={{ marginBottom: 2 }}>
@@ -54,7 +57,7 @@ export default async function Success({ searchParams }: any) {
           Código postal: <strong>{`${detail.postalCode}`}</strong>
         </Typography>
       
-        <ProductsDetail products={detail.products} />
+        <ProductsDetail products={detail.products} orderId={detail._id} />
       </Paper>
     </Container>
   );
