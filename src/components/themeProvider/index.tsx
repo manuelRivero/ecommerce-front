@@ -88,26 +88,26 @@ const ThemeProvider = ({
             h6: { fontFamily: "Merriweather" },
             body1: { fontFamily: "OpenSans" },
           },
-          components: {
-            MuiCssBaseline: {
-              styleOverrides: `
-                @font-face {
-                  font-family: 'Merriweather';
-                  font-style: normal;
-                  font-display: swap;
-                  font-weight: 400;
-                  src: local('Merriweather'), url('/fonts/merriweather/Merriweather-Regular.ttf') format('truetype');
-                }
-                @font-face {
-                  font-family: 'OpenSans';
-                  font-style: normal;
-                  font-display: swap;
-                  font-weight: 400;
-                  src: local('OpenSans'), url('/fonts/open-sans/OpenSans.ttf') format('truetype');
-                }
-              `,
-            },
-          },
+          // components: {
+          //   MuiCssBaseline: {
+          //     styleOverrides: `
+          //       @font-face {
+          //         font-family: 'Merriweather';
+          //         font-style: normal;
+          //         font-display: swap;
+          //         font-weight: 400;
+          //         src: local('Merriweather'), url('/fonts/merriweather/Merriweather-Regular.ttf') format('truetype');
+          //       }
+          //       @font-face {
+          //         font-family: 'OpenSans';
+          //         font-style: normal;
+          //         font-display: swap;
+          //         font-weight: 400;
+          //         src: local('OpenSans'), url('/fonts/open-sans/OpenSans.ttf') format('truetype');
+          //       }
+          //     `,
+          //   },
+          // },
         });
 
         setTheme(dynamicTheme);
