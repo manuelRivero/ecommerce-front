@@ -2,6 +2,7 @@ import { getProducts } from "@/client/products";
 import MainWrapper from "@/components/home/mainWrapper";
 import { Box, Container } from "@mui/material";
 import banner from "@/assets/images/banner.png";
+import BannerSwiper from "@/components/home/bannerSwiper";
 
 export const dynamic = "force-dynamic";
 
@@ -32,11 +33,7 @@ export default async function Home({
           overflow: "hidden",
         }}
       >
-        <img
-          src={banner.src}
-          alt="banner"
-          style={{ width: "100%", maxWidth: "100%", objectFit: "contain" }}
-        />
+        <BannerSwiper />
       </Box>
       <MainWrapper data={products} totalPages={totalPages} />
     </Container>
