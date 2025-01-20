@@ -5,12 +5,14 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const CategoriesOptions = ({ actionProvider }: any) => {
-  const router = useRouter()
+  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const [options, setOptions] = useState<any[]>([]);
   const params = useParams();
   const handleOptionClick = (id: string) => {
-    router.push(`/?category=${id}`)
+    const queryString = new URLSearchParams({ category: id }).toString();
+
+    router.push(`/?${queryString}`);
     actionProvider.handleCategorySelection(id);
   };
   useEffect(() => {
@@ -18,11 +20,11 @@ const CategoriesOptions = ({ actionProvider }: any) => {
       try {
         const { data } = await getCategories(params.subdomain as string, 1);
         console.log("data", data);
-        setOptions(data.categories)
+        setOptions(data.categories);
       } catch (error) {
         console.log("category options error", error);
-      }finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     };
     getData();
@@ -36,7 +38,7 @@ const CategoriesOptions = ({ actionProvider }: any) => {
             variant="contained"
             sx={{ margin: 1 }}
             key={option.id}
-            onClick={()=> handleOptionClick(option._id)}
+            onClick={() => handleOptionClick(option._id)}
           >
             {option.name}
           </Button>

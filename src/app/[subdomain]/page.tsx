@@ -8,7 +8,6 @@ export const dynamic = "force-dynamic";
 const getData = async (subdomain: string, category: string) => {
   try {
     const { data } = await getProducts(subdomain, 0, category);
-
     return { products: data.products, totalPages: data.totalPages };
   } catch (error: any) {
     console.log("error", error);
@@ -22,9 +21,9 @@ export default async function Home({
   params: Promise<any>;
   searchParams: Promise<any> ;
 }) {
-  const { category } = await searchParams;
+  const parseParams = await searchParams;
   const { subdomain } = await params;
-  const { products, totalPages } = await getData(subdomain, category as string);
+  const { products, totalPages } = await getData(subdomain, parseParams['?category'] as string);
   return (
     <Container sx={{ marginY: 6 }}>
       <Box

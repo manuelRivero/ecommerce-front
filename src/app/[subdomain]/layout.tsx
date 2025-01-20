@@ -47,11 +47,17 @@ export default async function RootLayout({
           <CartProvider>
             <>
               <Header />
-              <Box sx={{ marginY: 4, minHeight: "60vh", height: "100%", position: "relative" }}>
+              <Box
+                sx={{
+                  marginY: 4,
+                  minHeight: "60vh",
+                  height: "100%",
+                  position: "relative",
+                }}
+              >
                 {children}
-                <Box sx={{position: "fixed", right: 0, bottom: 0}}>
-              <ChatBotComponent />
-
+                <Box sx={{ position: "fixed", right: 0, bottom: 0 }}>
+                  <ChatBotComponent />
                 </Box>
               </Box>
               <Footer />

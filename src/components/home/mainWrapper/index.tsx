@@ -22,10 +22,12 @@ export default function MainWrapper({ data, totalPages }: Props) {
         try {
           const { data } = await getProducts(
             params.subdomain as string,
-            page - 1
+            page - 1,
+            categoryParam ?? undefined
           );
 
           setProducts(data.products);
+          setTotal(data.totalPages);
         } catch (error: any) {
           console.log("error", error);
         }
@@ -35,27 +37,27 @@ export default function MainWrapper({ data, totalPages }: Props) {
       getData();
     }
   }, [page]);
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        setPage(0);
-        const { data } = await getProducts(
-          params.subdomain as string,
-          0,
-          categoryParam as string
-        );
-        setTotal(data.total);
-        setProducts(data.products);
-      } catch (error: any) {
-        console.log("error", error);
-      }
-    };
-    if (categoryParam) {
-      getData();
-    } else {
-      console.log("no hay category param", categoryParam);
-    }
-  }, [categoryParam]);
+  // useEffect(() => {
+  //   const getData = async () => {
+  //     try {
+  //       setPage(0);
+  //       const { data } = await getProducts(
+  //         params.subdomain as string,
+  //         0,
+  //         categoryParam as string
+  //       );
+  //       setTotal(data.totalPages);
+  //       setProducts(data.products);
+  //     } catch (error: any) {
+  //       console.log("error", error);
+  //     }
+  //   };
+  //   if (categoryParam) {
+  //     getData();
+  //   } else {
+  //     console.log("no hay category param", categoryParam);
+  //   }
+  // }, [categoryParam]);
 
   useEffect(() => {
     setProducts(data);
