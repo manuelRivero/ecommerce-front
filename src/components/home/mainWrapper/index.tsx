@@ -3,17 +3,19 @@ import { getProducts } from "@/client/products";
 import ProductCard from "@/components/shared/productCard";
 import { Product } from "@/interfaces/products";
 import { Box, Pagination, Stack, Typography } from "@mui/material";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 interface Props {
   data: Product[];
   totalPages: number;
 }
 export default function MainWrapper({ data, totalPages }: Props) {
+  const searchParams = useSearchParams()
   const params = useParams();
+  const categoryParam = searchParams.get('category') ?? null;
   const [page, setPage] = useState<number | undefined>(undefined);
   const [products, setProducts] = useState<Product[]>(data);
-  console.log("data", data);
+const [total, setTotal] = useState<number>(totalPages);
   useEffect(() => {
     const getData = async () => {
       if (page) {
@@ -33,6 +35,33 @@ export default function MainWrapper({ data, totalPages }: Props) {
       getData();
     }
   }, [page]);
+  useEffect(() => {
+    const getData = async () => {
+        try {
+          setPage(0);
+          const { data } = await getProducts(
+            params.subdomain as string,
+            0,
+            categoryParam as string,
+          );
+          setTotal(data.total);
+          setProducts(data.products);
+        } catch (error: any) {
+          console.log("error", error);
+        }
+    };
+    if (categoryParam) {
+      getData();
+    } else {
+      console.log('no hay category param', categoryParam)
+
+    }
+  }, [categoryParam]);
+
+  useEffect(() => {
+    setProducts(data)
+    setTotal(totalPages)
+  }, [data, totalPages]);
 
   return (
     <>
@@ -52,7 +81,7 @@ export default function MainWrapper({ data, totalPages }: Props) {
       </Box>
       <Stack direction="row" justifyContent="center" sx={{ marginTop: 4 }}>
         <Pagination
-          count={totalPages}
+          count={total}
           color="primary"
           onChange={(_, newPage) => setPage(newPage)}
         />

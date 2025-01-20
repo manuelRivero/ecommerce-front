@@ -58,10 +58,10 @@ export default function Footer() {
               color="#fff"
               target="_blank"
               component={Link}
-              href="https://wa.me/%2B1234567890?text=Hola A-MATE, tengo una duda, escribo desde el enlace de la pagina web"
+              href={`https://wa.me/${state.config.phone}?text=Hola, tengo una duda, escribo desde el enlace de la pagina web`}
               sx={{ display: "block" }}
             >
-              Whatsapp: 341123123
+              Whatsapp: {state.config.phone}
             </Typography>
           </Grid>
         </Grid>

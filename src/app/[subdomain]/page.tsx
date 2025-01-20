@@ -6,9 +6,9 @@ import BannerSwiper from "@/components/home/bannerSwiper";
 
 export const dynamic = "force-dynamic";
 
-const getData = async (subdomain: string) => {
+const getData = async (subdomain: string, category: string) => {
   try {
-    const { data } = await getProducts(subdomain);
+    const { data } = await getProducts(subdomain, 0, category);
 
     return { products: data.products, totalPages: data.totalPages };
   } catch (error: any) {
@@ -18,11 +18,14 @@ const getData = async (subdomain: string) => {
 };
 export default async function Home({
   params,
+  searchParams,
 }: {
   params: Promise<any>;
-}){
-  const {subdomain} = await params
-  const { products, totalPages } = await getData(subdomain);
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  const { category } = await searchParams;
+  const { subdomain } = await params;
+  const { products, totalPages } = await getData(subdomain, category as string);
   return (
     <Container sx={{ marginY: 6 }}>
       <Box

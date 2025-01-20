@@ -16,6 +16,7 @@
     "axios": "^1.7.9",
     "next": "15.0.4",
     "react": "^19.0.0",
+    "react-chatbot-kit": "^2.2.2",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.1",
     "swiper": "^11.1.15"
