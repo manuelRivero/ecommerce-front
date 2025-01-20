@@ -1,7 +1,6 @@
 import { getProducts } from "@/client/products";
 import MainWrapper from "@/components/home/mainWrapper";
 import { Box, Container } from "@mui/material";
-import banner from "@/assets/images/banner.png";
 import BannerSwiper from "@/components/home/bannerSwiper";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +20,7 @@ export default async function Home({
   searchParams,
 }: {
   params: Promise<any>;
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<any> ;
 }) {
   const { category } = await searchParams;
   const { subdomain } = await params;
