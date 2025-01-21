@@ -58,7 +58,7 @@ export default async function RootLayout({
                   }}
                 >
                   {children}
-                  <Box sx={{ position: "fixed", right: 0, bottom: 0 }}>
+                  <Box sx={{ zIndex: '9999',position: "fixed", right: 0, bottom: 0 }}>
                     <ChatBotComponent />
                   </Box>
                 </Box>

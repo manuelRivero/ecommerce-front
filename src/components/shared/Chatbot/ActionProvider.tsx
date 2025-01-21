@@ -46,8 +46,9 @@ const ActionProvider: React.FC<ActionProviderProps> = ({
 
   const handleCategorySelection = (option: number) => {
     const botMessage = createChatBotMessage(
-      "Excelente elección hemos filtrado nuestros productos basandonos en tu selección, puedes cerrar el chat y volver a iniciar en cualquier momento",
-      {}
+      `Excelente elección hemos filtrado nuestros productos basandonos en tu selección,
+      A continuación tienes más de nuestras categorías`,
+      { widget: "categoryOptions" }
     );
     setState((prev) => ({
       ...prev,

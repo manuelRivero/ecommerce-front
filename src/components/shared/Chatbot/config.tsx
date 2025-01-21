@@ -43,7 +43,7 @@ const getMessages = () => {
   if (typeof window !== "undefined") {
     return [
       createChatBotMessage(
-        "Hola, bienvenido a Maryjo Style ¡en qué puedo ayudarte?",
+        "Hola, bienvenido a nuestra tienda ¡en qué puedo ayudarte?",
         {
           widget: "options",
         }
