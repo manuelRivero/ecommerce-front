@@ -12,8 +12,13 @@ const CategoriesOptions = ({ actionProvider }: any) => {
   const handleOptionClick = (id: string) => {
     const queryString = new URLSearchParams({ category: id }).toString();
 
-    router.push(`/?${queryString}`);
+    router.push(`/?${queryString}`, { scroll: false});
     actionProvider.handleCategorySelection(id);
+    const container = document.getElementById("product-container")
+    container?.scrollIntoView({
+      block: 'start',
+      behavior: 'smooth'
+    })
   };
   useEffect(() => {
     const getData = async () => {

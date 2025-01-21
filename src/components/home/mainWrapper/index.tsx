@@ -65,7 +65,7 @@ export default function MainWrapper({ data, totalPages }: Props) {
   }, [data, totalPages]);
 
   return (
-    <>
+    <Box id="product-container">
       <Typography variant="h2">Nustros productos más vendidos</Typography>
       <Box
         sx={{
@@ -75,6 +75,7 @@ export default function MainWrapper({ data, totalPages }: Props) {
           justifyContent: { xs: "center", md: "center" },
           marginTop: 4,
         }}
+        
       >
         {products.map((product: Product) => (
           <ProductCard data={product} key={product._id} />
@@ -92,6 +93,6 @@ export default function MainWrapper({ data, totalPages }: Props) {
           onChange={(_, newPage) => setPage(newPage)}
         />
       </Stack>
-    </>
+    </Box>
   );
 }
