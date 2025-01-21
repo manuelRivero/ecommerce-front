@@ -1,14 +1,20 @@
 import React from "react";
 import { Box, Stack } from "@mui/material";
 
-const PageLoader = () => {
+interface Props {
+  position: "fixed" | "absolute" | "relative";
+  background?: string;
+}
+const PageLoader = ({ position, background }: Props) => {
   return (
     <Box
       sx={{
-        position: "fixed",
-        background: "#fff",
+        position: position,
+        background: background ?? "#fff",
         width: "100%",
         height: "100vh",
+        top: 0,
+        left: 0,
       }}
     >
       <Stack
