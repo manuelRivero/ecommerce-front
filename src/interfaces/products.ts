@@ -12,7 +12,11 @@ export interface Product {
   status: {
     available: boolean;
   };
-  features: Features[]
+  features: Features[];
+  categoryDetail:{
+    _id: string;
+    name: string;
+  }[]
 }
 
 export interface Features {
