@@ -1,8 +1,6 @@
-import PageLoader from '@/components'
-import React from 'react'
+import PageLoader from "@/components";
+import React from "react";
 
 export default function Loading() {
-  return (
-    <PageLoader/>
-  )
+  return <PageLoader position="fixed" />;
 }

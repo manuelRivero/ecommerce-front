@@ -126,7 +126,7 @@ const ThemeProvider = ({
     <IThemeContext.Provider value={{ state, setState }}>
       <Experimental_CssVarsProvider theme={theme} modeStorageKey="color_mode">
         <CssBaseline enableColorScheme />
-        {loading ? <PageLoader /> : children}
+        {loading ? <PageLoader position="fixed" /> : children}
       </Experimental_CssVarsProvider>
     </IThemeContext.Provider>
   );

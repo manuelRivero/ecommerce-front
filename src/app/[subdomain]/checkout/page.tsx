@@ -11,11 +11,11 @@ export default function Checkout() {
         <Grid
           container
           sx={{ gap: { sx: 4, md: 0 } }}
-          spacing={{ xs: 0, md: 4 }}
+          spacing={{md:4}}
           flexDirection={{ xs: "column", md: "row" }}
         >
           <Grid item xs={12} md={6}>
-            <Paper sx={{ padding: { xs: 2, md: 4 } }}>
+            <Paper sx={{ padding: { xs: 2, md: 4 }, marginBottom:{xs: 2} }}>
               <Form />
             </Paper>
           </Grid>

@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import "./globals.css";
 import ThemeProvider from "@/components/themeProvider";
 import Header from "@/components/layout/header";
@@ -6,6 +5,9 @@ import { Box } from "@mui/material";
 import { CartProvider } from "@/context/cart";
 import Footer from "@/components/layout/footer";
 import { axiosInstance } from "@/client";
+import ChatBotComponent from "@/components/shared/Chatbot";
+import { Suspense } from "react";
+import PageLoader from "@/components";
 
 export async function generateMetadata({ params }: any) {
   const { subdomain } = await params;
@@ -46,9 +48,21 @@ export default async function RootLayout({
           <CartProvider>
             <>
               <Header />
-              <Box sx={{ marginY: 4, minHeight: "60vh", height: "100%" }}>
-                {children}
-              </Box>
+              <Suspense fallback={<PageLoader />}>
+                <Box
+                  sx={{
+                    marginY: 4,
+                    minHeight: "60vh",
+                    height: "100%",
+                    position: "relative",
+                  }}
+                >
+                  {children}
+                  <Box sx={{ zIndex: '9999',position: "fixed", right: 0, bottom: 0 }}>
+                    <ChatBotComponent />
+                  </Box>
+                </Box>
+              </Suspense>
               <Footer />
             </>
           </CartProvider>

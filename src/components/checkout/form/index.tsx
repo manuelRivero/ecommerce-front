@@ -1,6 +1,6 @@
 "use client";
 import { createSale } from "@/client/sales";
-import { useCart } from "@/context/cart";
+import { cleanCart, useCart } from "@/context/cart";
 import { Box, Button, CircularProgress, Stack, TextField, Typography } from "@mui/material";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -20,7 +20,7 @@ export interface ISalesForm {
 export default function Form() {
   const params = useParams();
   const router = useRouter();
-  const [{ products }] = useCart();
+  const [{ products }, dispatch] = useCart();
   const [loading, setLoading] = useState<boolean>(false);
   const [showFormAlert, setShowFormAlert] = useState<boolean>(false);
 
@@ -253,7 +253,7 @@ export default function Form() {
         spacing={2}
         justifyContent="center"
       >
-        <Button variant="contained" color="error">
+        <Button variant="contained" color="error" onClick={()=> cleanCart(dispatch)}>
           Cancelar compra
         </Button>
         <Button
