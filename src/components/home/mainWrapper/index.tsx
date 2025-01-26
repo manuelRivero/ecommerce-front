@@ -1,13 +1,11 @@
 "use client";
-import { getCategories } from "@/client/categories";
 import { getProducts } from "@/client/products";
 import PageLoader from "@/components";
 import ProductCard from "@/components/shared/productCard";
 import { Product } from "@/interfaces/products";
-import { Box, FormControl, IconButton, InputLabel, MenuItem, Pagination, Select, Stack, TextField, Typography } from "@mui/material";
-import { useParams, useSearchParams, useRouter, usePathname } from "next/navigation";
+import { Box, Pagination, Stack, Typography } from "@mui/material";
+import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import DeleteIcon from '@mui/icons-material/Delete';
 import CategoryDropdown from "../categoryDropdown";
 interface Props {
   data: Product[];
@@ -20,19 +18,19 @@ export default function MainWrapper({ data, totalPages }: Props) {
   const [products, setProducts] = useState<Product[]>(data);
   const [total, setTotal] = useState<number>(totalPages);
   const [loading, setLoading] = useState<boolean>(true);
-  
+
   useEffect(() => {
     const getData = async () => {
       if (page) {
         try {
-          const categoryParam = searchParams.get('category')
+          const categoryParam = searchParams.get("category");
           const { data } = await getProducts(
             params.subdomain as string,
             page - 1,
             categoryParam ?? undefined
           );
 
-          setProducts(data.products);          
+          setProducts(data.products);
           setTotal(data.totalPages);
         } catch (error: any) {
           console.log("error", error);
@@ -53,9 +51,12 @@ export default function MainWrapper({ data, totalPages }: Props) {
   }, [data, totalPages]);
 
   return (
-    <Box id="product-container" sx={{ position: "relative", minHeight: '60vh' }}>
+    <Box
+      id="product-container"
+      sx={{ position: "relative", minHeight: "60vh" }}
+    >
       <Stack
-        direction={{ xs: 'column', sm: 'row' }}
+        direction={{ xs: "column", sm: "row" }}
         spacing={2}
         justifyContent="space-between"
         alignItems="center"
