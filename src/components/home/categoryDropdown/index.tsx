@@ -3,16 +3,15 @@
 import React, { useEffect, useState } from "react";
 import { getCategories } from "@/client/categories";
 import {
+  Button,
   FormControl,
-  IconButton,
   InputLabel,
   MenuItem,
   Select,
   Stack,
+  Typography,
 } from "@mui/material";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
-import DeleteIcon from "@mui/icons-material/Delete";
-
 interface Category {
   _id: string;
   name: string;
@@ -29,7 +28,9 @@ export default function CategoryDropdown() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const { data: dataCategories } = await getCategories(params.subdomain as string);
+        const { data: dataCategories } = await getCategories(
+          params.subdomain as string
+        );
         setCategories(dataCategories.categories);
 
         const initialCategory = searchParams.get("category");
@@ -46,17 +47,21 @@ export default function CategoryDropdown() {
 
   const handleChangeCategory = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    const currentParams = new URLSearchParams(Array.from(searchParams.entries()));
+    const currentParams = new URLSearchParams(
+      Array.from(searchParams.entries())
+    );
     currentParams.set("category", categoryId);
 
     router.push(`?${currentParams.toString()}`, { scroll: false });
   };
 
   const clearCategory = () => {
-    setSelectedCategory('');
+    setSelectedCategory("");
 
-    const currentParams = new URLSearchParams(Array.from(searchParams.entries()));
-    currentParams.delete('category');
+    const currentParams = new URLSearchParams(
+      Array.from(searchParams.entries())
+    );
+    currentParams.delete("category");
 
     router.push(`?${currentParams.toString()}`, { scroll: false });
     const container = document.getElementById("product-container");
@@ -67,28 +72,16 @@ export default function CategoryDropdown() {
   };
 
   return (
-    <Stack direction={"row"} spacing={1} alignItems={"center"}>
-      {selectedCategory && (
-        <IconButton
-          onClick={clearCategory}
-          sx={{
-            color: "red",
-            width: '40px',
-            height: '40px',
-            '&:hover': {
-              backgroundColor: 'rgba(255, 0, 0, 0.1)',
-              borderRadius: '100%',
-            },
-          }}
-        >
-          <DeleteIcon />
-        </IconButton>
-      )}
+    <Stack
+      direction={{ xs: "column", md: "row" }}
+      spacing={1}
+      alignItems={{sx:"center", md:"flex-end"}}
+    >
       <FormControl variant="outlined" style={{ minWidth: 200 }}>
-        <InputLabel id="category-label">Categoría</InputLabel>
+        <InputLabel id="category-label">Buscar por categoría</InputLabel>
         <Select
           labelId="category-label"
-          label="Categoría"
+          label="Buscar por categoría"
           value={selectedCategory}
           onChange={(e) => handleChangeCategory(e.target.value)}
           style={{
@@ -103,6 +96,11 @@ export default function CategoryDropdown() {
           ))}
         </Select>
       </FormControl>
+      {selectedCategory && (
+        <Button sx={{ padding: 2 }} variant="contained" onClick={clearCategory}>
+          <Typography>Ver todos los productos</Typography>
+        </Button>
+      )}
     </Stack>
   );
 }

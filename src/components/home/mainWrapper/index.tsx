@@ -7,6 +7,7 @@ import { Box, Pagination, Stack, Typography } from "@mui/material";
 import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import CategoryDropdown from "../categoryDropdown";
+import EmptyProducts from "../emptyProducts";
 interface Props {
   data: Product[];
   totalPages: number;
@@ -61,7 +62,7 @@ export default function MainWrapper({ data, totalPages }: Props) {
         justifyContent="space-between"
         alignItems="center"
       >
-        <Typography variant="h2">Nustros productos más vendidos</Typography>
+        <Typography variant="h2">Nustros productos</Typography>
         <CategoryDropdown />
       </Stack>
       {loading ? (
@@ -81,11 +82,7 @@ export default function MainWrapper({ data, totalPages }: Props) {
               <ProductCard data={product} key={product._id} />
             ))}
           </Box>
-          {products.length === 0 && (
-            <Typography variant="body1" sx={{ marginY: 4 }}>
-              No hay resultados
-            </Typography>
-          )}
+          {products.length === 0 && <EmptyProducts />}
           <Stack direction="row" justifyContent="center" sx={{ marginTop: 4 }}>
             <Pagination
               count={total}
