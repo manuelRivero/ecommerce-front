@@ -1,6 +1,5 @@
 "use client";
 import BackButton from "@/components/shared/BackButton";
-import { cleanCart, useCart } from "@/context/cart";
 import {
   Box,
   Button,
@@ -10,14 +9,16 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React from "react";
 
 export default function PrivacyPolicies() {
-  const [, dispatch] = useCart();
+  // const [, dispatch] = useCart();
 
-  useEffect(() => {
-    cleanCart(dispatch);
-  }, []);
+  // useEffect(() => {
+  //   cleanCart(dispatch);
+  // }, []);
+  console.log("ruta", window.open)
+  window.open('http://maryjostyle.localhost:3000/politicas', '_blank')
   return (
     <Container>
       <BackButton />

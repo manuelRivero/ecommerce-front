@@ -1,7 +1,14 @@
 "use client";
 import { createSale } from "@/client/sales";
 import { cleanCart, useCart } from "@/context/cart";
-import { Box, Button, CircularProgress, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -33,10 +40,16 @@ export default function Form() {
     console.log("values", values, products);
     try {
       setLoading(true);
-      const response = await createSale({ ...values, products }, params.subdomain as string);
+      const response = await createSale(
+        { ...values, products },
+        params.subdomain as string
+      );
       setShowFormAlert(true);
-      // router.push('compra-en-progreso')
-      window.location.href = response.data.init_point;
+      window.open(response.data.init_point, "_blank", "noreferrer");
+      setTimeout(() => {
+        cleanCart(dispatch);
+        router.push("compra-en-progreso");
+      }, 1000);
     } catch (error: any) {
       console.log("error", error);
     } finally {
@@ -253,7 +266,11 @@ export default function Form() {
         spacing={2}
         justifyContent="center"
       >
-        <Button variant="contained" color="error" onClick={()=> cleanCart(dispatch)}>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => cleanCart(dispatch)}
+        >
           Cancelar compra
         </Button>
         <Button
@@ -261,13 +278,16 @@ export default function Form() {
           type="submit"
           disabled={!isDirty || !isValid}
         >
-         {loading ? <CircularProgress /> : 'Finalizar compra'}
+          {loading ? <CircularProgress /> : "Finalizar compra"}
         </Button>
       </Stack>
       {showFormAlert && (
+        <Stack direction="row" spacing={2}>
         <Typography variant="h5" sx={{ marginTop: 2, textAlign: "center" }}>
           Estás siendo redirigido a Mercado Pago para completar tu compra.
         </Typography>
+        <CircularProgress size="small"/>
+        </Stack>
       )}
     </form>
   ) : (
