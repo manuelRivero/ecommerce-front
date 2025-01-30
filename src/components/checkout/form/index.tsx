@@ -30,6 +30,7 @@ export default function Form() {
   const [{ products }, dispatch] = useCart();
   const [loading, setLoading] = useState<boolean>(false);
   const [showFormAlert, setShowFormAlert] = useState<boolean>(false);
+  const [redirect, setRedirect] = useState<string | null>(null);
 
   const {
     control,
@@ -45,15 +46,20 @@ export default function Form() {
         params.subdomain as string
       );
       setShowFormAlert(true);
-      window.open(response.data.init_point, "_blank", "noreferrer");
-      setTimeout(() => {
-        cleanCart(dispatch);
-        router.push("compra-en-progreso");
-      }, 1000);
+      setRedirect(response.data.init_point);
     } catch (error: any) {
       console.log("error", error);
     } finally {
       setLoading(false);
+    }
+  };
+  const handleRedirect = () => {
+    if (redirect) {
+      window.open(redirect, "_blank", "noreferrer");
+      setTimeout(() => {
+        cleanCart(dispatch);
+        router.push("compra-en-progreso");
+      }, 1000);
     }
   };
   return products.length > 0 ? (
@@ -282,12 +288,20 @@ export default function Form() {
         </Button>
       </Stack>
       {showFormAlert && (
-        <Stack direction="row" spacing={2}>
-        <Typography variant="h5" sx={{ marginTop: 2, textAlign: "center" }}>
-          Estás siendo redirigido a Mercado Pago para completar tu compra.
-        </Typography>
-        <CircularProgress size="small"/>
-        </Stack>
+        <>
+          <Typography variant="h5" sx={{ marginTop: 2, textAlign: "center" }}>
+            Todo listo, puedes proceder a mercado pago.
+          </Typography>
+          <Stack direction="row" justifyContent="center">
+            <Button
+              variant="contained"
+              onClick={handleRedirect}
+              sx={{ marginTop: 2 }}
+            >
+              Ir a mercado pago
+            </Button>
+          </Stack>
+        </>
       )}
     </form>
   ) : (
