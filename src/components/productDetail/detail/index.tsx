@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import QuantitySelector from "@/components/shared/quantitySelector";
-import { setProductToCart, useCart } from "@/context/cart";
+import { setProductToCart, toggleCart, useCart } from "@/context/cart";
 import { Product } from "@/interfaces/products";
 import {
   Box,
@@ -20,15 +20,13 @@ interface Props {
 }
 
 export default function Detail({ data }: Props) {
-  const [, dispatch] = useCart();
+  const [ , dispatch] = useCart();
   const [quantity, setQuantity] = useState<string>("1");
   const [formAlert, setFormAlert] = useState<boolean>(false);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [stock, setStock] = useState<string | null>(null);
 
-  // Agrupar las características del producto por color
-// Corregir la estructura del acumulador para que acepte un índice de tipo string
 const groupedFeatures = data.features.reduce((acc, feature) => {
   const { color, size, stock, _id } = feature;
 
@@ -44,13 +42,10 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
   return acc;
 }, {} as Record<string, { size: string | undefined; stock: string; _id?: string }[]>);
 
-
-  // Verificar si el producto tiene solo variantes de color
   const isColorOnlyProduct = Object.keys(groupedFeatures).every(
     (color) => groupedFeatures[color].every((feature) => !feature.size)
   );
 
-  // Actualizar el stock disponible basado en la selección de talla y color
   const updateStock = () => {
     if (!selectedColor) {
       setStock(null);
@@ -67,10 +62,6 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
   useEffect(() => {
     updateStock();
   }, [selectedSize, selectedColor]);
-
-  useEffect(() => {
-    setFormAlert(false);
-  }, [quantity]);
 
   const handleAddToCart = () => {
     // Validar que se haya seleccionado un color (y talla si aplica)
@@ -99,6 +90,20 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
     if(Number(stock) <= 0) return false // La talla es obligatoria si no es solo color
     return true;
   };
+
+  const handleScroll = () => {
+    toggleCart(dispatch, true);
+    window.scrollTo({
+      top:0,
+      left:0,
+      behavior: 'smooth'
+    })
+  }
+  useEffect(() => {
+    setFormAlert(false);
+  }, [quantity]);
+
+
 
   console.log("groupedFeatures", groupedFeatures);
 
@@ -149,7 +154,10 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
         </Box>
       </Stack>
       <Typography variant="body1">{data.description}</Typography>
+      <Divider sx={{marginY:2}} />
       <Box>
+      <Typography variant="body1">Color</Typography>
+
         <Stack direction="row">
           {Object.keys(groupedFeatures).map((color) => (
             <FormControlLabel
@@ -170,18 +178,21 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
         <Box>
           {selectedColor &&
             !isColorOnlyProduct &&
-            groupedFeatures[selectedColor].map((feature) => (
-              <FormControlLabel
-                key={feature.size}
-                control={
-                  <Checkbox
-                    checked={selectedSize === feature.size}
-                    onChange={() => setSelectedSize(feature.size ?? null)}
-                  />
-                }
-                label={`Talle: ${feature.size} ${Number(feature.stock) === 0 ? '(Sin stock)' : ''} `}
-              />
-            ))}
+            <>
+             <Typography variant="body1">Talle</Typography>
+             {groupedFeatures[selectedColor].map((feature) => (
+               <FormControlLabel
+                 key={feature.size}
+                 control={
+                   <Checkbox
+                     checked={selectedSize === feature.size}
+                     onChange={() => setSelectedSize(feature.size ?? null)}
+                   />
+                 }
+                 label={`Talle: ${feature.size} ${Number(feature.stock) === 0 ? '(Sin stock)' : ''} `}
+               />
+             ))}
+            </>}
         </Box>
       </Box>
       {Number(stock) > 0 && (
@@ -213,7 +224,7 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
         </Button>
       </Stack>
       {formAlert && (
-        <>
+        <Stack direction="column" alignItems="flex-end">
           <Typography textAlign="right" sx={{ marginTop: 2 }}>
             El producto se agregó al carrito, cantidad:{" "}
             <strong>{quantity}</strong>
@@ -221,7 +232,10 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
           <Typography textAlign="right" sx={{ marginTop: 2 }}>
             Revisa tu carrito para finalizar la compra
           </Typography>
-        </>
+          <Button variant="contained" sx={{ marginTop: 2 }} onClick={handleScroll}>
+            Ver mi carrito
+          </Button>
+        </Stack>
       )}
     </Box>
   );

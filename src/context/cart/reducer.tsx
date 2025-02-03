@@ -43,11 +43,17 @@ export default function registerReducer(
         products: action.payload,
       };
     }
-    case "CLEAN_CART":{
+    case "CLEAN_CART": {
       return {
         ...state,
-        products: []
-      }
+        products: [],
+      };
+    }
+    case "TOGGLE_CART": {
+      return {
+        ...state,
+        open: action.payload,
+      };
     }
     default:
       return state;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useReducer, useContext, ReactNode, JSX } from "react";
+import React, { useMemo, useReducer, useContext, ReactNode } from "react";
 import CartReducer from "./reducer";
 import { CartProduct } from "@/interfaces/products";
 import { useITheme } from "@/components/themeProvider";
@@ -8,6 +8,7 @@ import { useITheme } from "@/components/themeProvider";
 // Definición del estado inicial y tipos
 export type State = {
   products: CartProduct[];
+  open: boolean;
   themeConfig?: any;
 };
 
@@ -17,12 +18,15 @@ type Props = {
 
 const initialState: State = {
   products: [],
+  open: false,
 };
 
-const CartContext = React.createContext<[State, React.Dispatch<any>] | undefined>(undefined);
+const CartContext = React.createContext<
+  [State, React.Dispatch<any>] | undefined
+>(undefined);
 
 export const CartProvider: React.FC<Props> = ({ children }) => {
-  const {state:ThemeState} = useITheme(); // Obtiene la configuración del tema desde el proveedor de tema
+  const { state: ThemeState } = useITheme(); // Obtiene la configuración del tema desde el proveedor de tema
   const [state, dispatch] = useReducer(CartReducer, {
     ...initialState,
     themeConfig: ThemeState.config,
@@ -79,5 +83,14 @@ export async function setCart(
 export async function cleanCart(dispatch: React.Dispatch<any>) {
   dispatch({
     type: "CLEAN_CART",
+  });
+}
+export async function toggleCart(
+  dispatch: React.Dispatch<{ type: string; payload: any }>,
+  toggleAction: boolean
+) {
+  dispatch({
+    type: "TOGGLE_CART",
+    payload: toggleAction,
   });
 }

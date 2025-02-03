@@ -12,24 +12,23 @@ import {
   Typography,
 } from "@mui/material";
 import CartItemCard from "@/components/shared/CartItemCard";
-import Link from "next/link";
-import { useCart } from "@/context/cart";
+import { toggleCart, useCart } from "@/context/cart";
 import { CartProduct } from "@/interfaces/products";
 import { useRouter } from "next/navigation";
 import { finalPrice } from "@/utils/products";
 
 export default function Cart() {
   const router = useRouter();
-  const [{ products }] = useCart();
-  const [open, setOpen] = useState<boolean>(false);
+  const [{ products, open }, dispatch] = useCart();
+
   const [showBadged, setShowBadged] = useState<boolean>(false);
   const handleClick = () => {
-    setOpen(false);
+    toggleCart(dispatch, false);
     router.push("/checkout");
   };
 
   const handleOpen = () => {
-    setOpen(true);
+    toggleCart(dispatch, true);
   };
 
   useEffect(() => {
@@ -55,14 +54,14 @@ export default function Cart() {
             background: theme.palette.error.main,
             right: 0,
             top: 0,
-            zIndex: 9999
+            zIndex: 9999,
           })}
         >
           {products.length}
         </Stack>
       )}
       {open && (
-        <ClickAwayListener onClickAway={() => setOpen(false)}>
+        <ClickAwayListener onClickAway={() => toggleCart(dispatch, false)}>
           <Paper
             sx={{
               padding: 2,
@@ -91,7 +90,9 @@ export default function Cart() {
                     <strong>
                       $
                       {products.reduce(
-                        (acc, item) => acc + finalPrice(item.price, item.discount)  * item.quantity,
+                        (acc, item) =>
+                          acc +
+                          finalPrice(item.price, item.discount) * item.quantity,
                         0
                       )}
                     </strong>
