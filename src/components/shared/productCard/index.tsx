@@ -29,7 +29,7 @@ export default function ProductCard({ data }: Props) {
             </Typography>
           </Box>
         )}
-        <Link href={"detalle-producto/" + data._id}>
+        <Link href={"/detalle-producto/" + data._id}>
           <img
             style={{
               width: "100%",
@@ -86,7 +86,7 @@ export default function ProductCard({ data }: Props) {
             <Button
               variant="contained"
               component={Link}
-              href={"detalle-producto/" + data._id}
+              href={"/detalle-producto/" + data._id}
             >
               Ver más
             </Button>

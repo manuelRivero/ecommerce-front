@@ -32,3 +32,19 @@ export const getProductsById = (
     },
   });
 };
+
+export const getRelatedProducts = (
+  tenant: string,
+  category: string,
+  page = 0,
+  excludeId: string
+): Promise<AxiosResponse> => {
+  return axiosInstance.get("/products/get-related-products", {
+    params: {
+      tenant,
+      page,
+      category,
+      excludeId,
+    },
+  });
+};
