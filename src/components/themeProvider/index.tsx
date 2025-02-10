@@ -6,6 +6,7 @@ import { extendTheme } from "@mui/material/styles";
 import { axiosInstance } from "@/client";
 import { merriweather, openSans } from "@/fonts";
 import PageLoader from "..";
+import { NextFontWithVariable } from "next/dist/compiled/@next/font";
 
 declare module "@mui/material/styles/createPalette" {}
 
@@ -49,12 +50,12 @@ const ThemeProvider = ({
         const bodyFont = data.config.typography?.body || "OpenSans";
 
         // Determinar la clase de fuente a aplicar
-        const fontMap: Record<string, string> = {
-          Merriweather: merriweather.variable,
-          OpenSans: openSans.variable,
+        const fontMap: Record<string, NextFontWithVariable> = {
+          Merriweather: merriweather,
+         "Open Sans": openSans,
         };
 
-        setFontClass(`${fontMap[titleFont]} ${fontMap[bodyFont]}`);
+        setFontClass(`${fontMap[titleFont].className} ${fontMap[bodyFont].className}`);
 
 
         const dynamicTheme = extendTheme({
@@ -91,15 +92,15 @@ const ThemeProvider = ({
           typography: {
             button: {
               textTransform: "none",
-              fontFamily: "Merriweather",
+              fontFamily: fontMap[titleFont].style.fontFamily,
             },
-            h1: { fontFamily: "Merriweather", fontSize: "3rem" },
-            h2: { fontFamily: "Merriweather", fontSize: "2rem" },
-            h3: { fontFamily: "Merriweather", fontSize: "1.5rem" },
-            h4: { fontFamily: "Merriweather", fontSize: "1.3rem" },
-            h5: { fontFamily: "Merriweather", fontSize: "1rem" },
-            h6: { fontFamily: "Merriweather" },
-            body1: { fontFamily: "OpenSans" },
+            h1: { fontFamily: fontMap[titleFont].style.fontFamily, fontSize: "3rem" },
+            h2: { fontFamily: fontMap[titleFont].style.fontFamily, fontSize: "2rem" },
+            h3: { fontFamily: fontMap[titleFont].style.fontFamily, fontSize: "1.5rem" },
+            h4: { fontFamily: fontMap[titleFont].style.fontFamily, fontSize: "1.3rem" },
+            h5: { fontFamily: fontMap[titleFont].style.fontFamily, fontSize: "1rem" },
+            h6: { fontFamily: fontMap[titleFont].style.fontFamily },
+            body1: { fontFamily: fontMap[bodyFont].style.fontFamily },
           },
           // components: {
           //   MuiCssBaseline: {
