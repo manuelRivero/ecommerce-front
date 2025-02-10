@@ -4,11 +4,10 @@ import React, { useEffect, useState } from "react";
 import { CssBaseline, Experimental_CssVarsProvider } from "@mui/material";
 import { extendTheme } from "@mui/material/styles";
 import { axiosInstance } from "@/client";
+import { merriweather, openSans } from "@/fonts";
 import PageLoader from "..";
 
-declare module "@mui/material/styles/createPalette" {
- 
-}
+declare module "@mui/material/styles/createPalette" {}
 
 export type State = {
   config: any;
@@ -36,6 +35,8 @@ const ThemeProvider = ({
   const [theme, setTheme] = useState(extendTheme());
   const [loading, setLoading] = useState<boolean>(true);
   const [state, setState] = useState(initialState);
+  const [fontClass, setFontClass] = useState("");
+
 
   useEffect(() => {
     const fetchTheme = async () => {
@@ -43,6 +44,18 @@ const ThemeProvider = ({
         const { data } = await axiosInstance.get(
           `${process.env.NEXT_PUBLIC_API_URL}/tenant/get-tenant-config?tenant=${tenant}`
         );
+
+        const titleFont = data.config.typography?.title || "Merriweather";
+        const bodyFont = data.config.typography?.body || "OpenSans";
+
+        // Determinar la clase de fuente a aplicar
+        const fontMap: Record<string, string> = {
+          Merriweather: merriweather.variable,
+          OpenSans: openSans.variable,
+        };
+
+        setFontClass(`${fontMap[titleFont]} ${fontMap[bodyFont]}`);
+
 
         const dynamicTheme = extendTheme({
           colorSchemes: {
@@ -126,7 +139,9 @@ const ThemeProvider = ({
     <IThemeContext.Provider value={{ state, setState }}>
       <Experimental_CssVarsProvider theme={theme} modeStorageKey="color_mode">
         <CssBaseline enableColorScheme />
-        {loading ? <PageLoader position="fixed" /> : children}
+        <div className={fontClass}>
+          {loading ? <PageLoader position="fixed" /> : children}
+        </div>
       </Experimental_CssVarsProvider>
     </IThemeContext.Provider>
   );
