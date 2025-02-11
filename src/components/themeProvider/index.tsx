@@ -38,7 +38,6 @@ const ThemeProvider = ({
   const [state, setState] = useState(initialState);
   const [fontClass, setFontClass] = useState("");
 
-
   useEffect(() => {
     const fetchTheme = async () => {
       try {
@@ -52,11 +51,12 @@ const ThemeProvider = ({
         // Determinar la clase de fuente a aplicar
         const fontMap: Record<string, NextFontWithVariable> = {
           Merriweather: merriweather,
-         "Open Sans": openSans,
+          "Open Sans": openSans,
         };
 
-        setFontClass(`${fontMap[titleFont].className} ${fontMap[bodyFont].className}`);
-
+        setFontClass(
+          `${fontMap[titleFont].className} ${fontMap[bodyFont].className}`
+        );
 
         const dynamicTheme = extendTheme({
           colorSchemes: {
@@ -80,12 +80,6 @@ const ThemeProvider = ({
                 text: {
                   primary: "#2F4858",
                 },
-                medalGold: {
-                  main: "#FFD700",
-                },
-                disabledGray: {
-                  main: "#97a2aa",
-                },
               },
             },
           },
@@ -94,14 +88,38 @@ const ThemeProvider = ({
               textTransform: "none",
               fontFamily: fontMap[titleFont].style.fontFamily,
             },
-            h1: { fontFamily: fontMap[titleFont].style.fontFamily, fontSize: "3rem" },
-            h2: { fontFamily: fontMap[titleFont].style.fontFamily, fontSize: "2rem" },
-            h3: { fontFamily: fontMap[titleFont].style.fontFamily, fontSize: "1.5rem" },
-            h4: { fontFamily: fontMap[titleFont].style.fontFamily, fontSize: "1.3rem" },
-            h5: { fontFamily: fontMap[titleFont].style.fontFamily, fontSize: "1rem" },
+            h1: {
+              fontFamily: fontMap[titleFont].style.fontFamily,
+              fontSize: "3rem",
+            },
+            h2: {
+              fontFamily: fontMap[titleFont].style.fontFamily,
+              fontSize: "2rem",
+            },
+            h3: {
+              fontFamily: fontMap[titleFont].style.fontFamily,
+              fontSize: "1.5rem",
+            },
+            h4: {
+              fontFamily: fontMap[titleFont].style.fontFamily,
+              fontSize: "1.3rem",
+            },
+            h5: {
+              fontFamily: fontMap[titleFont].style.fontFamily,
+              fontSize: "1rem",
+            },
             h6: { fontFamily: fontMap[titleFont].style.fontFamily },
             body1: { fontFamily: fontMap[bodyFont].style.fontFamily },
           },
+          // components: {
+          //   MuiCssBaseline: {
+          //     styleOverrides: {
+          //       body: {
+          //         backgroundImage: backgrounds.cross["background-image"]
+          //       } ,
+          //     },
+          //   },
+          // },
           // components: {
           //   MuiCssBaseline: {
           //     styleOverrides: `
