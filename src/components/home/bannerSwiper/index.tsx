@@ -32,6 +32,8 @@ export default function BannerSwiper() {
                 style={{
                   width: "100%",
                   maxWidth: "100%",
+                  aspectRatio: "3/1",
+                  objectFit: 'cover'
                 }}
                 src={banner.url}
               />
