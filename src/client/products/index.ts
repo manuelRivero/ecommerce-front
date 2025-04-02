@@ -4,13 +4,15 @@ import { axiosInstance } from "..";
 export const getProducts = (
   tenant: string,
   page = 0,
-  category?: string
+  category?: string,
+  limit: number = 10
 ): Promise<AxiosResponse> => {
   return axiosInstance.get("/products/web", {
     params: {
       tenant,
       page,
       category,
+      limit,
     },
   });
 };
@@ -48,3 +50,31 @@ export const getRelatedProducts = (
     },
   });
 };
+
+export const getHotSales = (
+  tenant: string,
+  page = 0,
+  limit: number = 10
+): Promise<AxiosResponse> => {
+  return axiosInstance.get("/products/hot-sales", {
+    params: {
+      tenant,
+      page,
+      limit,
+    },
+  });
+}
+
+export const getBestSellers = (
+  tenant: string,
+  page = 0,
+  limit: number = 10
+): Promise<AxiosResponse> => {
+  return axiosInstance.get("/products/best-sallers", {
+    params: {
+      tenant,
+      page,
+      limit,
+    },
+  });
+}

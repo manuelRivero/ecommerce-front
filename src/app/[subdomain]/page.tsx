@@ -1,16 +1,32 @@
-import { getProducts } from "@/client/products";
+import { getBestSellers, getHotSales, getProducts } from "@/client/products";
 import MainWrapper from "@/components/home/mainWrapper";
 import { Box, Container } from "@mui/material";
 import BannerSwiper from "@/components/home/bannerSwiper";
-import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
 const getData = async (subdomain: string, category: string) => {
   console.log("get data");
   try {
-    const { data } = await getProducts(subdomain, 0, category);
-    return { products: data.products, totalPages: data.totalPages };
+    const [mainProductData, hotSalesData, bestSellersData] = await Promise.all([
+      getProducts(subdomain, 0, category, 6),
+      getHotSales(subdomain, 0, 6),
+      getBestSellers(subdomain, 0, category, 6),
+    ]);
+    return {
+      mainProducts: {
+        products: mainProductData.data.products,
+        totalPages: mainProductData.data.totalPages,
+      },
+      hotSales: {
+        products: hotSalesData.data.products,
+        totalPages: hotSalesData.data.totalPages,
+      },
+      bestSellers: {
+        products: bestSellersData.data.products,
+        totalPages: bestSellersData.data.totalPages,
+      },
+    };
   } catch (error: any) {
     console.log("error", error);
     throw "error";
@@ -25,23 +41,22 @@ export default async function Home({
 }) {
   const parseParams = await searchParams;
   const { subdomain } = await params;
-  const { products, totalPages } = await getData(
+  const products = await getData(
     subdomain,
     parseParams["?category"] as string
   );
   return (
-      <Container sx={{ marginY: 6 }}>
-        <Box
-          sx={{
-            maxWidth: "100%",
-            marginBottom: 2,
-            borderRadius: { xs: 4, md: 10 },
-            overflow: "hidden",
-          }}
-        >
-          <BannerSwiper />
-        </Box>
-        <MainWrapper data={products} totalPages={totalPages} />
-      </Container>
+    <Container sx={{ marginY: 6 }}>
+      <Box
+        sx={{
+          maxWidth: "100%",
+          marginBottom: 2,
+          overflow: "hidden",
+        }}
+      >
+        <BannerSwiper />
+      </Box>
+      <MainWrapper data={products} />
+    </Container>
   );
 }

@@ -9,6 +9,8 @@ import { Navigation } from "swiper/modules";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
+import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
 
 export default function BannerSwiper() {
   const { state } = useITheme();
@@ -16,7 +18,10 @@ export default function BannerSwiper() {
     <>
       <Swiper
         modules={[Navigation]}
-        navigation={{ enabled: true }}
+        navigation={{
+          prevEl: ".prev",
+          nextEl: ".next",
+        }}
         spaceBetween={50}
         slidesPerView={1}
         style={{ position: "relative", zIndex: 0 }}
@@ -33,12 +38,33 @@ export default function BannerSwiper() {
                   width: "100%",
                   maxWidth: "100%",
                   aspectRatio: "3/1",
-                  objectFit: 'cover'
+                  objectFit: "cover",
+                  borderRadius: "1rem",
                 }}
                 src={banner.url}
               />
             </SwiperSlide>
           ))}
+        <IconButton
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: 10,
+            transform: "translateY(-50%)",
+          }}
+        >
+          <ChevronLeft />
+        </IconButton>
+        <IconButton
+          sx={{
+            position: "absolute",
+            top: "50%",
+            right: 10,
+            transform: "translateY(-50%)",
+          }}
+        >
+          <ChevronRight />
+        </IconButton>
       </Swiper>
     </>
   );

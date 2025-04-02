@@ -10,7 +10,7 @@ const getData = async (id: string, tenant: string) => {
   try {
     const { data } = await getProductDetail(id);
     console.log("data", data);
-    const {data: relatedProductsData }= await getRelatedProducts(tenant, data.product.category, 0, id)
+    const {data: relatedProductsData }= await getRelatedProducts(tenant, data.product.category, 0, id, 6)
     return { detail: data.product, related: relatedProductsData.relatedProducts };
   } catch (error) {
     throw error;
