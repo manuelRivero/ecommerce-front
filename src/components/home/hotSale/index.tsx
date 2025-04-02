@@ -1,13 +1,7 @@
 "use client";
-import { getProducts } from "@/client/products";
-import PageLoader from "@/components";
 import ProductCard from "@/components/shared/productCard";
 import { Product } from "@/interfaces/products";
-import { Box, Stack, Typography } from "@mui/material";
-import { useParams, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import CategoryDropdown from "../categoryDropdown";
-import EmptyProducts from "../emptyProducts";
+import { Box, Button, Stack, Typography } from "@mui/material";
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -18,6 +12,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
+import Link from "next/link";
 
 interface Props {
   data: Product[];
@@ -70,6 +65,20 @@ export default function HotSales({ data, totalPages }: Props) {
               </Box>
             </SwiperSlide>
           ))}
+          <SwiperSlide style={{ height: "auto" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
+              <Button variant="contained" component={Link} href={"/ofertas"}>
+                Ver todas las ofertas
+              </Button>
+            </Box>
+          </SwiperSlide>
         </Swiper>
       </Box>
 

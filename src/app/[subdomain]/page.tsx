@@ -11,7 +11,7 @@ const getData = async (subdomain: string, category: string) => {
     const [mainProductData, hotSalesData, bestSellersData] = await Promise.all([
       getProducts(subdomain, 0, category, 6),
       getHotSales(subdomain, 0, 6),
-      getBestSellers(subdomain, 0, category, 6),
+      getBestSellers(subdomain, 0, 6),
     ]);
     return {
       mainProducts: {
