@@ -48,7 +48,7 @@ export default async function RootLayout({
           <CartProvider>
             <>
               <Header />
-              <Suspense fallback={<PageLoader />}>
+              <Suspense fallback={<PageLoader position="fixed" />}>
                 <Box
                   sx={{
                     marginY: 4,

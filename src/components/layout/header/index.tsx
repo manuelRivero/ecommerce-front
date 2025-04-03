@@ -1,13 +1,36 @@
 "use client";
-import { AppBar, Toolbar, Stack, Box } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Stack,
+  Box,
+  IconButton,
+  MenuList,
+  MenuItem,
+  Paper,
+  ListItemIcon,
+  ListItemText,
+  ClickAwayListener,
+} from "@mui/material";
 
 import Link from "next/link";
 import Cart from "../cart";
 import { useITheme } from "@/components/themeProvider";
+import { useState } from "react";
+import { Menu } from "@mui/icons-material";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import CategoryIcon from "@mui/icons-material/Category";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
-const {state} = useITheme()
-  console.log('config', state.config.metadata.logo) 
+  const router = useRouter();
+  const { state } = useITheme();
+  const [open, setOpen] = useState(false);
+
+  const handleNavigation = (path: string) => {
+    router.push(path);
+  };
   return (
     <>
       <AppBar
@@ -32,20 +55,69 @@ const {state} = useITheme()
               <Box>
                 <Link href={"/"} style={{ textDecoration: "none" }}>
                   <Stack direction="row" alignItems="center">
-                    <Box sx={{width: 45, }}>
-                    <img src={state.config.metadata.logo} alt="Logo" style={{maxWidth: '100%', borderRadius: 9999, overflow: 'hideen'}} />
-
+                    <Box sx={{ width: 45 }}>
+                      <img
+                        src={state.config.metadata.logo}
+                        alt="Logo"
+                        style={{
+                          maxWidth: "100%",
+                          borderRadius: 9999,
+                          overflow: "hideen",
+                        }}
+                      />
                     </Box>
                   </Stack>
                 </Link>
               </Box>
             </Stack>
 
-            <Stack
-                direction="row"
-                spacing={4}
-                >
+            <Stack direction="row" spacing={4} sx={{ position: "relative" }}>
               <Cart />
+              <IconButton
+                sx={(theme) => ({ color: theme.palette.primary.contrastText })}
+                onClick={() => setOpen(!open)}
+              >
+                <Menu />
+              </IconButton>
+              {open && (
+                <ClickAwayListener onClickAway={() => setOpen(false)}>
+                  <Paper
+                    sx={{
+                      width: 200,
+                      position: "absolute",
+                      top: 60,
+                      right: 0,
+                      margin: 0,
+                    }}
+                  >
+                    <MenuList>
+                      <MenuItem
+                        onClick={() => handleNavigation("/#product-container")}
+                      >
+                        <ListItemIcon>
+                          <CategoryIcon />
+                        </ListItemIcon>
+                        <ListItemText>Productos</ListItemText>
+                      </MenuItem>
+                      <MenuItem onClick={() => handleNavigation("/ofertas")}>
+                        <ListItemIcon>
+                          <LocalOfferIcon />
+                        </ListItemIcon>
+                        <ListItemText>Ofertas</ListItemText>
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => handleNavigation("/mas-vendidos")}
+                      >
+                        <ListItemIcon>
+                          <ThumbUpOffAltIcon />
+                        </ListItemIcon>
+                        <ListItemText>Más vendidos</ListItemText>
+                      </MenuItem>
+                    </MenuList>
+                  </Paper>
+                </ClickAwayListener>
+              )}
+
               {/* <Stack
                 direction="row"
                 spacing={{ xs: 0, md: 4 }}

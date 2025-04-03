@@ -67,9 +67,9 @@ export default function Cart() {
               padding: 2,
               width: { xs: 300, md: 350 },
               position: "absolute",
-              bottom: 0,
+              bottom: -20,
               transform: "translateY(100%)",
-              right: 0,
+              right: -20,
               zIndex: 9999,
             }}
           >
