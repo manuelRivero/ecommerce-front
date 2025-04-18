@@ -5,6 +5,7 @@ import BestSellers from "../bestSellers";
 import HotSales from "../hotSale";
 import MainProducts from "../mainProdutcs";
 import { Product } from "@/interfaces/products";
+import Offers from "../offers";
 interface Props {
   data: {
     mainProducts: Data;
@@ -21,6 +22,9 @@ export default function MainWrapper({ data }: Props) {
   console.log('MainWrapper', data)
   return (
     <>
+    <Box>
+      <Offers data={data.offers.offers} />
+    </Box>
       <Box sx={{ marginY: 4 }}>
         <MainProducts data={data.mainProducts.products} totalPages={data.mainProducts.totalPages} />
       </Box>

@@ -33,7 +33,7 @@ export default function HotSales({ data, totalPages }: Props) {
         alignItems="center"
         mb={4}
       >
-        <Typography variant="h2">Ofertas</Typography>
+        <Typography variant="h2">Descuentos</Typography>
       </Stack>
 
       <Box sx={{ paddingX: { md: 10 } }}>
@@ -74,8 +74,8 @@ export default function HotSales({ data, totalPages }: Props) {
                 height: "100%",
               }}
             >
-              <Button variant="contained" component={Link} href={"/ofertas"}>
-                Ver todas las ofertas
+              <Button variant="contained" component={Link} href={"/descuentos"}>
+                Ver todas descuentos
               </Button>
             </Box>
           </SwiperSlide>

@@ -99,11 +99,11 @@ export default function Header() {
                         </ListItemIcon>
                         <ListItemText>Productos</ListItemText>
                       </MenuItem>
-                      <MenuItem onClick={() => handleNavigation("/ofertas")}>
+                      <MenuItem onClick={() => handleNavigation("/descuentos")}>
                         <ListItemIcon>
                           <LocalOfferIcon />
                         </ListItemIcon>
-                        <ListItemText>Ofertas</ListItemText>
+                        <ListItemText>Descuentos</ListItemText>
                       </MenuItem>
                       <MenuItem
                         onClick={() => handleNavigation("/mas-vendidos")}
