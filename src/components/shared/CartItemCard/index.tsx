@@ -25,7 +25,7 @@ export default function CartItemCard({ data, hasDelete = true }: Props) {
         <Box sx={{ width: "100%" }}>
           <Typography variant="h5">{data.name}</Typography>
           <Typography variant="body1" fontWeight="bold">
-          ${finalPrice(data.price, data.discount) * data.quantity }
+          ${finalPrice(data.price, (data.discount + (data.offerDiscount || 0))) * data.quantity }
           </Typography>
           <Typography variant="body1">
             Cant. <strong>{data.quantity}</strong>

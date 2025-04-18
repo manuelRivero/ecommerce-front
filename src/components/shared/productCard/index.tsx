@@ -12,7 +12,7 @@ export default function ProductCard({ data }: Props) {
   return (
     <Paper sx={{ maxWidth: 300, width: "100%", borderRadius: 0, marginTop: 0 }}>
       <Box sx={{ width: "100%", position: "relative" }}>
-        {data.discount > 0 && (
+        {(data.discount > 0 || data.offerDiscount > 0) && (
           <Box
             sx={(theme) => ({
               position: "absolute",
@@ -25,7 +25,7 @@ export default function ProductCard({ data }: Props) {
             })}
           >
             <Typography variant="body1" sx={{ fontSize: 10 }}>
-              {data.discount}% off
+              {data.discount + (data.offerDiscount || 0)}% off
             </Typography>
           </Box>
         )}
@@ -75,7 +75,13 @@ export default function ProductCard({ data }: Props) {
                 color: theme.palette.primary.main,
               })}
             >
-              <strong>${finalPrice(data.price, data.discount)}</strong>
+              <strong>
+                $
+                {finalPrice(
+                  data.price,
+                  data.discount + (data.offerDiscount || 0)
+                )}
+              </strong>
             </Typography>
           </Stack>
           <Stack
@@ -88,7 +94,7 @@ export default function ProductCard({ data }: Props) {
               component={Link}
               href={"/detalle-producto/" + data._id}
             >
-              Ver más
+              Comprar
             </Button>
           </Stack>
         </Box>

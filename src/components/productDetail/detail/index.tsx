@@ -20,30 +20,30 @@ interface Props {
 }
 
 export default function Detail({ data }: Props) {
-  const [ , dispatch] = useCart();
+  const [, dispatch] = useCart();
   const [quantity, setQuantity] = useState<string>("1");
   const [formAlert, setFormAlert] = useState<boolean>(false);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [stock, setStock] = useState<string | null>(null);
 
-const groupedFeatures = data.features.reduce((acc, feature) => {
-  const { color, size, stock, _id } = feature;
+  const groupedFeatures = data.features.reduce((acc, feature) => {
+    const { color, size, stock, _id } = feature;
 
-  // Asegurarnos de que color no sea undefined antes de usarlo
-  if (color) {
-    if (!acc[color]) {
-      acc[color] = [];
+    // Asegurarnos de que color no sea undefined antes de usarlo
+    if (color) {
+      if (!acc[color]) {
+        acc[color] = [];
+      }
+
+      acc[color].push({ size, stock, _id });
     }
 
-    acc[color].push({ size, stock, _id });
-  }
+    return acc;
+  }, {} as Record<string, { size: string | undefined; stock: string; _id?: string }[]>);
 
-  return acc;
-}, {} as Record<string, { size: string | undefined; stock: string; _id?: string }[]>);
-
-  const isColorOnlyProduct = Object.keys(groupedFeatures).every(
-    (color) => groupedFeatures[color].every((feature) => !feature.size)
+  const isColorOnlyProduct = Object.keys(groupedFeatures).every((color) =>
+    groupedFeatures[color].every((feature) => !feature.size)
   );
 
   const updateStock = () => {
@@ -87,23 +87,21 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
   const isFormValid = () => {
     if (!selectedColor) return false; // El color es obligatorio
     if (!isColorOnlyProduct && !selectedSize) return false;
-    if(Number(stock) <= 0) return false // La talla es obligatoria si no es solo color
+    if (Number(stock) <= 0) return false; // La talla es obligatoria si no es solo color
     return true;
   };
 
   const handleScroll = () => {
     toggleCart(dispatch, true);
     window.scrollTo({
-      top:0,
-      left:0,
-      behavior: 'smooth'
-    })
-  }
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    });
+  };
   useEffect(() => {
     setFormAlert(false);
   }, [quantity]);
-
-
 
   console.log("groupedFeatures", groupedFeatures);
 
@@ -130,9 +128,9 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
               color: theme.palette.primary.main,
             })}
           >
-            ${finalPrice(data.price, data.discount)}
+            ${finalPrice(data.price, data.discount + (data.offerDiscount || 0))}
           </Typography>
-          {data.discount > 0 && (
+          {(data.discount > 0 || data.offerDiscount > 0) && (
             <Box
               sx={(theme) => ({
                 position: "absolute",
@@ -143,20 +141,20 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
                 borderRadius: 2,
                 color: theme.palette.primary.contrastText,
                 background: theme.palette.primary.main,
-                width: 'max-content'
+                width: "max-content",
               })}
             >
               <Typography variant="body1" sx={{ fontSize: 10 }}>
-                {data.discount}% off
+                {data.discount + (data.offerDiscount || 0)}% off
               </Typography>
             </Box>
           )}
         </Box>
       </Stack>
       <Typography variant="body1">{data.description}</Typography>
-      <Divider sx={{marginY:2}} />
+      <Divider sx={{ marginY: 2 }} />
       <Box>
-      <Typography variant="body1">Color</Typography>
+        <Typography variant="body1">Color</Typography>
 
         <Stack direction="row">
           {Object.keys(groupedFeatures).map((color) => (
@@ -176,23 +174,25 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
           ))}
         </Stack>
         <Box>
-          {selectedColor &&
-            !isColorOnlyProduct &&
+          {selectedColor && !isColorOnlyProduct && (
             <>
-             <Typography variant="body1">Talle</Typography>
-             {groupedFeatures[selectedColor].map((feature) => (
-               <FormControlLabel
-                 key={feature.size}
-                 control={
-                   <Checkbox
-                     checked={selectedSize === feature.size}
-                     onChange={() => setSelectedSize(feature.size ?? null)}
-                   />
-                 }
-                 label={`Talle: ${feature.size} ${Number(feature.stock) === 0 ? '(Sin stock)' : ''} `}
-               />
-             ))}
-            </>}
+              <Typography variant="body1">Talle</Typography>
+              {groupedFeatures[selectedColor].map((feature) => (
+                <FormControlLabel
+                  key={feature.size}
+                  control={
+                    <Checkbox
+                      checked={selectedSize === feature.size}
+                      onChange={() => setSelectedSize(feature.size ?? null)}
+                    />
+                  }
+                  label={`Talle: ${feature.size} ${
+                    Number(feature.stock) === 0 ? "(Sin stock)" : ""
+                  } `}
+                />
+              ))}
+            </>
+          )}
         </Box>
       </Box>
       {Number(stock) > 0 && (
@@ -232,7 +232,11 @@ const groupedFeatures = data.features.reduce((acc, feature) => {
           <Typography textAlign="right" sx={{ marginTop: 2 }}>
             Revisa tu carrito para finalizar la compra
           </Typography>
-          <Button variant="contained" sx={{ marginTop: 2 }} onClick={handleScroll}>
+          <Button
+            variant="contained"
+            sx={{ marginTop: 2 }}
+            onClick={handleScroll}
+          >
             Ver mi carrito
           </Button>
         </Stack>

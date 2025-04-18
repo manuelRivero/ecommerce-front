@@ -42,7 +42,7 @@ export default function CartList() {
             <strong>
               $
               {products.reduce(
-                (acc, item) => acc + finalPrice(item.price, item.discount)  * item.quantity,
+                (acc, item) => acc + finalPrice(item.price, (item.discount + (item.offerDiscount || 0)))  * item.quantity,
                 0
               )}
             </strong>

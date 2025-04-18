@@ -1,19 +1,18 @@
-import { getHotSales } from "@/client/products";
-import MainWrapper from "@/components/bestSellers/mainWrapper";
+import { getOffers } from "@/client/offers";
+import MainWrapper from "@/components/offers/mainWrapper";
 import { Container } from "@mui/material";
 
 export const dynamic = "force-dynamic";
 
 const getData = async (subdomain: string ) => {
-  console.log("get data");
   try {
-    const [hotSales] = await Promise.all([
-      getHotSales(subdomain, 0, 6),
+    const [offers] = await Promise.all([
+      getOffers(subdomain, 0, 4)
     ]);
     return {
-      hotSales: {
-        products: hotSales.data.products,
-        totalPages: hotSales.data.totalPages,
+      offers: {
+        products: offers.data.offers[0].products,
+        detail: offers.data.offers[0]
       },
     };
   } catch (error: any) {
@@ -21,12 +20,13 @@ const getData = async (subdomain: string ) => {
     throw "error";
   }
 };
-export default async function HotSales({ params }: { params: Promise<any> }) {
+export default async function Offers({ params }: { params: Promise<any> }) {
   const { subdomain } = await params;
   const data = await getData(subdomain);
+  console.log('data', data.offers.products)
   return (
     <Container sx={{ marginY: 6 }}>
-      <MainWrapper data={data.hotSales.products} totalPages={data.hotSales.totalPages} />
+      <MainWrapper data={data.offers.products} detail={data.offers.detail} />
     </Container>
   );
 }
