@@ -46,7 +46,7 @@ export default function Offers({ data }: Props) {
       </Stack>
 
       <Box sx={{ paddingX: { md: 10 }, height: "100%" }}>
-        {data.length > 0 && !isMobile && (
+        {data.length > 1 && !isMobile && (
           <>
             <IconButton
               className="prev-offers"

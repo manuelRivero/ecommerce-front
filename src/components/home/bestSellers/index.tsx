@@ -87,7 +87,7 @@ export default function BestSellers({ data }: Props) {
           </SwiperSlide>
         </Swiper>
       </Box>
-      {data.length > 0 && !isMobile && (
+      {data.length > 1 && !isMobile && (
         <>
           <IconButton
             className="prev-best-seller"

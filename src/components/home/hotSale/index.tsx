@@ -82,7 +82,7 @@ export default function HotSales({ data }: Props) {
           </SwiperSlide>
         </Swiper>
       </Box>
-      {data.length > 0 && !isMobile && (
+      {data.length > 1 && !isMobile && (
         <>
           <IconButton
             className="prev-hot-sales"
