@@ -1,11 +1,11 @@
 "use client";
 import ProductCard from "@/components/shared/productCard";
 import { Product } from "@/interfaces/products";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography, useMediaQuery } from "@mui/material";
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Navigation, Pagination } from "swiper/modules";
 
 // Import Swiper styles
 import "swiper/css";
@@ -18,8 +18,8 @@ interface Props {
   data: Product[];
   totalPages: number;
 }
-export default function HotSales({ data, totalPages }: Props) {
-  console.log("hot sales", data, totalPages);
+export default function HotSales({ data }: Props) {
+  const isMobile = useMediaQuery("(max-width:1200px)");
 
   return (
     <Box
@@ -38,7 +38,8 @@ export default function HotSales({ data, totalPages }: Props) {
 
       <Box sx={{ paddingX: { md: 10 } }}>
         <Swiper
-          modules={[Navigation]}
+          modules={[Navigation, Pagination]}
+          pagination={true}
           navigation={{
             prevEl: ".prev-hot-sales",
             nextEl: ".next-hot-sales",
@@ -50,7 +51,7 @@ export default function HotSales({ data, totalPages }: Props) {
             600: {
               slidesPerView: 2,
             },
-            900: {
+            1200: {
               slidesPerView: 3,
             },
           }}
@@ -81,31 +82,32 @@ export default function HotSales({ data, totalPages }: Props) {
           </SwiperSlide>
         </Swiper>
       </Box>
-
-      <IconButton
-        className="prev-hot-sales"
-        sx={(theme) => ({
-          position: "absolute",
-          top: "50%",
-          left: 10,
-          transform: "translateY(-50%)",
-          border: { xs: `2px solid ${theme.palette.primary.main}` },
-        })}
-      >
-        <ChevronLeft sx={(theme) => ({ color: theme.palette.primary.main })} />
-      </IconButton>
-      <IconButton
-        className="next-hot-sales"
-        sx={(theme) => ({
-          position: "absolute",
-          top: "50%",
-          right: 10,
-          transform: "translateY(-50%)",
-          border: { xs: `2px solid ${theme.palette.primary.main}` },
-        })}
-      >
-        <ChevronRight sx={(theme) => ({ color: theme.palette.primary.main })} />
-      </IconButton>
+      {data.length > 0 && !isMobile && (
+        <>
+          <IconButton
+            className="prev-hot-sales"
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: 10,
+              transform: "translateY(-50%)",
+            }}
+          >
+            <ChevronLeft />
+          </IconButton>
+          <IconButton
+            className="next-hot-sales"
+            sx={{
+              position: "absolute",
+              top: "50%",
+              right: 10,
+              transform: "translateY(-50%)",
+            }}
+          >
+            <ChevronRight />
+          </IconButton>
+        </>
+      )}
     </Box>
   );
 }

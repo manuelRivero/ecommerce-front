@@ -2,14 +2,15 @@
 
 import ProductCard from "@/components/shared/productCard";
 import { Product } from "@/interfaces/products";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography, useMediaQuery } from "@mui/material";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Navigation, Pagination } from "swiper/modules";
 
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
+import "swiper/css/pagination";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import Link from "next/link";
@@ -19,6 +20,8 @@ interface Props {
   totalPages: number;
 }
 export default function BestSellers({ data }: Props) {
+  const isMobile = useMediaQuery("(max-width:1200px)");
+
   return (
     <Box
       id="best-seller-container"
@@ -36,7 +39,8 @@ export default function BestSellers({ data }: Props) {
 
       <Box sx={{ paddingX: { md: 10 } }}>
         <Swiper
-          modules={[Navigation]}
+          modules={[Navigation, Pagination]}
+          pagination={true}
           navigation={{
             prevEl: ".prev-best-seller",
             nextEl: ".next-best-seller",
@@ -48,7 +52,7 @@ export default function BestSellers({ data }: Props) {
             600: {
               slidesPerView: 2,
             },
-            900: {
+            1200: {
               slidesPerView: 3,
             },
           }}
@@ -63,7 +67,7 @@ export default function BestSellers({ data }: Props) {
               </Box>
             </SwiperSlide>
           ))}
-          <SwiperSlide style={{height: "auto"}}>
+          <SwiperSlide style={{ height: "auto" }}>
             <Box
               sx={{
                 display: "flex",
@@ -72,38 +76,43 @@ export default function BestSellers({ data }: Props) {
                 height: "100%",
               }}
             >
-              <Button variant="contained" component={Link} href={"/mas-vendidos"}>
+              <Button
+                variant="contained"
+                component={Link}
+                href={"/mas-vendidos"}
+              >
                 Ver todos los más vendidos
               </Button>
             </Box>
           </SwiperSlide>
         </Swiper>
       </Box>
-
-      <IconButton
-        className="prev-best-seller"
-        sx={(theme) => ({
-          position: "absolute",
-          top: "50%",
-          left: 10,
-          transform: "translateY(-50%)",
-          border: { xs: `2px solid ${theme.palette.primary.main}` },
-        })}
-      >
-        <ChevronLeft sx={(theme) => ({ color: theme.palette.primary.main })} />
-      </IconButton>
-      <IconButton
-        className="next-best-seller"
-        sx={(theme) => ({
-          position: "absolute",
-          top: "50%",
-          right: 10,
-          transform: "translateY(-50%)",
-          border: { xs: `2px solid ${theme.palette.primary.main}` },
-        })}
-      >
-        <ChevronRight sx={(theme) => ({ color: theme.palette.primary.main })} />
-      </IconButton>
+      {data.length > 0 && !isMobile && (
+        <>
+          <IconButton
+            className="prev-best-seller"
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: 10,
+              transform: "translateY(-50%)",
+            }}
+          >
+            <ChevronLeft />
+          </IconButton>
+          <IconButton
+            className="next-best-seller"
+            sx={{
+              position: "absolute",
+              top: "50%",
+              right: 10,
+              transform: "translateY(-50%)",
+            }}
+          >
+            <ChevronRight />
+          </IconButton>
+        </>
+      )}
     </Box>
   );
 }
