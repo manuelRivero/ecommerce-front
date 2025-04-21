@@ -14,19 +14,45 @@ export default function ProductCard({ data }: Props) {
       <Box sx={{ width: "100%", position: "relative" }}>
         {(data.discount > 0 || data.offerDiscount > 0) && (
           <Box
-            sx={(theme) => ({
+            sx={{
               position: "absolute",
               top: 10,
               right: 10,
-              padding: 0.5,
-              borderRadius: 2,
-              color: theme.palette.primary.contrastText,
-              background: theme.palette.primary.main,
-            })}
+              flexDirection: "column",
+              display: "flex",
+              alignItems: "end",
+              gap: 1,
+            }}
           >
-            <Typography variant="body1" sx={{ fontSize: 10 }}>
-              {data.discount + (data.offerDiscount || 0)}% off
-            </Typography>
+            {data.offerDiscount > 0 && (
+              <Box
+                sx={(theme) => ({
+                  padding: 0.5,
+                  borderRadius: 2,
+                  color: theme.palette.primary.contrastText,
+                  background: theme.palette.primary.main,
+                })}
+              >
+                <Typography variant="body1" sx={{ fontSize: 10 }}>
+                  {data.offerDiscount}% Off tiempo limitado
+                </Typography>
+              </Box>
+            )}
+            {data.discount > 0 && (
+              <Box
+                sx={(theme) => ({
+                  padding: 0.5,
+                  borderRadius: 2,
+                  color: theme.palette.primary.contrastText,
+                  background: theme.palette.primary.main,
+                  width: "fit-content",
+                })}
+              >
+                <Typography variant="body1" sx={{ fontSize: 10 }}>
+                  {data.discount + (data.offerDiscount || 0)}% Off
+                </Typography>
+              </Box>
+            )}
           </Box>
         )}
         <Link href={"/detalle-producto/" + data._id}>

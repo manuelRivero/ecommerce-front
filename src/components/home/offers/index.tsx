@@ -26,6 +26,8 @@ import { alpha } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Countdown from "react-countdown";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import moment from "moment-timezone";
+
 import "swiper/css";
 import "swiper/css/navigation";
 interface Props {
@@ -118,7 +120,6 @@ export default function Offers({ data }: Props) {
                 >
                   {offer.products.map((product: Product) => (
                     <SwiperSlide
-                    
                       key={product._id}
                       style={{
                         display: "flex",
@@ -227,13 +228,16 @@ export default function Offers({ data }: Props) {
                         textAlign="center"
                         sx={(theme) => ({ color: theme.palette.primary.main })}
                       >
-                        Tiempo restante:
+                        Finaliza en:
                       </Typography>
                       <Countdown
-                        date={offer.endDate}
-                        renderer={({ hours, minutes, seconds }) => (
+                        date={moment.utc(offer.endDate).toDate()}
+                        renderer={({ days, hours, minutes, seconds }) => (
                           <Typography variant="h3" textAlign="center" mb={2}>
-                            {hours}:{minutes}:{seconds}
+                            {String(days).padStart(2, "0")}:
+                            {String(hours).padStart(2, "0")}:
+                            {String(minutes).padStart(2, "0")}:
+                            {String(seconds).padStart(2, "0")}
                           </Typography>
                         )}
                       />
