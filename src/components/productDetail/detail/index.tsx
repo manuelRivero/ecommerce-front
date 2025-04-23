@@ -45,18 +45,24 @@ export default function Detail({ data }: Props) {
   const isColorOnlyProduct = Object.keys(groupedFeatures).every((color) =>
     groupedFeatures[color].every((feature) => !feature.size)
   );
+  const isUniqueProduct = Object.keys(groupedFeatures).length === 0
 
   const updateStock = () => {
-    if (!selectedColor) {
+    if (!selectedColor && !isUniqueProduct) {
       setStock(null);
       return;
     }
 
-    const selectedFeature = groupedFeatures[selectedColor].find(
-      (feature) => feature.size === selectedSize
-    );
+    if(selectedColor){
+      const selectedFeature = groupedFeatures[selectedColor].find(
+        (feature) => feature.size === selectedSize
+      );
+      setStock(selectedFeature ? selectedFeature.stock : null);
+    } else if (isUniqueProduct) {
+      const selectedFeature = data.features[0];
+      setStock(selectedFeature ? selectedFeature.stock : null);
+    }
 
-    setStock(selectedFeature ? selectedFeature.stock : null);
   };
 
   useEffect(() => {
@@ -154,7 +160,8 @@ export default function Detail({ data }: Props) {
       <Typography variant="body1">{data.description}</Typography>
       <Divider sx={{ marginY: 2 }} />
       <Box>
-        <Typography variant="body1">Color</Typography>
+     { Object.keys(groupedFeatures).length > 0 && <>
+     <Typography variant="body1">Color</Typography>
 
         <Stack direction="row">
           {Object.keys(groupedFeatures).map((color) => (
@@ -194,6 +201,7 @@ export default function Detail({ data }: Props) {
             </>
           )}
         </Box>
+     </> }
       </Box>
       {Number(stock) > 0 && (
         <Box sx={{ marginTop: 2 }}>
