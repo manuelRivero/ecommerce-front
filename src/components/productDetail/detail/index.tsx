@@ -91,8 +91,9 @@ export default function Detail({ data }: Props) {
   };
 
   const isFormValid = () => {
-    if (!selectedColor) return false; // El color es obligatorio
-    if (!isColorOnlyProduct && !selectedSize) return false;
+    if(isUniqueProduct && Number(stock) < 0)  return false; 
+    if (!selectedColor && !isUniqueProduct) return false; // El color es obligatorio
+    if (!isColorOnlyProduct && !selectedSize && !isUniqueProduct) return false;
     if (Number(stock) <= 0) return false; // La talla es obligatoria si no es solo color
     return true;
   };
