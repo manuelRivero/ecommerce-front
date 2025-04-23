@@ -45,7 +45,7 @@ export default function Detail({ data }: Props) {
   const isColorOnlyProduct = Object.keys(groupedFeatures).every((color) =>
     groupedFeatures[color].every((feature) => !feature.size)
   );
-  const isUniqueProduct = Object.keys(groupedFeatures).length === 0
+  const isUniqueProduct = Object.keys(groupedFeatures).length === 0;
 
   const updateStock = () => {
     if (!selectedColor && !isUniqueProduct) {
@@ -53,7 +53,7 @@ export default function Detail({ data }: Props) {
       return;
     }
 
-    if(selectedColor){
+    if (selectedColor) {
       const selectedFeature = groupedFeatures[selectedColor].find(
         (feature) => feature.size === selectedSize
       );
@@ -62,7 +62,6 @@ export default function Detail({ data }: Props) {
       const selectedFeature = data.features[0];
       setStock(selectedFeature ? selectedFeature.stock : null);
     }
-
   };
 
   useEffect(() => {
@@ -71,27 +70,27 @@ export default function Detail({ data }: Props) {
 
   const handleAddToCart = () => {
     // Validar que se haya seleccionado un color (y talla si aplica)
-    if (!selectedColor) {
-      alert("Por favor selecciona un color.");
-      return;
-    }
-
-    if (!isColorOnlyProduct && !selectedSize) {
-      alert("Por favor selecciona una talla.");
-      return;
-    }
 
     setFormAlert(true);
-    setProductToCart(dispatch, {
-      ...data,
-      color: selectedColor,
-      size: selectedSize ?? null,
-      quantity: Number(quantity),
-    });
+    if (isUniqueProduct) {
+      setProductToCart(dispatch, {
+        ...data,
+        color: null,
+        size: null,
+        quantity: Number(quantity),
+      });
+    } else {
+      setProductToCart(dispatch, {
+        ...data,
+        color: selectedColor!,
+        size: selectedSize ?? null,
+        quantity: Number(quantity),
+      });
+    }
   };
 
   const isFormValid = () => {
-    if(isUniqueProduct && Number(stock) < 0)  return false; 
+    if (isUniqueProduct && Number(stock) < 0) return false;
     if (!selectedColor && !isUniqueProduct) return false; // El color es obligatorio
     if (!isColorOnlyProduct && !selectedSize && !isUniqueProduct) return false;
     if (Number(stock) <= 0) return false; // La talla es obligatoria si no es solo color
@@ -161,48 +160,50 @@ export default function Detail({ data }: Props) {
       <Typography variant="body1">{data.description}</Typography>
       <Divider sx={{ marginY: 2 }} />
       <Box>
-     { Object.keys(groupedFeatures).length > 0 && <>
-     <Typography variant="body1">Color</Typography>
+        {Object.keys(groupedFeatures).length > 0 && (
+          <>
+            <Typography variant="body1">Color</Typography>
 
-        <Stack direction="row">
-          {Object.keys(groupedFeatures).map((color) => (
-            <FormControlLabel
-              key={color}
-              control={
-                <Checkbox
-                  checked={selectedColor === color}
-                  onChange={() => {
-                    setSelectedColor(color);
-                    setSelectedSize(null); // Reiniciar la talla al cambiar de color
-                  }}
-                />
-              }
-              label={color}
-            />
-          ))}
-        </Stack>
-        <Box>
-          {selectedColor && !isColorOnlyProduct && (
-            <>
-              <Typography variant="body1">Talle</Typography>
-              {groupedFeatures[selectedColor].map((feature) => (
+            <Stack direction="row">
+              {Object.keys(groupedFeatures).map((color) => (
                 <FormControlLabel
-                  key={feature.size}
+                  key={color}
                   control={
                     <Checkbox
-                      checked={selectedSize === feature.size}
-                      onChange={() => setSelectedSize(feature.size ?? null)}
+                      checked={selectedColor === color}
+                      onChange={() => {
+                        setSelectedColor(color);
+                        setSelectedSize(null); // Reiniciar la talla al cambiar de color
+                      }}
                     />
                   }
-                  label={`Talle: ${feature.size} ${
-                    Number(feature.stock) === 0 ? "(Sin stock)" : ""
-                  } `}
+                  label={color}
                 />
               ))}
-            </>
-          )}
-        </Box>
-     </> }
+            </Stack>
+            <Box>
+              {selectedColor && !isColorOnlyProduct && (
+                <>
+                  <Typography variant="body1">Talle</Typography>
+                  {groupedFeatures[selectedColor].map((feature) => (
+                    <FormControlLabel
+                      key={feature.size}
+                      control={
+                        <Checkbox
+                          checked={selectedSize === feature.size}
+                          onChange={() => setSelectedSize(feature.size ?? null)}
+                        />
+                      }
+                      label={`Talle: ${feature.size} ${
+                        Number(feature.stock) === 0 ? "(Sin stock)" : ""
+                      } `}
+                    />
+                  ))}
+                </>
+              )}
+            </Box>
+          </>
+        )}
       </Box>
       {Number(stock) > 0 && (
         <Box sx={{ marginTop: 2 }}>

@@ -28,6 +28,6 @@ export interface Features {
 }
 export interface CartProduct extends Product {
   quantity: number;
-  color: string;
+  color: string | null;
   size: string | null;
 }
