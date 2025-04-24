@@ -114,7 +114,7 @@ export default function Offers({ data }: Props) {
                   slidesPerView={1}
                   autoHeight={false}
                   style={{
-                    height: isMobile ? 600 : 400,
+                    maxHeight: isMobile ? 600 : 400,
                     width: "100%",
                   }}
                 >

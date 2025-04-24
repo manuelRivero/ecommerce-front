@@ -34,11 +34,11 @@ export default function ProductCard({ data }: Props) {
                 })}
               >
                 <Typography variant="body1" sx={{ fontSize: 10 }}>
-                  {data.offerDiscount}% Off tiempo limitado
+                  {data.offerDiscount + (data.discount || 0)}% Off tiempo limitado
                 </Typography>
               </Box>
             )}
-            {data.discount > 0 && (
+            {data.discount && !data.offerDiscount > 0 && (
               <Box
                 sx={(theme) => ({
                   padding: 0.5,

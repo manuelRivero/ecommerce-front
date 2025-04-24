@@ -2,7 +2,7 @@
 import { getProductsById } from "@/client/products";
 import CartList from "@/components/shared/cartList";
 import { setCart, useCart } from "@/context/cart";
-import { Product } from "@/interfaces/products";
+import { Features, Product } from "@/interfaces/products";
 import { compareProducts } from "@/utils/products";
 import { Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -16,45 +16,46 @@ export default function CheckoutCart() {
       const { data } = await getProductsById(
         products.map((product) => product._id)
       );
-  
+
       const mergedProducts = products.map((localProduct) => {
         const backendProduct = data.products.find(
           (bp: Product) => bp._id === localProduct._id
         );
-  
+
         return backendProduct
           ? { ...localProduct, ...backendProduct }
           : localProduct;
       });
-  
+
       // Verificar si algún producto tiene stock 0 solo en la variante seleccionada
       const updatedProducts = mergedProducts.filter((product) => {
         const { color: selectedColor, size: selectedSize } = product;
         const localFeatures = product.features || [];
-  
+
         // Buscar la feature seleccionada
         const selectedFeature = localFeatures.find(
-          (feature: any) =>
+          (feature: Features) =>
             feature.color === selectedColor && feature.size === selectedSize
         );
-  
-        // Si la feature seleccionada tiene stock 0, se elimina del carrito
-        return !(selectedFeature && (selectedFeature.stock === "0" || selectedFeature.stock === 0));
+
+        // Validar que exista la feature y tenga stock suficiente
+        const stock = Number(selectedFeature?.stock) || 0;
+
+        return selectedFeature && stock > 0 && product.quantity <= stock;
       });
-  
+
       // Compara los productos locales con los del backend
       const changesDetected = !compareProducts(products, mergedProducts);
       setHasChanges(changesDetected);
-  
+
       // Actualizar el carrito solo con los productos que tengan stock disponible
       setCart(dispatch, updatedProducts);
     };
-  
+
     if (products.length > 0) {
       getData();
     }
   }, []);
-  
 
   return (
     <>
@@ -63,7 +64,9 @@ export default function CheckoutCart() {
           <Typography color="#97a2aa">El carrito está vacío</Typography>
           {hasChanges && (
             <Typography color="#97a2aa" sx={{ marginY: 2 }}>
-              Parece que ha pasado mucho tiempo y los productos de tu carrito ya no están disponibles
+              Parece que ha pasado mucho tiempo y los productos de tu carrito ya
+              no están disponibles, esto puede suceder si el stock se ha agotado o si
+              el producto ya no está disponible.
             </Typography>
           )}
           <Typography color="#97a2aa" sx={{ marginTop: 2 }}>

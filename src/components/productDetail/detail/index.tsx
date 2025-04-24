@@ -26,6 +26,7 @@ export default function Detail({ data }: Props) {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [stock, setStock] = useState<string | null>(null);
+  console.log("data", data.features[0].stock);
 
   const groupedFeatures = data.features.reduce((acc, feature) => {
     const { color, size, stock, _id } = feature;
@@ -57,6 +58,7 @@ export default function Detail({ data }: Props) {
       const selectedFeature = groupedFeatures[selectedColor].find(
         (feature) => feature.size === selectedSize
       );
+      console.log("selectedFeature", selectedFeature);
       setStock(selectedFeature ? selectedFeature.stock : null);
     } else if (isUniqueProduct) {
       const selectedFeature = data.features[0];
@@ -70,7 +72,7 @@ export default function Detail({ data }: Props) {
 
   const handleAddToCart = () => {
     // Validar que se haya seleccionado un color (y talla si aplica)
-
+    setStock((Number(stock) - Number(quantity)).toString());
     setFormAlert(true);
     if (isUniqueProduct) {
       setProductToCart(dispatch, {
@@ -91,7 +93,7 @@ export default function Detail({ data }: Props) {
 
   const isFormValid = () => {
     if (isUniqueProduct && Number(stock) < 0) return false;
-    if (!selectedColor && !isUniqueProduct) return false; // El color es obligatorio
+    if (isColorOnlyProduct && !selectedColor && !isUniqueProduct) return false; // El color es obligatorio
     if (!isColorOnlyProduct && !selectedSize && !isUniqueProduct) return false;
     if (Number(stock) <= 0) return false; // La talla es obligatoria si no es solo color
     return true;
