@@ -67,7 +67,7 @@ export default function ProductCard({ data }: Props) {
           />
         </Link>
         <Box sx={{ padding: 2 }}>
-          {data.categoryDetail[0] && (
+          {data.categoryDetail && data.categoryDetail[0] && (
             <Box
               sx={(theme) => ({
                 marginBottom: 1,

@@ -29,11 +29,13 @@ export default function CategoryDropdown() {
     const getData = async () => {
       try {
         const { data: dataCategories } = await getCategories(
-          params.subdomain as string
+          params.subdomain as string,
+          0,
+          50
         );
         setCategories(dataCategories.categories);
 
-        const initialCategory = searchParams.get("category");
+        const initialCategory = params.id as string;
         if (initialCategory) {
           setSelectedCategory(initialCategory);
         }
@@ -43,16 +45,12 @@ export default function CategoryDropdown() {
     };
 
     getData();
-  }, [searchParams]);
+  }, [params.id]);
 
   const handleChangeCategory = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    const currentParams = new URLSearchParams(
-      Array.from(searchParams.entries())
-    );
-    currentParams.set("category", categoryId);
-
-    router.push(`?${currentParams.toString()}`, { scroll: false });
+    
+    router.push(`/productos/${categoryId}`, { scroll: false });
   };
 
   const clearCategory = () => {
@@ -63,7 +61,7 @@ export default function CategoryDropdown() {
     );
     currentParams.delete("category");
 
-    router.push(`?${currentParams.toString()}`, { scroll: false });
+    router.push(`/productos`, { scroll: false });
     const container = document.getElementById("product-container");
     container?.scrollIntoView({
       block: "start",

@@ -1,10 +1,8 @@
 "use client";
-import { getProducts } from "@/client/products";
-import PageLoader from "@/components";
 import ProductCard from "@/components/shared/productCard";
 import { Product } from "@/interfaces/products";
 import { Box, Pagination, Stack, Typography } from "@mui/material";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import CategoryDropdown from "../categoryDropdown";
 import EmptyProducts from "../emptyProducts";
@@ -12,34 +10,24 @@ import EmptyProducts from "../emptyProducts";
 interface Props {
   data: Product[];
   totalPages: number;
+  categoryDetail: any;
 }
-export default function MainProducts({ data, totalPages }: Props) {
-  const searchParams = useSearchParams();
+export default function MainProducts({
+  data,
+  totalPages,
+  categoryDetail,
+}: Props) {
+  const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
+  const pageParam = searchParams.get("page") as string;
   const [page, setPage] = useState<number | undefined>(undefined);
-  const [products, setProducts] = useState<Product[]>(data);
-  const [total, setTotal] = useState<number>(totalPages);
-  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getData = async () => {
       if (page) {
         try {
-          const categoryParam = searchParams.get("category");
-          const { data } = await getProducts(
-            params.subdomain as string,
-            page - 1,
-            categoryParam ?? undefined,
-            6
-          );
-
-          setProducts(data.products);
-          setTotal(data.totalPages);
-          const container = document.getElementById("product-container")
-          container?.scrollIntoView({
-            block: 'start',
-            behavior: 'smooth'
-          })
+          router.push(`/productos/${params.id ?? ""}?page=${page}`,);
         } catch (error: any) {
           console.log("error", error);
         }
@@ -49,14 +37,6 @@ export default function MainProducts({ data, totalPages }: Props) {
       getData();
     }
   }, [page]);
-
-  useEffect(() => {
-    setProducts(data);
-    setTotal(totalPages);
-    setTimeout(() => {
-      setLoading(false);
-    }, 800);
-  }, [data, totalPages]);
 
   return (
     <Box
@@ -69,36 +49,38 @@ export default function MainProducts({ data, totalPages }: Props) {
         justifyContent="space-between"
         alignItems="center"
       >
-        <Typography variant="h2">Nustros productos</Typography>
+        <Typography variant="h2">{`${
+          categoryDetail
+            ? "Productos en" + " " + categoryDetail.name
+            : "Todos nuestros productos"
+        } `}</Typography>
         <CategoryDropdown />
       </Stack>
-      {loading ? (
-        <PageLoader position="relative" background="transparent" />
-      ) : (
-        <>
-          <Box
-            sx={{
-              display: "flex",
-              gap: 6,
-              flexWrap: "wrap",
-              justifyContent: { xs: "center", md: "center" },
-              marginTop: 4,
-            }}
-          >
-            {products.map((product: Product) => (
-              <ProductCard data={product} key={product._id} />
-            ))}
-          </Box>
-          {products.length === 0 && <EmptyProducts />}
-          <Stack direction="row" justifyContent="center" sx={{ marginTop: 4 }}>
-            <Pagination
-              count={total}
-              color="primary"
-              onChange={(_, newPage) => setPage(newPage)}
-            />
-          </Stack>
-        </>
-      )}
+
+      <>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 6,
+            flexWrap: "wrap",
+            justifyContent: { xs: "center", md: "center" },
+            marginTop: 4,
+          }}
+        >
+          {data.map((product: Product) => (
+            <ProductCard data={product} key={product._id} />
+          ))}
+        </Box>
+        {data.length === 0 && <EmptyProducts />}
+        <Stack direction="row" justifyContent="center" sx={{ marginTop: 4 }}>
+          <Pagination
+            count={totalPages}
+            color="primary"
+            page={pageParam ? Number(pageParam) : 1}
+            onChange={(_, newPage) => setPage(newPage)}
+          />
+        </Stack>
+      </>
     </Box>
   );
 }

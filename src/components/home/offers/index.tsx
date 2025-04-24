@@ -139,7 +139,8 @@ export default function Offers({ data }: Props) {
                           boxShadow: "0px 0px 12px rgba(0, 0, 0, 0.1)",
                           borderRadius: 2,
                           p: 2,
-                          minWidth: 350,
+                          width: "100%",
+                          minWidth: {xs:300,  md: 400},
                           flexDirection: { xs: "column", md: "row" },
                         }}
                       >

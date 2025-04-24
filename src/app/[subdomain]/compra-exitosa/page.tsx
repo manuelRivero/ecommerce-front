@@ -56,6 +56,9 @@ export default async function Success({ searchParams }: any) {
         <Typography sx={{ marginBottom: 2 }}>
           Código postal: <strong>{`${detail.postalCode}`}</strong>
         </Typography>
+        <Typography sx={{ marginBottom: 2 }}>
+          Dirección: <strong>{`${detail.address}`}</strong>
+        </Typography>
       
         <ProductsDetail products={detail.products} orderId={detail._id} />
       </Paper>

@@ -3,23 +3,22 @@ import MainWrapper from "@/components/home/mainWrapper";
 import { Box, Container } from "@mui/material";
 import BannerSwiper from "@/components/home/bannerSwiper";
 import { getOffers } from "@/client/offers";
+import { getCategories } from "@/client/categories";
 
 export const dynamic = "force-dynamic";
 
-const getData = async (subdomain: string, category: string) => {
+const getData = async (subdomain: string,) => {
   console.log("get data");
   try {
-    const [mainProductData, hotSalesData, bestSellersData, offersData] = await Promise.all([
-      getProducts(subdomain, 0, category, 6),
+    const [ hotSalesData, bestSellersData, offersData, categoriesData] = await Promise.all([
       getHotSales(subdomain, 0, 6),
       getBestSellers(subdomain, 0, 6),
       getOffers(subdomain, 0, 4),
+      getCategories(subdomain, 0, 100),
     ]);
+    console.log("categoriesData", categoriesData.data.categories);
     return {
-      mainProducts: {
-        products: mainProductData.data.products,
-        totalPages: mainProductData.data.totalPages,
-      },
+    
       hotSales: {
         products: hotSalesData.data.products,
         totalPages: hotSalesData.data.totalPages,
@@ -31,7 +30,8 @@ const getData = async (subdomain: string, category: string) => {
       offers:{
         offers: offersData.data.offers,
         totalPages: offersData.data.totalPages
-      }
+      },
+      categories:categoriesData.data.categories,
     };
   } catch (error: any) {
     console.log("error", error);
@@ -40,18 +40,14 @@ const getData = async (subdomain: string, category: string) => {
 };
 export default async function Home({
   params,
-  searchParams,
 }: {
   params: Promise<any>;
-  searchParams: Promise<any>;
 }) {
-  const parseParams = await searchParams;
   const { subdomain } = await params;
   const products = await getData(
     subdomain,
-    parseParams["?category"] as string
   );
-  console.log(products.offers   )
+
   return (
     <Container sx={{ marginY: 6 }}>
       <Box
