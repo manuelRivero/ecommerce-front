@@ -38,7 +38,7 @@ export default function ProductCard({ data }: Props) {
                 </Typography>
               </Box>
             )}
-            {data.discount && !data.offerDiscount > 0 && (
+            {data.discount > 0 && !data.offerDiscount > 0 && (
               <Box
                 sx={(theme) => ({
                   padding: 0.5,
@@ -59,7 +59,7 @@ export default function ProductCard({ data }: Props) {
           <img
             style={{
               width: "100%",
-              objectFit: "cover",
+              objectFit: "contain",
               maxWidth: "100%",
               maxHeight: 300,
             }}

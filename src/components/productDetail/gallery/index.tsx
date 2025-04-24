@@ -8,7 +8,8 @@ import { Thumbs, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/thumbs";
 import "swiper/css/navigation";
-import { Box, Stack } from "@mui/material";
+import { Box, IconButton, Stack } from "@mui/material";
+import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 
 interface Props {
   images: string[];
@@ -22,7 +23,10 @@ export default function Gallery({ images }: Props) {
       <Swiper
         modules={[Thumbs, Navigation]}
         thumbs={{ swiper: thumbsRef.current }}
-        navigation={{ enabled: true }}
+        navigation={{
+          prevEl: ".prev-detail",
+          nextEl: ".next-detail",
+        }}
         spaceBetween={50}
         slidesPerView={1}
         onSlideChange={(swiper: any) => setActiveSlide(swiper.activeIndex)}
@@ -47,7 +51,7 @@ export default function Gallery({ images }: Props) {
               >
                 <img
                   style={{
-                    objectFit: "cover",
+                    objectFit: "contain",
                     height: "100%",
                     width: "100%",
                     maxWidth: "100%",
@@ -58,6 +62,32 @@ export default function Gallery({ images }: Props) {
             </Stack>
           </SwiperSlide>
         ))}
+          {images.length > 1 &&  (
+        <>
+          <IconButton
+            className="prev-detail"
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: 10,
+              transform: "translateY(-50%)",
+            }}
+          >
+            <ChevronLeft />
+          </IconButton>
+          <IconButton
+            className="next-detail"
+            sx={{
+              position: "absolute",
+              top: "50%",
+              right: 10,
+              transform: "translateY(-50%)",
+            }}
+          >
+            <ChevronRight />
+          </IconButton>
+        </>
+      )}
       </Swiper>
       <Box sx={{ marginTop: 4 }}>
         <Swiper
@@ -82,7 +112,8 @@ export default function Gallery({ images }: Props) {
                   overflow: "hidden",
                   backgroundImage: `url(${image})`,
                   backgroundPosition: "center",
-                  backgroundSize: "cover",
+                  backgroundSize: "contain",
+                  backgroundRepeat: "no-repeat",
                 })}
               />
             </SwiperSlide>
