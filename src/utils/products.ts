@@ -21,6 +21,13 @@ export function finalPrice(price: number, percentage: number): number {
   return parseFloat(finalPrice.toFixed(2)); // Redondea a 2 decimales
 }
 
+export const formatNumber = (value: number) => {
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }).format(value);
+};
+
 export function compareProducts(
   original: CartProduct[],
   updated: Product[]

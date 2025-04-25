@@ -6,6 +6,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import CategoryDropdown from "../categoryDropdown";
 import EmptyProducts from "../emptyProducts";
+import { motion } from "motion/react";
 
 interface Props {
   data: Product[];
@@ -27,7 +28,7 @@ export default function MainProducts({
     const getData = async () => {
       if (page) {
         try {
-          router.push(`/productos/${params.id ?? ""}?page=${page}`,);
+          router.push(`/productos/${params.id ?? ""}?page=${page}`);
         } catch (error: any) {
           console.log("error", error);
         }
@@ -68,7 +69,14 @@ export default function MainProducts({
           }}
         >
           {data.map((product: Product) => (
-            <ProductCard data={product} key={product._id} />
+            <motion.div
+              key={product._id}
+              initial={{ transform: "translateY(100px)", opacity: 0 }}
+              whileInView={{ transform: "translateY(0)", opacity: 1 }}
+              transition={{ duration: 0.4 }}
+            >
+              <ProductCard data={product} />
+            </motion.div>
           ))}
         </Box>
         {data.length === 0 && <EmptyProducts />}

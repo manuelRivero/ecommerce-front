@@ -30,11 +30,13 @@ import moment from "moment-timezone";
 
 import "swiper/css";
 import "swiper/css/navigation";
+import { useState } from "react";
 interface Props {
   data: Offer[];
 }
 export default function Offers({ data }: Props) {
   const isMobile = useMediaQuery("(max-width:1200px)");
+  const [completed, setCompleted] = useState(false);
   return data.length > 0 ? (
     <Box id="offers-sales-container" sx={{ position: "relative" }}>
       <Stack
@@ -140,7 +142,7 @@ export default function Offers({ data }: Props) {
                           borderRadius: 2,
                           p: 2,
                           width: "100%",
-                          minWidth: {xs:300,  md: 400},
+                          minWidth: { xs: 300, md: 400 },
                           flexDirection: { xs: "column", md: "row" },
                         }}
                       >
@@ -224,24 +226,48 @@ export default function Offers({ data }: Props) {
                       >
                         {offer.discount}% de descuento
                       </Typography>
-                      <Typography
-                        variant="h5"
-                        textAlign="center"
-                        sx={(theme) => ({ color: theme.palette.primary.main })}
-                      >
-                        Finaliza en:
-                      </Typography>
-                      <Countdown
-                        date={moment.utc(offer.endDate).toDate()}
-                        renderer={({ days, hours, minutes, seconds }) => (
-                          <Typography variant="h3" textAlign="center" mb={2}>
-                            {String(days).padStart(2, "0")}:
-                            {String(hours).padStart(2, "0")}:
-                            {String(minutes).padStart(2, "0")}:
-                            {String(seconds).padStart(2, "0")}
+                      {!completed && (
+                        <>
+                          <Typography
+                            variant="h5"
+                            textAlign="center"
+                            sx={(theme) => ({
+                              color: theme.palette.primary.main,
+                            })}
+                          >
+                            Finaliza en:
                           </Typography>
-                        )}
-                      />
+                          <Countdown
+                            date={moment(offer.endDate)
+                              .set("hour", 23)
+                              .set("minute", 59)
+                              .toDate()}
+                            renderer={({
+                              days,
+                              hours,
+                              minutes,
+                              seconds,
+                              completed,
+                            }) => {
+                              if (completed) {
+                                setCompleted(completed);
+                              }
+                              return (
+                                <Typography
+                                  variant="h3"
+                                  textAlign="center"
+                                  mb={2}
+                                >
+                                  {String(days).padStart(2, "0")}:
+                                  {String(hours).padStart(2, "0")}:
+                                  {String(minutes).padStart(2, "0")}:
+                                  {String(seconds).padStart(2, "0")}
+                                </Typography>
+                              );
+                            }}
+                          />
+                        </>
+                      )}
                     </>
                   )}
 
