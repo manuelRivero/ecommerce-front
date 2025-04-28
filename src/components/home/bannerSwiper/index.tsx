@@ -59,33 +59,33 @@ export default function BannerSwiper({ section }: Props) {
               />
             </SwiperSlide>
           ))}
-        {slides.length > 1 && isMobile && (
-          <>
-            <IconButton
-              className={`banner-${section}-prev`}
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: 10,
-                transform: "translateY(-50%)",
-              }}
-            >
-              <ChevronLeft />
-            </IconButton>
-            <IconButton
-              className={`banner-${section}-next`}
-              sx={{
-                position: "absolute",
-                top: "50%",
-                right: 10,
-                transform: "translateY(-50%)",
-              }}
-            >
-              <ChevronRight />
-            </IconButton>
-          </> 
-        )}
       </Swiper>
+      {slides.length > 1 && !isMobile && (
+        <>
+          <IconButton
+            className={`banner-${section}-prev`}
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: 10,
+              transform: "translateY(-50%)",
+            }}
+          >
+            <ChevronLeft />
+          </IconButton>
+          <IconButton
+            className={`banner-${section}-next`}
+            sx={{
+              position: "absolute",
+              top: "50%",
+              right: 10,
+              transform: "translateY(-50%)",
+            }}
+          >
+            <ChevronRight />
+          </IconButton>
+        </>
+      )}
     </>
   ) : null;
 }

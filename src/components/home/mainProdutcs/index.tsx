@@ -74,6 +74,7 @@ export default function MainProducts({
               initial={{ transform: "translateY(100px)", opacity: 0 }}
               whileInView={{ transform: "translateY(0)", opacity: 1 }}
               transition={{ duration: 0.4 }}
+              style={{maxWidth: 300, width: "100%",}}
             >
               <ProductCard data={product} />
             </motion.div>

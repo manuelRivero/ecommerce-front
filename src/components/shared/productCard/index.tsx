@@ -5,7 +5,6 @@ import { finalPrice, formatNumber } from "@/utils/products";
 import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion"; // Corregí el import
-import { useMediaQuery } from "@mui/material";
 
 interface Props {
   data: Product;
@@ -17,19 +16,21 @@ export default function ProductCard({ data }: Props) {
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
-  
+
     if (hovering && data.images.length > 1) {
       // Cambiamos de imagen inmediatamente
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % data.images.length);
-  
+
       // Luego empieza el intervalo normal
       interval = setInterval(() => {
-        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % data.images.length);
+        setCurrentImageIndex(
+          (prevIndex) => (prevIndex + 1) % data.images.length
+        );
       }, 1500);
     } else {
       setCurrentImageIndex(0);
     }
-  
+
     return () => clearInterval(interval);
   }, [hovering, data.images.length]);
 
@@ -57,7 +58,19 @@ export default function ProductCard({ data }: Props) {
               zIndex: 2,
             }}
           >
-            {/* ... tus badges de descuento ... */}
+            <Box
+              sx={(theme) => ({
+                padding: 0.5,
+                borderRadius: 2,
+                color: theme.palette.primary.contrastText,
+                background: theme.palette.primary.main,
+                width: "fit-content",
+              })}
+            >
+              <Typography variant="body1" sx={{ fontSize: 10 }}>
+                {data.discount + (data.offerDiscount || 0)}% Off
+              </Typography>
+            </Box>
           </Box>
         )}
 
