@@ -51,7 +51,6 @@ export default async function RootLayout({
               <Suspense fallback={<PageLoader position="fixed" />}>
                 <Box
                   sx={{
-                    marginY: 4,
                     minHeight: "60vh",
                     height: "100%",
                     position: "relative",

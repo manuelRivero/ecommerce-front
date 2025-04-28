@@ -1,33 +1,47 @@
 "use client";
 import { useITheme } from "@/components/themeProvider";
-import React from "react";
+import React, { useId } from "react";
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Autoplay, Navigation } from "swiper/modules";
 
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
+import { IconButton, useMediaQuery } from "@mui/material";
 
-export default function BannerSwiper() {
+interface Props {
+  section: string;
+}
+
+export default function BannerSwiper({ section }: Props) {
   const { state } = useITheme();
-  return (
+  const isMobile = useMediaQuery("(max-width:600px)");
+  const slides = state.config.banners
+    .filter((banner: any) => banner.section === section && banner.active)
+    .filter((banner: any) =>
+      isMobile ? banner.type === "0" : banner.type === "1"
+    );
+
+  return slides.length > 0 ? (
     <>
       <Swiper
-        modules={[Navigation]}
+        modules={[Navigation, Autoplay]}
         navigation={{
-          prevEl: ".prev",
-          nextEl: ".next",
+          prevEl: `.banner-${section}-prev`,
+          nextEl: `.banner-${section}-next`,
         }}
+        autoplay
         spaceBetween={50}
         slidesPerView={1}
         style={{ position: "relative", zIndex: 0 }}
       >
-        {state.config.banners
+        {slides
+          .filter((banner: any) => banner.section === section)
           .filter((banner: any) => banner.active)
+
           .map((banner: any) => (
             <SwiperSlide
               key={banner._id}
@@ -37,35 +51,41 @@ export default function BannerSwiper() {
                 style={{
                   width: "100%",
                   maxWidth: "100%",
-                  aspectRatio: "3/1",
-                  objectFit: "cover",
+                  aspectRatio: isMobile ? "" : "3/1",
+                  objectFit: isMobile ? "contain" : "cover",
                   borderRadius: "1rem",
                 }}
                 src={banner.url}
               />
             </SwiperSlide>
           ))}
-        <IconButton
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: 10,
-            transform: "translateY(-50%)",
-          }}
-        >
-          <ChevronLeft />
-        </IconButton>
-        <IconButton
-          sx={{
-            position: "absolute",
-            top: "50%",
-            right: 10,
-            transform: "translateY(-50%)",
-          }}
-        >
-          <ChevronRight />
-        </IconButton>
+        {slides.length > 1 && isMobile && (
+          <>
+            <IconButton
+              className={`banner-${section}-prev`}
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: 10,
+                transform: "translateY(-50%)",
+              }}
+            >
+              <ChevronLeft />
+            </IconButton>
+            <IconButton
+              className={`banner-${section}-next`}
+              sx={{
+                position: "absolute",
+                top: "50%",
+                right: 10,
+                transform: "translateY(-50%)",
+              }}
+            >
+              <ChevronRight />
+            </IconButton>
+          </> 
+        )}
       </Swiper>
     </>
-  );
+  ) : null;
 }

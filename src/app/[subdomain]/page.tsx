@@ -1,9 +1,10 @@
-import { getBestSellers, getHotSales, getProducts } from "@/client/products";
+import { getBestSellers, getHotSales } from "@/client/products";
 import MainWrapper from "@/components/home/mainWrapper";
 import { Box, Container } from "@mui/material";
 import BannerSwiper from "@/components/home/bannerSwiper";
 import { getOffers } from "@/client/offers";
 import { getCategories } from "@/client/categories";
+import HomeCTA from "@/components/home/homeCTA";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +50,7 @@ export default async function Home({
   );
 
   return (
+    <>
     <Container sx={{ marginY: 6 }}>
       <Box
         sx={{
@@ -57,9 +59,20 @@ export default async function Home({
           overflow: "hidden",
         }}
       >
-        <BannerSwiper />
+        <BannerSwiper section="HOME-HERO"/>
       </Box>
       <MainWrapper data={products} />
+      <Box
+        sx={{
+          maxWidth: "100%",
+          marginBottom: 2,
+          overflow: "hidden",
+        }}
+      >
+        <BannerSwiper section="HOME-FOOTER" />
+      </Box>
     </Container>
+    <HomeCTA />
+    </>
   );
 }
