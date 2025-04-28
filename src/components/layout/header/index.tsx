@@ -92,7 +92,7 @@ export default function Header() {
                   >
                     <MenuList>
                       <MenuItem
-                        onClick={() => handleNavigation("/#product-container")}
+                        onClick={() => handleNavigation("/productos")}
                       >
                         <ListItemIcon>
                           <CategoryIcon />
