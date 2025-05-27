@@ -44,7 +44,7 @@ export default function ProductsDetail({products, orderId}: Props) {
           <strong>
             $
             {products
-              .reduce((acc, item) => acc + finalPrice( item.data.price, (item.data.discount + (item.data.offerDiscount || 0))) * item.quantity, 0)}
+              .reduce((acc, item) => acc + finalPrice( item.data.price, ((item.data.discount || 0) + (item.data.offerDiscount || 0))) * item.quantity, 0)}
           </strong>
         </Typography>
       </Box>{" "}

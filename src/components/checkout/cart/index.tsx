@@ -44,6 +44,9 @@ export default function CheckoutCart() {
         return selectedFeature && stock > 0 && product.quantity <= stock;
       });
 
+      console.log("updatedProducts", updatedProducts);
+      console.log("mergedProducts", mergedProducts);
+
       // Compara los productos locales con los del backend
       const changesDetected = !compareProducts(products, mergedProducts);
       setHasChanges(changesDetected);

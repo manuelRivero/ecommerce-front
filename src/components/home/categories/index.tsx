@@ -22,7 +22,7 @@ interface Props {
 function Categories({ data }: Props) {
   const isMobile = useMediaQuery("(max-width:1200px)");
 
-  return (
+  return data.length === 0 ? null : (
     <Box
       id="hot-categories-container"
       sx={{ position: "relative", minHeight: "60vh" }}
@@ -96,7 +96,7 @@ function Categories({ data }: Props) {
                           transform: "scale(1.2)",
                           transition: "transform .5s ease-in-out",
                           transformOrigin: "50% 50%",
-                          backgroundColor: 'red'
+                          backgroundColor: "red",
                         },
                       }}
                     >

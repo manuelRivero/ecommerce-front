@@ -12,8 +12,8 @@ const getData = async (subdomain: string,) => {
   console.log("get data");
   try {
     const [ hotSalesData, bestSellersData, offersData, categoriesData] = await Promise.all([
-      getHotSales(subdomain, 0, 6),
-      getBestSellers(subdomain, 0, 6),
+      getHotSales(subdomain, 0, 12),
+      getBestSellers(subdomain, 0, 12),
       getOffers(subdomain, 0, 4),
       getCategories(subdomain, 0, 100),
     ]);

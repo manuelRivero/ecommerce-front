@@ -89,6 +89,14 @@ export function compareProducts(
   });
 }
 
+export const chunkArray = (array: Product[], size: number): Product[][] => {
+  const chunks: Product[][] = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunks.push(array.slice(i, i + size));
+  }
+  return chunks;
+};
+
 // export  function compareProducts (original: Product[], updated: Product[]): boolean  {
 //   if (original.length !== updated.length) return false;
 

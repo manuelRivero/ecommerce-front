@@ -1,6 +1,6 @@
 "use client";
 import { getCategories } from "@/client/categories";
-import { Button, CircularProgress } from "@mui/material";
+import { Button, CircularProgress, Stack } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -10,20 +10,13 @@ const CategoriesOptions = ({ actionProvider }: any) => {
   const [options, setOptions] = useState<any[]>([]);
   const params = useParams();
   const handleOptionClick = (id: string) => {
-    const queryString = new URLSearchParams({ category: id }).toString();
-
-    router.push(`/?${queryString}`, { scroll: false});
+    router.push(`/productos/${id}`, { scroll: false });
     actionProvider.handleCategorySelection(id);
-    const container = document.getElementById("product-container")
-    container?.scrollIntoView({
-      block: 'start',
-      behavior: 'smooth'
-    })
   };
   useEffect(() => {
     const getData = async () => {
       try {
-        const { data } = await getCategories(params.subdomain as string, 1);
+        const { data } = await getCategories(params.subdomain as string, 0);
         console.log("data", data);
         setOptions(data.categories);
       } catch (error) {
@@ -36,7 +29,11 @@ const CategoriesOptions = ({ actionProvider }: any) => {
   }, []);
   return (
     <div className="options-container">
-      {loading && <CircularProgress />}
+      {loading && (
+        <Stack direction="row" justifyContent="center" mb={2}>
+          <CircularProgress size="2rem" />
+        </Stack>
+      )}
       {!loading &&
         options.map((option: any) => (
           <Button
@@ -45,9 +42,18 @@ const CategoriesOptions = ({ actionProvider }: any) => {
             key={option.id}
             onClick={() => handleOptionClick(option._id)}
           >
-            {option.name}
+            {`${option.name} (${option.productCount})`}
           </Button>
         ))}
+      {!loading && (
+        <Button
+          variant="contained"
+          sx={{ margin: 1 }}
+          onClick={() => router.push("/productos")}
+        >
+          Ver todo
+        </Button>
+      )}
     </div>
   );
 };

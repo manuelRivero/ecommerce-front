@@ -9,10 +9,7 @@ interface Props {
 
 export default function ProductGrid({ data, title }: Props) {
   return (
-    <Box
-      id="grid-container"
-      sx={{ position: "relative", minHeight: "60vh" }}
-    >
+    <Box id="grid-container" sx={{ position: "relative", minHeight: "60vh" }}>
       <Stack
         direction={{ xs: "column", sm: "row" }}
         spacing={2}
@@ -23,10 +20,13 @@ export default function ProductGrid({ data, title }: Props) {
       </Stack>
       <Box
         sx={{
-          display: "flex",
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "repeat(1, 1fr)",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
+          },
           gap: 6,
-          flexWrap: "wrap",
-          justifyContent: { xs: "center", md: "center" },
           marginTop: 4,
         }}
       >
@@ -35,7 +35,6 @@ export default function ProductGrid({ data, title }: Props) {
         ))}
       </Box>
       {data.length === 0 && <EmptyProducts />}
-     
     </Box>
   );
 }

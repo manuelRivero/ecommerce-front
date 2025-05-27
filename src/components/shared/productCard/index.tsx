@@ -147,7 +147,7 @@ export default function ProductCard({ data }: Props) {
                   {formatNumber(
                     finalPrice(
                       data.price,
-                      data.discount + (data.offerDiscount || 0)
+                      (data.discount || 0) + (data.offerDiscount || 0)
                     )
                   )}
                 </strong>

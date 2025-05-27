@@ -3,7 +3,7 @@ import { axiosInstance } from "..";
 
 export const getCategories = (
   tenant: string,
-  page = 1,
+  page = 0,
   limit = 10
 ): Promise<AxiosResponse> => {
   return axiosInstance.get("/categories/get-categories-web", {
