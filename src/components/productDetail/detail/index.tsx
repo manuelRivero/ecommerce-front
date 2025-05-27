@@ -10,9 +10,11 @@ import {
   Checkbox,
   Divider,
   FormControlLabel,
+  IconButton,
   Stack,
   Typography,
 } from "@mui/material";
+import ShareIcon from "@mui/icons-material/Share";
 import { finalPrice } from "@/utils/products";
 
 interface Props {
@@ -115,7 +117,22 @@ export default function Detail({ data }: Props) {
 
   return (
     <Box>
-      <Typography variant="h3">{data.name}</Typography>
+      <Stack
+        direction="row"
+        spacing={1}
+        alignItems="start"
+        justifyContent={"space-between"}
+        sx={{ marginTop: 2 }}
+      >
+        <Typography variant="h3">{data.name}</Typography>
+        <IconButton
+          component={"a"}
+          href={"https://www.facebook.com/sharer/sharer.php?u=" + window.location.href} // aquí necesito el hostname
+          target="_blank"
+        >
+          <ShareIcon />
+        </IconButton>
+      </Stack>
       <Stack
         direction="row"
         spacing={1}
@@ -159,7 +176,9 @@ export default function Detail({ data }: Props) {
           )}
         </Box>
       </Stack>
-      <Typography variant="body1" mt={2}>{data.description}</Typography>
+      <Typography variant="body1" mt={2}>
+        {data.description}
+      </Typography>
       <Divider sx={{ marginY: 2 }} />
       <Box>
         {Object.keys(groupedFeatures).length > 0 && (

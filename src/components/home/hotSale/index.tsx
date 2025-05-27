@@ -135,7 +135,7 @@ export default function HotSales({ data }: Props) {
                     component={Link}
                     href={"/descuentos"}
                   >
-                    Ver todos productos
+                    Ver todos los productos
                   </Button>
                 </Box>
               </SwiperSlide>
@@ -291,6 +291,36 @@ export default function HotSales({ data }: Props) {
         //   )}
         // </>
       )}
+      <Paper
+        sx={(theme) => ({
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+          padding: 4,
+          marginTop: 4,
+          backgroundImage: `linear-gradient(300deg, ${alpha(
+            theme.palette.primary.main,
+            0.2
+          )} 60%, transparent 40%)`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "100% 100%",
+        })}
+      >
+        <>
+          <Typography variant="h2" sx={{ marginBottom: 2 }}>
+            ¡No dejes pasar estas ofertas!
+          </Typography>
+          <Typography variant="body1" sx={{ marginBottom: 2 }}>
+            Descubre todos los productos con descuento y aprovecha precios
+            únicos
+          </Typography>
+          <Button variant="contained" component={Link} href={"/mas-vendidos"}>
+            Ver todos los descuentos
+          </Button>
+        </>
+      </Paper>
     </Box>
   );
 }
