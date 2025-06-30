@@ -78,3 +78,15 @@ export const getBestSellers = (
     },
   });
 }
+
+export const getRandomCategoryProducts = (
+  tenant: string,
+  category: string,
+): Promise<AxiosResponse> => {
+  return axiosInstance.get("/products/random-category-products", {
+    params: {
+      tenant,
+      category,
+    },
+  });
+};
