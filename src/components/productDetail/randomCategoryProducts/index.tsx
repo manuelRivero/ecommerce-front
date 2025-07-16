@@ -1,7 +1,8 @@
 "use client";
 import ProductCard from "@/components/shared/productCard";
 import { Product } from "@/interfaces/products";
-import { Box, IconButton, Typography, useMediaQuery } from "@mui/material";
+import { alpha, Button, Box, IconButton, Paper, Typography, useMediaQuery, Stack } from "@mui/material";
+import Link from "next/link";
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -18,12 +19,16 @@ interface Props {
 
 export default function RandomCategoryProducts({ products }: Props) {
   const isMobile = useMediaQuery("(max-width:600px)");
-
+  const categoryName = products[0]?.categoryDetail[0]?.name ?? '';
+  const categoryId = products[0]?.categoryDetail[0]?._id ?? '';
   return products.length > 0 ? (
     <Box sx={{ marginY: 2 }}>
-      <Typography variant="h3" sx={{ marginBottom: 4 }}>
-        Productos que te pueden interesar
-      </Typography>
+      <Stack direction="row" sx={{ marginBottom: 4 }} spacing={2} alignItems="baseline" justifyContent="space-between">
+        <Typography variant="h3">
+          Otros productos en <Link href={`/categorias/${categoryId}`} style={{ color: "inherit", textDecoration: "underline" }}>{categoryName}</Link>
+        </Typography>
+        <Link href={`/categorias/${categoryId}`} style={{ color: "inherit" }}>Ver más</Link>
+      </Stack>
       <Box sx={{ paddingX: { md: 10 }, position: "relative" }}>
 
         <Swiper
@@ -54,10 +59,10 @@ export default function RandomCategoryProducts({ products }: Props) {
                 <ProductCard data={product} />
               </Box>
             </SwiperSlide>
-            
+
           ))}
         </Swiper>
-        { products.length > 3 && !isMobile && (
+        {products.length > 3 && !isMobile && (
           <>
             <IconButton
               className={`ramdon-prev`}
@@ -83,6 +88,27 @@ export default function RandomCategoryProducts({ products }: Props) {
             </IconButton>
           </>
         )}
+      </Box>
+      <Box
+        sx={(theme) => ({
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+        })}
+      >
+        <>
+          <Typography variant="h2" sx={{ marginBottom: 2 }}>
+            ¿Te gustaron estos productos?
+          </Typography>
+          <Typography variant="body1" sx={{ marginBottom: 2 }}>
+            Explorá todos los productos en {categoryName} y encontrá tu próximo favorito.
+          </Typography>
+          <Button variant="contained" component={Link} href={`/categorias/${categoryName}`}>
+            Ver todos los productos en {categoryName}
+          </Button>
+        </>
       </Box>
     </Box>
   ) : null;
