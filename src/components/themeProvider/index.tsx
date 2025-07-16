@@ -75,10 +75,10 @@ const ThemeProvider = ({
                   contrastText: "#fff",
                 },
                 background: {
-                  default: "#faf9f6",
+                  default: data.config.palette.backgroundColor,
                 },
                 text: {
-                  primary: "#2F4858",
+                  primary: data.config.palette.textColor,
                 },
               },
             },

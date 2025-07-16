@@ -43,7 +43,7 @@ export default function MainWrapper({ data, totalPages }: Props) {
   return (
     <>
     <BackButton />
-      <ProductGrid title="Más vendidos" data={products} />
+      <ProductGrid title="Descuentos" data={products} />
       <Stack direction="row" justifyContent="center" sx={{ marginTop: 4 }}>
         <Pagination
           count={total}
