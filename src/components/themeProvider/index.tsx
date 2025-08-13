@@ -1,14 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { CssBaseline, Experimental_CssVarsProvider } from "@mui/material";
+import { CssBaseline, Experimental_CssVarsProvider, Typography, Container, Stack, Button } from "@mui/material";
 import { extendTheme } from "@mui/material/styles";
 import { axiosInstance } from "@/client";
 import { merriweather, openSans } from "@/fonts";
 import PageLoader from "..";
 import { NextFontWithVariable } from "next/dist/compiled/@next/font";
+import empty from "@/assets/images/wait.webp";
+import Image from "next/image";
+import Link from "next/link";
 
-declare module "@mui/material/styles/createPalette" {}
+declare module "@mui/material/styles/createPalette" { }
 
 export type State = {
   config: any;
@@ -23,8 +26,16 @@ const IThemeContext = React.createContext<{
   setState: React.Dispatch<React.SetStateAction<State>>;
 }>({
   state: initialState,
-  setState: () => {},
+  setState: () => { },
 });
+
+enum Status {
+  PENDING = "pending",
+  PAUSED = "paused",
+  CANCELLED = "cancelled",
+  APPROVED = "approved",
+  LOADING = "loading",
+}
 
 const ThemeProvider = ({
   children,
@@ -37,6 +48,7 @@ const ThemeProvider = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [state, setState] = useState(initialState);
   const [fontClass, setFontClass] = useState("");
+  const [status, setStatus] = useState<Status>(Status.LOADING);
 
   useEffect(() => {
     const fetchTheme = async () => {
@@ -44,7 +56,7 @@ const ThemeProvider = ({
         const { data } = await axiosInstance.get(
           `${process.env.NEXT_PUBLIC_API_URL}/tenant/get-tenant-config?tenant=${tenant}`
         );
-
+        console.log("data", data)
         const titleFont = data.config.typography?.title || "Merriweather";
         const bodyFont = data.config.typography?.body || "OpenSans";
 
@@ -144,6 +156,39 @@ const ThemeProvider = ({
 
         setTheme(dynamicTheme);
         setState({ config: data.config });
+
+        // Flags de estado
+        const paymentStatus = data.config?.paymentStatus
+        const preapprovalStatus = data.config?.preapprovalStatus
+        const lastStatusObj = Array.isArray(data.config?.userActionHistory) && data.config.userActionHistory.length > 0
+          ? data.config.userActionHistory[data.config.userActionHistory.length - 1]
+          : null;
+        const lastStatus = lastStatusObj?.action;
+        const isPaymentApproved = (preapprovalStatus === 'authorized' && paymentStatus === 'approved');
+        const isPaymentPending = (preapprovalStatus === 'authorized' && paymentStatus === 'pending');
+        const isPaymentPaused = (preapprovalStatus === 'paused' || paymentStatus === 'paused' || lastStatus === 'paused');
+        const isPaymentCancelled = (preapprovalStatus === 'cancelled' || paymentStatus === 'cancelled' || lastStatus === 'cancelled');
+        const isSubscriptionActive = (isPaymentApproved || isPaymentPaused || isPaymentPending) && !isPaymentCancelled;
+
+        console.log("isPaymentPaused", isPaymentPaused)
+        console.log("isPaymentCancelled", isPaymentCancelled)
+        console.log("isPaymentPending", isPaymentPending)
+        console.log("isPaymentApproved", isPaymentApproved)
+        console.log("isSubscriptionActive", isSubscriptionActive)
+
+        if (isPaymentPaused || isPaymentCancelled) {
+          setStatus(Status.PAUSED);
+        }
+
+        if (isPaymentPending) {
+          setStatus(Status.PENDING);
+        }
+
+        // Si el pago está aprobado pero la suscripción no está activa, mostrar todas las rutas
+        if (isPaymentApproved && !isSubscriptionActive) {
+          setStatus(Status.APPROVED);
+        }
+
       } catch (error) {
         console.error("Error fetching theme:", error);
       } finally {
@@ -154,12 +199,46 @@ const ThemeProvider = ({
     fetchTheme();
   }, [tenant]);
 
+  const handleContent = ({ children }: { children: React.ReactNode }) => {
+    if (status !== Status.APPROVED) {
+      return <Container sx={{ marginY: 4 }}>
+        <Typography variant="h1" sx={{ textAlign: "center" }}>
+          ¡Pronto estaremos en linea otra vez!
+        </Typography>
+        <Typography variant="body1" color="text.primary" sx={{ textAlign: "center" }}>
+          Estamos trabajando en mejorar la experiencia de usuario.
+        </Typography>
+        <Stack direction="row" justifyContent="center" alignItems="center">
+          <Image width={400} height={400} src={empty.src} alt="no products" />
+        </Stack>
+        <Stack direction="column" justifyContent="center" alignItems="center">
+
+          <Typography variant="body1" color="text.primary" sx={{ textAlign: "center" }}>
+            ¿Tienes algún pedido en proceso?
+          </Typography>
+          <Button
+            variant="contained"
+            component={Link}
+            href={`https://wa.me/${state.config.phone}?text=Hola, estoy escribiendo desde el enlace de la página web de ${state.config.name} y tengo una consulta`}
+
+            sx={{ marginTop: 2 }}
+          >
+            Contactar a soporte
+          </Button>
+        </Stack>
+      </Container>;
+    }
+    return <div>
+      {children}
+    </div>;
+  }
+  console.log("status", status)
   return (
     <IThemeContext.Provider value={{ state, setState }}>
       <Experimental_CssVarsProvider theme={theme} modeStorageKey="color_mode">
         <CssBaseline enableColorScheme />
         <div className={fontClass}>
-          {loading ? <PageLoader position="fixed" /> : children}
+          {loading || status === Status.LOADING ? <PageLoader position="fixed" /> : handleContent({ children })}
         </div>
       </Experimental_CssVarsProvider>
     </IThemeContext.Provider>

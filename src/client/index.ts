@@ -4,3 +4,10 @@ export const axiosInstance = axios.create({
     baseURL:process.env.NEXT_PUBLIC_API_URL,
     withCredentials: true
 });
+
+// Export super-admin features
+export * from './super-admin/features';
+export * from './super-admin/plans';
+
+// Export super-admin plans
+export * from './super-admin/plans';

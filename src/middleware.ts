@@ -1,16 +1,20 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { axiosInstance } from './client';
 
 export const config = {
   matcher: [
-    "/((?!api/|_next/|_static/|[\\w-]+\\.\\w+).*)",
+    "/((?!api/|_next/|_static/|super-admin|[\\w-]+\\.\\w+).*)",
   ],
 };
 
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl;
   let hostname = req.headers.get("host") || '';
+
+  // Permitir acceso directo a /super-admin y subrutas
+  if (url.pathname.startsWith('/super-admin')) {
+    return NextResponse.next();
+  }
 
   // Remove port if it exists
   hostname = hostname.split(':')[0];
@@ -36,15 +40,13 @@ export async function middleware(req: NextRequest) {
   // Handle subdomain logic
   if (subdomain) {
     try {
-      // Use fetch to verify if the subdomain exists
-      const response = await axiosInstance.get(`/tenant/verify-tenant?subdomain=${subdomain}`);
-      
-      if (response) {
+      // Usar fetch estándar para verificar si el subdominio existe
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tenant/verify-tenant?subdomain=${subdomain}`);
+      if (response.ok) {
         console.log('Middleware: Valid subdomain detected, rewriting URL');
         // Rewrite the URL to a dynamic route based on the subdomain
         return NextResponse.rewrite(new URL(`/${subdomain}${url.pathname}?${url.search}`, req.url));
       }
-
     } catch (error) {
       console.error('Middleware: Error fetching tenant:', error);
     }
