@@ -178,15 +178,18 @@ const ThemeProvider = ({
 
         if (isPaymentPaused || isPaymentCancelled) {
           setStatus(Status.PAUSED);
+          return
         }
 
         if (isPaymentPending) {
           setStatus(Status.PENDING);
+          return
         }
 
         // Si el pago está aprobado pero la suscripción no está activa, mostrar todas las rutas
-        if (isPaymentApproved && !isSubscriptionActive) {
+        if (isPaymentApproved) {
           setStatus(Status.APPROVED);
+          return
         }
 
       } catch (error) {

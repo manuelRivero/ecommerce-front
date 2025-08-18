@@ -113,3 +113,32 @@ export const chunkArray = (array: Product[], size: number): Product[][] => {
 //     );
 //   });
 // };
+
+/**
+ * Limpia HTML de una cadena de texto para usar en metadatos
+ * @param htmlString - Cadena que puede contener HTML
+ * @param maxLength - Longitud máxima del texto resultante (opcional)
+ * @returns Texto limpio sin HTML
+ */
+export function cleanHtmlForMetadata(htmlString: string, maxLength?: number): string {
+  if (!htmlString) return '';
+  
+  // Remover etiquetas HTML
+  const cleanText = htmlString
+    .replace(/<[^>]*>/g, '') // Remover todas las etiquetas HTML
+    .replace(/&nbsp;/g, ' ') // Reemplazar &nbsp; con espacios
+    .replace(/&amp;/g, '&') // Reemplazar &amp; con &
+    .replace(/&lt;/g, '<') // Reemplazar &lt; con <
+    .replace(/&gt;/g, '>') // Reemplazar &gt; con >
+    .replace(/&quot;/g, '"') // Reemplazar &quot; con "
+    .replace(/&#39;/g, "'") // Reemplazar &#39; con '
+    .replace(/\s+/g, ' ') // Reemplazar múltiples espacios con uno solo
+    .trim();
+  
+  // Limitar longitud si se especifica
+  if (maxLength && cleanText.length > maxLength) {
+    return cleanText.substring(0, maxLength).trim() + '...';
+  }
+  
+  return cleanText;
+}

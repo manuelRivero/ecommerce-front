@@ -4,8 +4,8 @@ import { axiosInstance } from "..";
 export const getProducts = (
   tenant: string,
   page = 0,
+  limit: number = 10,
   category?: string,
-  limit: number = 10
 ): Promise<AxiosResponse> => {
   return axiosInstance.get("/products/web", {
     params: {

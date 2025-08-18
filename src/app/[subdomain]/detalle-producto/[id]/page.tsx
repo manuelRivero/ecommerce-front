@@ -8,6 +8,7 @@ import Gallery from "@/components/productDetail/gallery";
 import RandomCategoryProducts from "@/components/productDetail/randomCategoryProducts";
 import RelatedProducts from "@/components/productDetail/relatedProducts";
 import BackButton from "@/components/shared/BackButton";
+import { cleanHtmlForMetadata } from "@/utils/products";
 import {
   Box,
   Button,
@@ -29,13 +30,16 @@ export async function generateMetadata({ params }: any) {
       data.product.images[0].url.split("com")[0] + "com"
     );
     console.log("metadataBase", metadataBase);
+    // Limpiar HTML de la descripción para metadatos
+    const cleanDescription = cleanHtmlForMetadata(data.product.description, 160);
+    
     return {
       metadataBase: metadataBase.origin,
       title: data.product.name,
-      description: data.product.description,
+      description: cleanDescription,
       openGraph: {
         title: data.product.name,
-        description: data.product.description,
+        description: cleanDescription,
         type: "article",
         images: [
           {

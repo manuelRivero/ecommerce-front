@@ -184,14 +184,6 @@ export default function Offers({ data }: Props) {
                               </strong>
                             </Typography>
                           </Box>
-                          <Typography
-                            variant="body1"
-                            sx={(theme) => ({
-                              color: theme.palette.primary.main,
-                            })}
-                          >
-                            {product.description}
-                          </Typography>
                           <Stack direction="row" justifyContent="end">
                             <Button
                               sx={{ marginTop: 2 }}
