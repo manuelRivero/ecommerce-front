@@ -1,4 +1,4 @@
-import { getBestSellers, getHotSales } from "@/client/products";
+import { getBestSellers, getHotSales, getProducts } from "@/client/products";
 import MainWrapper from "@/components/home/mainWrapper";
 import { Box, Container } from "@mui/material";
 import BannerSwiper from "@/components/home/bannerSwiper";
@@ -11,13 +11,14 @@ export const dynamic = "force-dynamic";
 const getData = async (subdomain: string,) => {
   console.log("get data");
   try {
-    const [ hotSalesData, bestSellersData, offersData, categoriesData] = await Promise.all([
+    const [ hotSalesData, bestSellersData, offersData, categoriesData, moreRecentsData] = await Promise.all([
       getHotSales(subdomain, 0, 12),
       getBestSellers(subdomain, 0, 12),
       getOffers(subdomain, 0, 4),
       getCategories(subdomain, 0, 100),
+      getProducts(subdomain, 0, 12),
     ]);
-    console.log("categoriesData", categoriesData.data.categories);
+    console.log("moreRecentsData", moreRecentsData.data.products);
     return {
     
       hotSales: {
@@ -33,6 +34,10 @@ const getData = async (subdomain: string,) => {
         totalPages: offersData.data.totalPages
       },
       categories:categoriesData.data.categories,
+      moreRecents:{
+        products: moreRecentsData.data.products,
+        totalPages: moreRecentsData.data.totalPages,
+      } 
     };
   } catch (error: any) {
     console.log("error", error);

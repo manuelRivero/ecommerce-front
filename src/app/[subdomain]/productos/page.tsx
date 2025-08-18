@@ -9,7 +9,7 @@ const getData = async (subdomain: string, category: string, page = '1') => {
   console.log('get data page', page);
   try {
     const [mainProductData, categoryDetailData] = await Promise.all([
-      getProducts(subdomain, (Number(page) - 1), category ?? undefined, 6),
+      getProducts(subdomain, (Number(page) - 1), 6,  category ?? undefined,),
       category
         ? getCategoryDetail(subdomain, category)
         : Promise.resolve({ data: { category: null } }),

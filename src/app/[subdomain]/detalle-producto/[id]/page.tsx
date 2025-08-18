@@ -63,8 +63,14 @@ const getData = async (id: string, tenant: string) => {
     ]);
     return {
       detail: data.product,
-      related: relatedProductsData.data.relatedProducts,
-      random: randomCategoryProducts.data.randomCategoryProducts,
+      related: {
+        products: relatedProductsData.data.relatedProducts,
+      category: relatedProductsData.data.category
+      },
+      random: {
+        products: randomCategoryProducts.data.randomCategoryProducts,
+        category: randomCategoryProducts.data.category,
+      },
     };
   } catch (error) {
     throw error;
@@ -75,7 +81,7 @@ export default async function ProductDetail({ params }: any) {
   const { id, subdomain } = await params;
   const { detail, related, random } = await getData(id, subdomain);
   const images = detail.images.map((image: any) => image.url);
-  console.log("related", related);
+  console.log("random", random);
   return (
     <Container sx={{ marginTop: 4, marginBottom: 4 }}>
       <BackButton />
@@ -93,12 +99,12 @@ export default async function ProductDetail({ params }: any) {
           </Grid>
           <Grid item xs={12}>
             <Box sx={{ padding: 4 }}>
-              <RelatedProducts products={related[0].data} />
+              <RelatedProducts products={related.products[0].data} category={related.category} />
             </Box>
           </Grid>
           <Grid item xs={12}>
             <Box sx={{ padding: 4 }}>
-              <RandomCategoryProducts products={random[0].data} />
+              <RandomCategoryProducts products={random.products[0].data} category={random.category} />
             </Box>
           </Grid>
         </Grid>
