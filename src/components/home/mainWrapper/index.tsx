@@ -3,7 +3,7 @@
 import { Box } from "@mui/material";
 import BestSellers from "../bestSellers";
 import HotSales from "../hotSale";
-import MainProducts from "../mainProdutcs";
+import MoreRecents from "../moreRecents";
 import { Product } from "@/interfaces/products";
 import Offers from "../offers";
 import Categories from "../categories";
@@ -13,6 +13,7 @@ interface Props {
   data: {
     hotSales: Data;
     bestSellers: Data;
+    moreRecents: Data;
     categories: Category[];
     offers: {
       offers: Offer[];
@@ -25,7 +26,7 @@ interface Data {
   totalPages: number;
 }
 export default function MainWrapper({ data }: Props) {
-  console.log("MainWrapper", data);
+  console.log("MainWrapper", data.moreRecents);
   return (
     <>
       <Box>
@@ -33,6 +34,12 @@ export default function MainWrapper({ data }: Props) {
       </Box>
       <Box sx={{ marginY: 4 }}>
         <Categories data={data.categories} />
+      </Box>
+      <Box sx={{ marginY: 4 }}>
+        <MoreRecents
+          data={data.moreRecents.products}
+          totalPages={data.moreRecents.totalPages}
+        />
       </Box>
       <Box sx={{ marginY: 4 }}>
         <BestSellers

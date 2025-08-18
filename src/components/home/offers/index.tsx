@@ -179,7 +179,7 @@ export default function Offers({ data }: Props) {
                                 $
                                 {finalPrice(
                                   product.price,
-                                  product.discount + product.offerDiscount
+                                  product.discount ?? 0 + product.offerDiscount ?? 0  
                                 )}
                               </strong>
                             </Typography>

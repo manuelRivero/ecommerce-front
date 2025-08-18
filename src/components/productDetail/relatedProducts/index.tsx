@@ -13,23 +13,22 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import { Category } from "@/interfaces/categories";
 
 interface Props {
   products: Product[];
+  category: Category;
 }
 
-export default function RelatedProducts({ products }: Props) {
-  const isMobile = useMediaQuery("(max-width:600px)");
-  console.log("products", products);
-  const categoryName = products[0]?.categoryDetail[0]?.name ?? '';
-  const categoryId = products[0]?.categoryDetail[0]?._id ?? '';
+export default function RelatedProducts({ products, category }: Props) {
+  const isMobile = useMediaQuery("(max-width:600px)");  
   return products.length > 0 ? (
     <Box sx={{ marginY: 2 }}>
       <Stack direction="row" sx={{ marginBottom: 4 }} spacing={2} alignItems="baseline" justifyContent="space-between">
         <Typography variant="h3" >
-          Otros productos en <Link href={`/categorias/${categoryId}`} style={{ color: "inherit", textDecoration: "underline" }}>{categoryId}</Link>
+          Otros productos en <Link href={`/categorias/${category._id}`} style={{ color: "inherit", textDecoration: "underline" }}>{category.name}</Link>
         </Typography>
-        <Link href={`/categorias/${categoryId}`} style={{ color: "inherit" }}>Ver más</Link>
+        <Link href={`/categorias/${category._id}`} style={{ color: "inherit" }}>Ver más</Link>
       </Stack>
       <Box sx={{ paddingX: { md: 10 }, position: "relative" }}>
         <Swiper
@@ -96,10 +95,10 @@ export default function RelatedProducts({ products }: Props) {
             ¿Te gustaron estos productos?
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: 2 }}>
-            Explorá todos los productos en {categoryName} y encontrá tu próximo favorito.
+            Explorá todos los productos en {category.name} y encontrá tu próximo favorito.
           </Typography>
-          <Button variant="contained" component={Link} href={`/categorias/${categoryName}`}>
-            Ver todos los productos en {categoryName}
+          <Button variant="contained" component={Link} href={`/categorias/${category._id}`}>
+            Ver todos los productos en {category.name}
           </Button>
         </>
       </Box>

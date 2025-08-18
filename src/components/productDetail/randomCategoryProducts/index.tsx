@@ -1,5 +1,6 @@
 "use client";
 import ProductCard from "@/components/shared/productCard";
+import { Category } from "@/interfaces/categories";
 import { Product } from "@/interfaces/products";
 import { alpha, Button, Box, IconButton, Paper, Typography, useMediaQuery, Stack } from "@mui/material";
 import Link from "next/link";
@@ -15,19 +16,19 @@ import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 
 interface Props {
   products: Product[];
+  category: Category;
 }
 
-export default function RandomCategoryProducts({ products }: Props) {
+export default function RandomCategoryProducts({ products, category }: Props) {
   const isMobile = useMediaQuery("(max-width:600px)");
-  const categoryName = products[0]?.categoryDetail[0]?.name ?? '';
-  const categoryId = products[0]?.categoryDetail[0]?._id ?? '';
+  console.log("products", products[0]?.categoryDetail[0]);
   return products.length > 0 ? (
     <Box sx={{ marginY: 2 }}>
       <Stack direction="row" sx={{ marginBottom: 4 }} spacing={2} alignItems="baseline" justifyContent="space-between">
         <Typography variant="h3">
-          Otros productos en <Link href={`/categorias/${categoryId}`} style={{ color: "inherit", textDecoration: "underline" }}>{categoryName}</Link>
+          Otros productos en <Link href={`/categorias/${category._id}`} style={{ color: "inherit", textDecoration: "underline" }}>{category.name}</Link>
         </Typography>
-        <Link href={`/categorias/${categoryId}`} style={{ color: "inherit" }}>Ver más</Link>
+        <Link href={`/categorias/${category._id}`} style={{ color: "inherit" }}>Ver más</Link>
       </Stack>
       <Box sx={{ paddingX: { md: 10 }, position: "relative" }}>
 
@@ -103,10 +104,10 @@ export default function RandomCategoryProducts({ products }: Props) {
             ¿Te gustaron estos productos?
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: 2 }}>
-            Explorá todos los productos en {categoryName} y encontrá tu próximo favorito.
+            Explorá todos los productos en {category.name} y encontrá tu próximo favorito.
           </Typography>
-          <Button variant="contained" component={Link} href={`/categorias/${categoryName}`}>
-            Ver todos los productos en {categoryName}
+          <Button variant="contained" component={Link} href={`/categorias/${category._id}`}>
+            Ver todos los productos en {category.name}
           </Button>
         </>
       </Box>

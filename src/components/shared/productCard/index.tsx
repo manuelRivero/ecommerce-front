@@ -46,32 +46,60 @@ export default function ProductCard({ data }: Props) {
     >
       <Stack sx={{ width: "100%", position: "relative", height: "100%" }}>
         {(data.discount > 0 || data.offerDiscount > 0) && (
-          <Box
-            sx={{
-              position: "absolute",
-              top: 10,
-              right: 10,
-              flexDirection: "column",
-              display: "flex",
-              alignItems: "end",
-              gap: 1,
-              zIndex: 2,
-            }}
-          >
+          <>
             <Box
-              sx={(theme) => ({
-                padding: 0.5,
-                borderRadius: 2,
-                color: theme.palette.primary.contrastText,
-                background: theme.palette.primary.main,
-                width: "fit-content",
-              })}
+              sx={{
+                position: "absolute",
+                top: 10,
+                right: 10,
+                flexDirection: "column",
+                display: "flex",
+                alignItems: "end",
+                gap: 1,
+                zIndex: 2,
+              }}
             >
-              <Typography variant="body1" sx={{ fontSize: 10 }}>
-                {data.discount + (data.offerDiscount || 0)}% Off
-              </Typography>
+              <Box
+                sx={(theme) => ({
+                  padding: 0.5,
+                  borderRadius: 2,
+                  color: theme.palette.primary.contrastText,
+                  background: theme.palette.error.main,
+                  width: "fit-content",
+                })}
+              >
+                <Typography variant="body1" sx={{ fontSize: 10 }}>
+                  {data.discount ?? 0 + (data.offerDiscount ?? 0)}% Off
+                </Typography>
+              </Box>
             </Box>
-          </Box>
+            <Box
+              sx={{
+                position: "absolute",
+                top: 35,
+                right: 10,
+                flexDirection: "column",
+                display: "flex",
+                alignItems: "end",
+                gap: 1,
+                zIndex: 2,
+              }}
+            >
+              <Box
+                sx={(theme) => ({
+                  padding: 0.5,
+                  borderRadius: 2,
+                  color: theme.palette.primary.contrastText,
+                  background: theme.palette.primary.main,
+                  width: "fit-content",
+                })}
+              >
+                <Typography variant="body1" sx={{ fontSize: 10 }}>
+                  Oferta por tiempo limitado
+                </Typography>
+              </Box>
+            </Box>
+          </>
         )}
 
         <Box
