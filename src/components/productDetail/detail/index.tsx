@@ -195,9 +195,7 @@ export default function Detail({ data }: Props) {
           )}
         </Box>
       </Stack>
-      <Typography variant="body1" mt={2}>
-        {data.description}
-      </Typography>
+      <div dangerouslySetInnerHTML={{ __html: data.description }} />
       <Divider sx={{ marginY: 2 }} />
       <Box>
         {Object.keys(groupedFeatures).length > 0 && (
