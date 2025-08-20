@@ -8,6 +8,7 @@ export const axiosInstance = axios.create({
 // Export super-admin features
 export * from './super-admin/features';
 export * from './super-admin/plans';
+export * from './super-admin/tenants';
 
 // Export super-admin plans
 export * from './super-admin/plans';

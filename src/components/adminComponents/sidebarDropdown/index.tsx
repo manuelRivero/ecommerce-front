@@ -9,6 +9,7 @@ import SidebarLinkButton from "../sidebarLinkButton";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 const dropdownOptions = [
+  { label: "Tenants", href: "/super-admin/tenants" },
   { label: "Planes", href: "/super-admin/plans" },
   { label: "Crear Plan", href: "/super-admin/create-plan" },
   { label: "Características", href: "/super-admin/features" },
