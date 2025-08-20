@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 
 export const config = {
   matcher: [
-    "/((?!api/|_next/|_static/|super-admin|[\\w-]+\\.\\w+).*)",
+    "/((?!api/|_next/|_static/|super-admin|subdomain-not-found|crear-tienda|[\\w-]+\\.\\w+).*)",
   ],
 };
 
@@ -13,6 +13,11 @@ export async function middleware(req: NextRequest) {
 
   // Permitir acceso directo a /super-admin y subrutas
   if (url.pathname.startsWith('/super-admin')) {
+    return NextResponse.next();
+  }
+
+  // Permitir acceso directo a /crear-tienda
+  if (url.pathname.startsWith('/crear-tienda')) {
     return NextResponse.next();
   }
 
@@ -52,7 +57,7 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  console.log('Middleware: Invalid subdomain or domain, returning 404');
-  // If none of the above conditions are met, return a 404 response
-  return new NextResponse(null, { status: 404 });
+  console.log('Middleware: Invalid subdomain, redirecting to subdomain-not-found page');
+  // If subdomain is invalid, redirect to the subdomain-not-found page
+  return NextResponse.rewrite(new URL('/subdomain-not-found', req.url));
 }
