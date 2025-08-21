@@ -57,14 +57,21 @@ const ThemeProvider = ({
           `${process.env.NEXT_PUBLIC_API_URL}/tenant/get-tenant-config?tenant=${tenant}`
         );
         console.log("data", data)
-        const titleFont = data.config.typography?.title || "Merriweather";
-        const bodyFont = data.config.typography?.body || "OpenSans";
-
+        
         // Determinar la clase de fuente a aplicar
         const fontMap: Record<string, NextFontWithVariable> = {
           Merriweather: merriweather,
           "Open Sans": openSans,
         };
+
+        // Validar y asignar fuentes por defecto si no están en el fontMap
+        const titleFont = fontMap[data.config.typography?.title] ? data.config.typography.title : "Merriweather";
+        const bodyFont = fontMap[data.config.typography?.body] ? data.config.typography.body : "Open Sans";
+
+        console.log("titleFont from backend:", data.config.typography?.title);
+        console.log("bodyFont from backend:", data.config.typography?.body);
+        console.log("titleFont final:", titleFont);
+        console.log("bodyFont final:", bodyFont);
 
         setFontClass(
           `${fontMap[titleFont].className} ${fontMap[bodyFont].className}`
@@ -160,37 +167,46 @@ const ThemeProvider = ({
         // Flags de estado
         const paymentStatus = data.config?.paymentStatus
         const preapprovalStatus = data.config?.preapprovalStatus
+        const subscriptionStatus = data.config?.subscriptionStatus
         const lastStatusObj = Array.isArray(data.config?.userActionHistory) && data.config.userActionHistory.length > 0
           ? data.config.userActionHistory[data.config.userActionHistory.length - 1]
           : null;
         const lastStatus = lastStatusObj?.action;
+        
+        // Validaciones simplificadas para manejar null values
         const isPaymentApproved = (preapprovalStatus === 'authorized' && paymentStatus === 'approved');
         const isPaymentPending = (preapprovalStatus === 'authorized' && paymentStatus === 'pending');
         const isPaymentPaused = (preapprovalStatus === 'paused' || paymentStatus === 'paused' || lastStatus === 'paused');
         const isPaymentCancelled = (preapprovalStatus === 'cancelled' || paymentStatus === 'cancelled' || lastStatus === 'cancelled');
-        const isSubscriptionActive = (isPaymentApproved || isPaymentPaused || isPaymentPending) && !isPaymentCancelled;
+        const isNewStore = (paymentStatus === null && preapprovalStatus === null && subscriptionStatus === null);
 
+        console.log("paymentStatus", paymentStatus)
+        console.log("preapprovalStatus", preapprovalStatus)
+        console.log("subscriptionStatus", subscriptionStatus)
         console.log("isPaymentPaused", isPaymentPaused)
         console.log("isPaymentCancelled", isPaymentCancelled)
         console.log("isPaymentPending", isPaymentPending)
         console.log("isPaymentApproved", isPaymentApproved)
-        console.log("isSubscriptionActive", isSubscriptionActive)
+        console.log("isNewStore", isNewStore)
 
+        // Prioridad de estados
         if (isPaymentPaused || isPaymentCancelled) {
           setStatus(Status.PAUSED);
           return
         }
 
-        if (isPaymentPending) {
-          setStatus(Status.PENDING);
-          return
-        }
-
-        // Si el pago está aprobado pero la suscripción no está activa, mostrar todas las rutas
         if (isPaymentApproved) {
           setStatus(Status.APPROVED);
           return
         }
+
+        if (isPaymentPending || isNewStore) {
+          setStatus(Status.PENDING);
+          return
+        }
+
+        // Estado por defecto si no se cumple ninguna condición
+        setStatus(Status.PENDING);
 
       } catch (error) {
         console.error("Error fetching theme:", error);
