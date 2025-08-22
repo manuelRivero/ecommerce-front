@@ -58,6 +58,9 @@ const CreateStorePage = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [verifyingSubdomain, setVerifyingSubdomain] = useState(false);
+  const [subdomainVerified, setSubdomainVerified] = useState(false);
+  const [subdomainError, setSubdomainError] = useState<string | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -116,6 +119,50 @@ const CreateStorePage = () => {
         [field]: ''
       }));
     }
+
+    // Reset subdomain verification when subdomain changes
+    if (field === 'subdomain') {
+      setSubdomainVerified(false);
+      setSubdomainError(null);
+    }
+  };
+
+  const verifySubdomain = async () => {
+    if (!formData.subdomain.trim()) {
+      setSubdomainError('Ingresa un subdominio para verificar');
+      return;
+    }
+
+    try {
+      setVerifyingSubdomain(true);
+      setSubdomainError(null);
+      setSubdomainVerified(false);
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tenant/verify-available-tenant?subdomain=${formData.subdomain}`);
+      const data = await response.json();
+      
+      if (response.ok) {
+        if (data.available) {
+          // El subdominio está disponible
+          setSubdomainVerified(true);
+          setSubdomainError(null);
+        } else {
+          // El subdominio no está disponible
+          setSubdomainError(data.message || 'Este nombre de tienda ya está en uso. Por favor, elige otro subdominio.');
+          setSubdomainVerified(false);
+        }
+      } else {
+        // Error en la respuesta
+        setSubdomainError(data.message || 'Error al verificar el subdominio. Por favor, intenta de nuevo.');
+        setSubdomainVerified(false);
+      }
+    } catch (error) {
+      console.error('Error verifying subdomain:', error);
+      setSubdomainError('Error de conexión. Por favor, verifica tu conexión e intenta de nuevo.');
+      setSubdomainVerified(false);
+    } finally {
+      setVerifyingSubdomain(false);
+    }
   };
 
   const validateStep = (step: number): boolean => {
@@ -129,6 +176,8 @@ const CreateStorePage = () => {
           newErrors.subdomain = 'Solo letras minúsculas, números y guiones';
         } else if (formData.subdomain.length < 3) {
           newErrors.subdomain = 'Mínimo 3 caracteres';
+        } else if (!subdomainVerified) {
+          newErrors.subdomain = 'Debes verificar que el subdominio esté disponible';
         }
         if (!formData.config.metadata.title.trim()) {
           newErrors['config.metadata.title'] = 'El nombre de la tienda es requerido';
@@ -214,6 +263,7 @@ const CreateStorePage = () => {
         return formData.subdomain.trim() !== '' && 
                /^[a-z0-9-]+$/.test(formData.subdomain) && 
                formData.subdomain.length >= 3 &&
+               subdomainVerified &&
                formData.config.metadata.title.trim() !== '';
       
              case 1: // Información de Contacto
@@ -320,13 +370,26 @@ const CreateStorePage = () => {
                 label="Subdominio"
                 value={formData.subdomain}
                 onChange={(e) => handleInputChange('subdomain', e.target.value.toLowerCase())}
-                error={!!errors.subdomain}
-                helperText={errors.subdomain || `${formData.subdomain}.tiendapro.com.ar`}
+                error={!!errors.subdomain || !!subdomainError}
+                helperText={
+                  subdomainError || 
+                  errors.subdomain || 
+                  (subdomainVerified ? '✅ Subdominio disponible' : `${formData.subdomain}.tiendapro.com.ar`)
+                }
                 InputProps={{
                   endAdornment: <InputAdornment position="end">.tiendapro.com.ar</InputAdornment>,
                 }}
                 placeholder="mi-tienda"
               />
+              <Button
+                variant="outlined"
+                onClick={verifySubdomain}
+                disabled={verifyingSubdomain || !formData.subdomain.trim() || !/^[a-z0-9-]+$/.test(formData.subdomain) || formData.subdomain.length < 3}
+                startIcon={verifyingSubdomain ? <CircularProgress size={16} /> : null}
+                sx={{ mt: 1, width: '100%' }}
+              >
+                {verifyingSubdomain ? 'Verificando...' : 'Verificar Disponibilidad'}
+              </Button>
             </Grid>
             
             <Grid item xs={12} md={6}>
@@ -898,6 +961,7 @@ const CreateStorePage = () => {
                   <Button
                     variant="contained"
                     onClick={handleNext}
+                    disabled={activeStep === 0 && !subdomainVerified}
                     endIcon={<ArrowForward />}
                     sx={{
                       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -909,9 +973,13 @@ const CreateStorePage = () => {
                       '&:hover': {
                         background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
                       },
+                      '&:disabled': {
+                        background: 'rgba(0, 0, 0, 0.12)',
+                        color: 'rgba(0, 0, 0, 0.38)',
+                      },
                     }}
                   >
-                    Siguiente
+                    {activeStep === 0 && !subdomainVerified ? 'Verifica el subdominio primero' : 'Siguiente'}
                   </Button>
                 )}
               </Box>
