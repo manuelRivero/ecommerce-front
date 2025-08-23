@@ -42,6 +42,8 @@ import {
 import { useRouter } from 'next/navigation';
 import { createStore } from '@/client/tenants';
 import MobileStepper from '@/components/landingComponents/mobileStepper';
+import Header from '@/app/components/Header';
+import Footer from '@/app/components/Footer';
 
 const steps = [
   'Información de la Tienda',
@@ -815,13 +817,16 @@ const CreateStorePage = () => {
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        py: 4,
-      }}
-    >
+    <>
+      <Header />
+      <Box
+        sx={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          pt: { xs: 8, md: 10 },
+          pb: 4,
+        }}
+      >
       <Container maxWidth="md">
         <Box sx={{ mb: { xs: 2, md: 4 }, textAlign: 'center' }}>
           <Box
@@ -1144,8 +1149,10 @@ const CreateStorePage = () => {
             </Button>
           </DialogActions>
         </Dialog>
-     </Box>
-   );
- };
+      </Box>
+      <Footer />
+    </>
+  );
+};
 
 export default CreateStorePage;

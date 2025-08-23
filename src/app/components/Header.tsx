@@ -68,7 +68,7 @@ const Header = () => {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
       <Box component="a" href="/" sx={{ textDecoration: 'none', marginTop: 2, display: 'flex', justifyContent: 'center' }}>
-        {<img src={scrolled ? logoAlt.src : logo.src} alt="logo" style={{ width: '60px' }} />}
+        {<img src={logoAlt.src} alt="logo" style={{ width: '60px' }} />}
       </Box>
       <List>
         {menuItems.map((item) => (

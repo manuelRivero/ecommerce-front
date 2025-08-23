@@ -41,31 +41,19 @@ const Features = () => {
       icon: <Payment sx={{ fontSize: 40, color: 'primary.main' }} />,
       title: 'Proceso de Pago Seguro',
       description: 'Integración con Mercado Pago para transacciones seguras y confiables.',
-      benefits: ['Pagos seguros', 'Protección al comprador', 'Devoluciones automáticas'],
-    },
-    {
-      icon: <Analytics sx={{ fontSize: 40, color: 'primary.main' }} />,
-      title: 'Analytics y Optimización',
-      description: 'Métricas detalladas para tomar decisiones basadas en evidencia real.',
-      benefits: ['Métricas de ventas', 'Comportamiento de clientes', 'Optimización continua'],
+      benefits: ['Pagos seguros', 'Protección al comprador'],
     },
     {
       icon: <Security sx={{ fontSize: 40, color: 'primary.main' }} />,
       title: 'Seguridad y Confiabilidad',
-      description: 'Protección de datos y cumplimiento de normativas de seguridad.',
-      benefits: ['Datos protegidos', 'Encriptación', 'Cumplimiento normativo'],
+      description: 'Protección de datos y altas normativas de seguridad.',
+      benefits: ['Datos protegidos', 'Encriptación',],
     },
     {
       icon: <Speed sx={{ fontSize: 40, color: 'primary.main' }} />,
       title: 'Rendimiento Optimizado',
       description: 'Carga rápida y experiencia fluida en todos los dispositivos.',
       benefits: ['Carga rápida', 'Responsive design', 'Optimización móvil'],
-    },
-    {
-      icon: <Support sx={{ fontSize: 40, color: 'primary.main' }} />,
-      title: 'Atención Automatizada',
-      description: 'Chatbot inteligente disponible 24/7 para asistir a tus clientes.',
-      benefits: ['Soporte 24/7', 'Respuestas automáticas', 'Integración WhatsApp'],
     },
   ];
 

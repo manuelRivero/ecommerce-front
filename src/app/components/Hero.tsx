@@ -42,7 +42,7 @@ const Hero = () => {
         },
       }}
     >
-      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, paddingBottom: {xs: 10, md: 0}, marginTop: {xs: 10, md: 0} }}>
         <Grid container spacing={4} alignItems="center">
           <Grid item xs={12} md={6}>
             <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
@@ -139,7 +139,7 @@ const Hero = () => {
               <Box
                 sx={{
                   zIndex: 10,
-                  padding: 3,
+                  padding: {xs: 2, md: 3},
                   alignItems: 'normal !important',
                   background: 'rgba(255, 255, 255, 0.1)',
                   borderRadius: 10,
@@ -154,7 +154,7 @@ const Hero = () => {
               <Box
                 sx={{
                   zIndex: 10,
-                  padding: 3,
+                  padding: {xs: 2, md: 3},
                   boxSizing: 'border-box',
                   alignItems: 'normal !important',
                   background: 'rgba(255, 255, 255, 0.1)',
@@ -169,7 +169,7 @@ const Hero = () => {
               <Box
                 sx={{
                   zIndex: 10,
-                  padding: 3,
+                  padding: {xs: 2, md: 3},
                   boxSizing: 'border-box',
                   alignItems: 'normal !important',
                   background: 'rgba(255, 255, 255, 0.1)',
