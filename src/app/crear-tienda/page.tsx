@@ -41,6 +41,7 @@ import {
 } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { createStore } from '@/client/tenants';
+import MobileStepper from '@/components/landingComponents/mobileStepper';
 
 const steps = [
   'Información de la Tienda',
@@ -822,7 +823,7 @@ const CreateStorePage = () => {
       }}
     >
       <Container maxWidth="md">
-        <Box sx={{ mb: 4, textAlign: 'center' }}>
+        <Box sx={{ mb: { xs: 2, md: 4 }, textAlign: 'center' }}>
           <Box
             sx={{
               display: 'inline-flex',
@@ -833,8 +834,8 @@ const CreateStorePage = () => {
           >
             <Box
               sx={{
-                width: 60,
-                height: 60,
+                width: { xs: 50, md: 60 },
+                height: { xs: 50, md: 60 },
                 borderRadius: '50%',
                 background: 'rgba(255, 255, 255, 0.2)',
                 display: 'flex',
@@ -843,14 +844,14 @@ const CreateStorePage = () => {
                 backdropFilter: 'blur(10px)',
               }}
             >
-              <Store sx={{ fontSize: 30, color: 'white' }} />
+              <Store sx={{ fontSize: { xs: 24, md: 30 }, color: 'white' }} />
             </Box>
             <Typography
               variant="h3"
               sx={{
                 fontWeight: 700,
                 color: 'white',
-                fontSize: { xs: '2rem', md: '3rem' },
+                fontSize: { xs: '1.75rem', md: '3rem' },
               }}
             >
               Crea tu Tienda
@@ -862,6 +863,7 @@ const CreateStorePage = () => {
               color: 'rgba(255, 255, 255, 0.9)',
               maxWidth: 600,
               mx: 'auto',
+              fontSize: { xs: '1rem', md: '1.25rem' },
             }}
           >
             Configura tu tienda online en minutos y comienza a vender
@@ -877,9 +879,19 @@ const CreateStorePage = () => {
             border: '1px solid rgba(255, 255, 255, 0.2)',
           }}
         >
-          <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-                         {/* Stepper */}
-             <Box sx={{ mb: 4 }}>
+          <CardContent sx={{ p: { xs: 2, md: 4 } }}>
+            {/* Mobile Stepper */}
+            <MobileStepper
+              steps={steps}
+              activeStep={activeStep}
+              onStepClick={handleStepClick}
+              onBack={handleBack}
+              isStepComplete={isStepComplete}
+              showBackButton={activeStep > 0}
+            />
+            
+            {/* Desktop Stepper */}
+            <Box sx={{ mb: 4, display: { xs: 'none', md: 'block' } }}>
                <Stepper activeStep={activeStep} alternativeLabel>
                  {steps.map((label, index) => (
                    <Step key={label}>
@@ -918,7 +930,7 @@ const CreateStorePage = () => {
             )}
 
             {/* Step Content */}
-            <Box sx={{ mb: 4 }}>
+            <Box sx={{ mb: { xs: 2, md: 4 } }}>
               {renderStepContent(activeStep)}
             </Box>
 
