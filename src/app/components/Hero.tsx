@@ -12,7 +12,10 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { ArrowForward, PlayArrow } from '@mui/icons-material';
-
+import heroImage from '@/assets/images/logo-white-medium.svg';
+import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
+import AddBusinessIcon from '@mui/icons-material/AddBusiness';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 const Hero = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -53,10 +56,8 @@ const Hero = () => {
                   textShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
                 }}
               >
-                Transforma tu negocio en una{' '}
-                <span className="gradient-text" style={{ color: 'white' }}>
-                  tienda online
-                </span>{' '}
+                Transforma tu negocio en una
+                tienda online
                 profesional
               </Typography>
 
@@ -124,21 +125,70 @@ const Hero = () => {
             <Box
               sx={{
                 display: 'flex',
-                justifyContent: { xs: 'center', md: 'flex-end' },
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: 4,
+                justifyContent: 'center',
                 mt: { xs: 4, md: 0 },
               }}
             >
               <Box
                 sx={{
-                  width: { xs: '100%', md: '80%' },
-                  maxWidth: 500,
-                  height: 400,
+                  zIndex: 10,
+                  padding: 3,
+                  alignItems: 'normal !important',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: 10,
+                  backdropFilter: 'blur(10px)',
+                  border: '10px solid rgba(255, 255, 255, 0.2)',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
+                <AddBusinessIcon sx={{ fontSize: 40, color: 'white' }} />
+              </Box>
+              <Box
+                sx={{
+                  zIndex: 10,
+                  padding: 3,
+                  boxSizing: 'border-box',
+                  alignItems: 'normal !important',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: 10,
+                  border: '10px solid rgba(255, 255, 255, 0.2)',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
+                <ShoppingCartCheckoutIcon sx={{ fontSize: 40, color: 'white' }} />
+              </Box>
+              <Box
+                sx={{
+                  zIndex: 10,
+                  padding: 3,
+                  boxSizing: 'border-box',
+                  alignItems: 'normal !important',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: 10,
+                  border: '10px solid rgba(255, 255, 255, 0.2)',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
+                <MonetizationOnIcon sx={{ fontSize: 40, color: 'white' }} />
+              </Box>
+              <Box
+                sx={{
+                  maxWidth: '400px',
+                  zIndex: 1,
+                  padding: 3,
+                  boxSizing: 'border-box',
+                  alignItems: 'normal !important',
                   background: 'rgba(255, 255, 255, 0.1)',
                   borderRadius: 4,
                   backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  border: '10px solid rgba(255, 255, 255, 0.2)',
                   display: 'flex',
-                  alignItems: 'center',
                   justifyContent: 'center',
                   position: 'relative',
                   overflow: 'hidden',
@@ -147,8 +197,8 @@ const Hero = () => {
                     position: 'absolute',
                     top: -50,
                     right: -50,
-                    width: 100,
-                    height: 100,
+                    width: 150,
+                    height: 150,
                     background: 'rgba(255, 255, 255, 0.1)',
                     borderRadius: '50%',
                   },
@@ -164,18 +214,9 @@ const Hero = () => {
                   },
                 }}
               >
-                <Typography
-                  variant="h4"
-                  sx={{
-                    color: 'white',
-                    textAlign: 'center',
-                    fontWeight: 600,
-                    zIndex: 1,
-                  }}
-                >
-                  🛒 Ecommerce Platform
-                </Typography>
+                <img src={heroImage.src} style={{ width: '100%', height: '100%' }} alt="Hero Image" />
               </Box>
+
             </Box>
           </Grid>
         </Grid>
