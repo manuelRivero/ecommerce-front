@@ -26,12 +26,18 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import ExtensionIcon from '@mui/icons-material/Extension';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
+import HomeIcon from '@mui/icons-material/Home';
+import { usePathname } from 'next/navigation';
 
 const Header = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+
+  // Detectar si estamos en la página de condiciones de uso
+  const isConditionsPage = pathname === '/condiciones-de-uso';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,7 +52,13 @@ const Header = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const menuItems = [
+  const menuItems = isConditionsPage ? [
+    { text: 'Inicio', href: '/', icon: <HomeIcon /> },
+    { text: 'Características', href: '/#features', icon: <ExtensionIcon /> },
+    { text: 'Beneficios', href: '/#benefits', icon: <TipsAndUpdatesIcon /> },
+    { text: 'Precios', href: '/#pricing', icon: <LocalOfferIcon /> },
+    { text: 'Contacto', href: '/#contact', icon: <EmailIcon /> },
+  ] : [
     { text: 'Características', href: '#features', icon: <ExtensionIcon /> },
     { text: 'Beneficios', href: '#benefits', icon: <TipsAndUpdatesIcon /> },
     { text: 'Precios', href: '#pricing', icon: <LocalOfferIcon /> },
@@ -55,13 +67,15 @@ const Header = () => {
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-      {scrolled ? <img src={logoAlt.src} alt="logo" /> : <img src={logo.src} alt="logo" />}
+      <Box component="a" href="/" sx={{ textDecoration: 'none', marginTop: 2, display: 'flex', justifyContent: 'center' }}>
+        {<img src={scrolled ? logoAlt.src : logo.src} alt="logo" style={{ width: '60px' }} />}
+      </Box>
       <List>
         {menuItems.map((item) => (
           <ListItem key={item.text} component="a" href={item.href}>
             <ListItemText primary={item.text} />
             <ListItemIcon>
-              <EmailIcon />
+              {item.icon}
             </ListItemIcon>
           </ListItem>
         ))}
@@ -78,12 +92,15 @@ const Header = () => {
           backdropFilter: scrolled ? 'blur(10px)' : 'none',
           boxShadow: scrolled ? '0 1px 3px rgba(0, 0, 0, 0.1)' : 'none',
           transition: 'all 0.3s ease-in-out',
+          borderRadius: 0,
         }}
         elevation={0}
       >
         <Container maxWidth="lg">
           <Toolbar sx={{ justifyContent: 'space-between', py: 1 }}>
-            <img src={scrolled ? logoAlt.src : logo.src} style={{ width: '60px' }} alt="logo" />
+            <Box component="a" href="/" sx={{ textDecoration: 'none' }}>
+              <img src={scrolled ? logoAlt.src : logo.src} style={{ width: '60px' }} alt="logo" />
+            </Box>
 
 
             {isMobile ? (
@@ -117,25 +134,21 @@ const Header = () => {
                     {item.text}
                   </Button>
                 ))}
-                <Tooltip title="Comenzar" arrow PopperProps={{ style: { marginTop: -12 } }} 
-                >
-                  <Box>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        ml: 2,
-                        backgroundColor: scrolled ? 'primary.main' : 'white',
-                        color: scrolled ? 'white' : 'primary.main',
-                        '&:hover': {
-                          backgroundColor: scrolled ? 'primary.dark' : 'grey.100',
-                        },
-                      }}
-                    >
-                      <RocketLaunchIcon />
-                    </Button>
-
-                  </Box>
-                </Tooltip>
+                                 <Tooltip title="¡Crear tienda ahora!" arrow>
+                   <Button
+                     variant="contained"
+                     sx={{
+                       ml: 2,
+                       backgroundColor: scrolled ? 'primary.main' : 'white',
+                       color: scrolled ? 'white' : 'primary.main',
+                       '&:hover': {
+                         backgroundColor: scrolled ? 'primary.dark' : 'grey.100',
+                       },
+                     }}
+                   >
+                     <RocketLaunchIcon />
+                   </Button>
+                 </Tooltip>
               </Box>
             )}
           </Toolbar>
@@ -151,7 +164,11 @@ const Header = () => {
         }}
         sx={{
           display: { xs: 'block', md: 'none' },
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
+            width: 240,
+            borderRadius: 0,
+          },
         }}
       >
         {drawer}

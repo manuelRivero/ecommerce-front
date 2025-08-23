@@ -11,11 +11,12 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import { ArrowForward, PlayArrow } from '@mui/icons-material';
+import { ArrowForward, PlayArrow, RocketLaunch } from '@mui/icons-material';
 import heroImage from '@/assets/images/logo-white-medium.svg';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import Link from 'next/link';
 const Hero = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -82,7 +83,7 @@ const Hero = () => {
                 <Button
                   variant="contained"
                   size="large"
-                  endIcon={<ArrowForward />}
+                  endIcon={<RocketLaunch sx={{ fontSize: 20, marginLeft: 1 }} />}
                   sx={{
                     backgroundColor: 'white',
                     color: 'primary.main',
@@ -95,8 +96,11 @@ const Hero = () => {
                       transform: 'translateY(-2px)',
                     },
                   }}
+                  component={Link}
+                  href="/crear-tienda"
                 >
-                  Comenzar Ahora
+                  ¡Crear tienda ahora!
+                  
                 </Button>
                 <Button
                   variant="outlined"

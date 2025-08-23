@@ -57,6 +57,7 @@ const Footer = () => {
     {
       title: 'Legal',
       links: [
+        { text: 'Condiciones de Uso', href: '/condiciones-de-uso' },
         { text: 'Términos de Servicio', href: '#terms' },
         { text: 'Política de Privacidad', href: '#privacy' },
         { text: 'Cookies', href: '#cookies' },
