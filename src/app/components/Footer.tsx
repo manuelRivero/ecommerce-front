@@ -48,20 +48,15 @@ const Footer = () => {
     {
       title: 'Empresa',
       links: [
-        { text: 'Acerca de Nosotros', href: '#about' },
-        { text: 'Blog', href: '#blog' },
-        { text: 'Carreras', href: '#careers' },
-        { text: 'Prensa', href: '#press' },
+        { text: 'Acerca de Nosotros', href: '/acerca-de-nosotros' },
       ],
     },
     {
       title: 'Legal',
       links: [
         { text: 'Condiciones de Uso', href: '/condiciones-de-uso' },
-        { text: 'Términos de Servicio', href: '#terms' },
-        { text: 'Política de Privacidad', href: '#privacy' },
-        { text: 'Cookies', href: '#cookies' },
-        { text: 'GDPR', href: '#gdpr' },
+        { text: 'Términos de Servicio', href: '/terminos-de-servicio' },
+        { text: 'Políticas de Privacidad', href: '/politicas-de-privacidad' },
       ],
     },
   ];

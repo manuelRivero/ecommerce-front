@@ -11,7 +11,7 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import { ArrowForward, PlayArrow, RocketLaunch } from '@mui/icons-material';
+import { ArrowForward, PlayArrow, RocketLaunch, CheckCircle } from '@mui/icons-material';
 import heroImage from '@/assets/images/logo-white-medium.svg';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 import AddBusinessIcon from '@mui/icons-material/AddBusiness';
@@ -66,7 +66,7 @@ const Hero = () => {
                 variant="h5"
                 sx={{
                   color: 'rgba(255, 255, 255, 0.9)',
-                  mb: 4,
+                  mb: 3,
                   fontSize: { xs: '1.1rem', md: '1.25rem' },
                   lineHeight: 1.6,
                   textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
@@ -74,6 +74,34 @@ const Hero = () => {
               >
                 Sistema completo de ecommerce que maximiza ventas, optimiza operaciones y genera confianza en los clientes.
               </Typography>
+
+              {/* Mensaje destacado de 0% comisión */}
+              <Box
+                sx={{
+                  mb: 4,
+                  p: 2,
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  borderRadius: 2,
+                  border: '2px solid rgba(255, 255, 255, 0.3)',
+                  backdropFilter: 'blur(10px)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 1,
+                }}
+              >
+                <CheckCircle sx={{ color: 'white', fontSize: 24 }} />
+                <Typography
+                  variant="h6"
+                  sx={{
+                    color: 'white',
+                    fontWeight: 600,
+                    fontSize: { xs: '1rem', md: '1.1rem' },
+                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                  }}
+                >
+                  ¡0% comisión por ventas! - Mantén el 100% de tus ganancias
+                </Typography>
+              </Box>
 
               <Stack
                 direction={{ xs: 'column', sm: 'row' }}

@@ -36,8 +36,8 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
-  // Detectar si estamos en la página de condiciones de uso
-  const isConditionsPage = pathname === '/condiciones-de-uso';
+  // Detectar si estamos en la página principal
+  const isHomePage = pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,17 +52,17 @@ const Header = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const menuItems = isConditionsPage ? [
+  const menuItems = isHomePage ? [
+    { text: 'Características', href: '#features', icon: <ExtensionIcon /> },
+    { text: 'Beneficios', href: '#benefits', icon: <TipsAndUpdatesIcon /> },
+    { text: 'Precios', href: '#pricing', icon: <LocalOfferIcon /> },
+    { text: 'Contacto', href: '#contact', icon: <EmailIcon /> },
+  ] : [
     { text: 'Inicio', href: '/', icon: <HomeIcon /> },
     { text: 'Características', href: '/#features', icon: <ExtensionIcon /> },
     { text: 'Beneficios', href: '/#benefits', icon: <TipsAndUpdatesIcon /> },
     { text: 'Precios', href: '/#pricing', icon: <LocalOfferIcon /> },
     { text: 'Contacto', href: '/#contact', icon: <EmailIcon /> },
-  ] : [
-    { text: 'Características', href: '#features', icon: <ExtensionIcon /> },
-    { text: 'Beneficios', href: '#benefits', icon: <TipsAndUpdatesIcon /> },
-    { text: 'Precios', href: '#pricing', icon: <LocalOfferIcon /> },
-    { text: 'Contacto', href: '#contact', icon: <EmailIcon /> },
   ];
 
   const drawer = (
@@ -136,6 +136,8 @@ const Header = () => {
                 ))}
                                  <Tooltip title="¡Crear tienda ahora!" arrow>
                    <Button
+                     component="a"
+                     href="/crear-tienda"
                      variant="contained"
                      sx={{
                        ml: 2,

@@ -266,10 +266,15 @@ const CondicionesDeUso = () => {
                   {sections.map((section, index) => (
                     <ListItem
                       key={index}
-                      button
+                      component="button"
                       sx={{
                         borderRadius: 1,
                         mb: 0.5,
+                        textAlign: 'left',
+                        width: '100%',
+                        border: 'none',
+                        background: 'transparent',
+                        cursor: 'pointer',
                         '&:hover': {
                           backgroundColor: 'primary.light',
                           color: 'primary.contrastText',
@@ -312,17 +317,29 @@ const CondicionesDeUso = () => {
           )}
         </Box>
 
-        {/* Footer */}
-        <Box sx={{ mt: 6, textAlign: 'center' }}>
-          <Typography
-            variant="body2"
-            sx={{
-              color: 'rgba(255, 255, 255, 0.8)',
-            }}
-          >
-            Para consultas sobre estas condiciones, contacte a soporte@tiendapro.com.ar
-          </Typography>
-                 </Box>
+                 {/* Footer Section */}
+         <Box sx={{ mt: 6, textAlign: 'center' }}>
+           <Card
+             sx={{
+               background: 'rgba(255, 255, 255, 0.95)',
+               backdropFilter: 'blur(10px)',
+               border: '1px solid rgba(255, 255, 255, 0.2)',
+               borderRadius: 3,
+             }}
+           >
+             <CardContent sx={{ p: 4 }}>
+               <Typography variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
+                 TiendaPro - Plataforma de E-commerce
+               </Typography>
+               <Typography variant="body1" sx={{ mb: 2, color: 'text.secondary' }}>
+                 Facilitando el comercio digital en Argentina
+               </Typography>
+               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                 Última actualización: {new Date().toLocaleDateString('es-AR')}
+               </Typography>
+             </CardContent>
+           </Card>
+         </Box>
        </Container>
      </Box>
      <Footer />
