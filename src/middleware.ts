@@ -3,16 +3,23 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const hostname = request.headers.get('host') || '';
 
-  // Subdomain handling for tenant stores
+  // Skip for localhost and known domains
+  if (hostname.includes('localhost') || hostname.includes('vercel.app') || hostname.includes('yourdomain.com')) {
+    return NextResponse.next();
+  }
+
+  // Handle tenant store subdomains (e.g., margarita.tiendapro.com.ar)
+  // These should NOT redirect, let the app handle the subdomain internally
+  if (hostname.includes('tiendapro.com.ar') && !hostname.startsWith('www.') && !hostname.startsWith('api.')) {
+    // This is a tenant store subdomain, don't redirect - let the app handle it
+    return NextResponse.next();
+  }
+
+  // Handle other subdomains for main app
   if (pathname === '/') {
-    const hostname = request.headers.get('host') || '';
     const subdomain = hostname.split('.')[0];
-    
-    // Skip for localhost and known domains
-    if (hostname.includes('localhost') || hostname.includes('vercel.app') || hostname.includes('yourdomain.com')) {
-      return NextResponse.next();
-    }
     
     // If there's a subdomain, redirect to the subdomain route
     if (subdomain && subdomain !== 'www' && subdomain !== 'api') {
