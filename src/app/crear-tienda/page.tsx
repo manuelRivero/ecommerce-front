@@ -558,6 +558,7 @@ const CreateStorePage = () => {
                 error={!!errors['config.address']}
                 helperText={errors['config.address']}
                 placeholder="Av. Corrientes 1234"
+                required
               />
             </Grid>
             
@@ -570,6 +571,7 @@ const CreateStorePage = () => {
                 error={!!errors['config.province']}
                 helperText={errors['config.province']}
                 placeholder="Buenos Aires"
+                required
               />
             </Grid>
             
@@ -582,6 +584,7 @@ const CreateStorePage = () => {
                 error={!!errors['config.locality']}
                 helperText={errors['config.locality']}
                 placeholder="Ciudad Autónoma de Buenos Aires"
+                required
               />
             </Grid>
             
@@ -594,6 +597,7 @@ const CreateStorePage = () => {
                 error={!!errors['config.postalCode']}
                 helperText={errors['config.postalCode']}
                 placeholder="1001"
+                required
               />
             </Grid>
           </Grid>
