@@ -48,7 +48,7 @@ const Pricing = () => {
     const fetchPlans = async () => {
       try {
         setLoading(true);
-        const response = await getAllPlans();
+        const response = await getAllPlans({searchAvailable:true});
         console.log('Plans response:', response.data);
         setPlans(response.data.plans || []);
       } catch (err) {

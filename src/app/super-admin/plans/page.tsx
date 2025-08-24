@@ -22,7 +22,6 @@ import {
   Switch,
   FormControlLabel,
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useRouter } from 'next/navigation';
 import { getAllPlans, Plan } from '@/client';
@@ -43,7 +42,7 @@ export default function PlansListPage() {
       setLoading(true);
       setError(null);
       
-      const response = await getAllPlans();
+      const response = await getAllPlans({searchAvailable:false});
       setPlans(response.data.plans);
     } catch (error: any) {
       console.error('Error loading plans:', error);
@@ -54,23 +53,31 @@ export default function PlansListPage() {
     }
   };
 
-  const handleEdit = (planId: string) => {
-    router.push(`/super-admin/create-plan?id=${planId}`);
-  };
-
   const handleView = (plan: Plan) => {
     router.push(`/super-admin/plan-detail?id=${plan._id}`);
   };
 
   const handleToggleStatus = async (planId: string, currentStatus: string) => {
     try {
-      // TODO: Implement toggle API call
-      // await togglePlanStatus(planId, currentStatus === 'active' ? 'inactive' : 'active');
+      const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
       
-      // Update local state for now
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/plans/edit/${planId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('super-admin-token')}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar el estado del plan');
+      }
+
+      // Update local state after successful API call
       setPlans(prev => prev.map(plan => 
         plan._id === planId 
-          ? { ...plan, status: currentStatus === 'active' ? 'inactive' : 'active' }
+          ? { ...plan, status: newStatus }
           : plan
       ));
     } catch (error: any) {
@@ -241,13 +248,6 @@ export default function PlansListPage() {
                         color="info"
                       >
                         <VisibilityIcon />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleEdit(plan._id)}
-                        color="primary"
-                      >
-                        <EditIcon />
                       </IconButton>
                     </Box>
                   </TableCell>

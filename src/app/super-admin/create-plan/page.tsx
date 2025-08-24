@@ -29,8 +29,8 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { getPlanFeatures, Feature, createSubscriptionPlan, getPlanById, updateSubscriptionPlan, Plan } from '@/client';
+import { useRouter } from 'next/navigation';
+import { getPlanFeatures, Feature, createSubscriptionPlan } from '@/client';
 
 interface FeatureLimit {
   max: number;
@@ -60,7 +60,26 @@ interface PlanFormData {
 const fetchFeatures = async (): Promise<Feature[]> => {
   try {
     const response = await getPlanFeatures();
-    return response.data.data;
+    
+    console.log('Respuesta completa de la API:', response);
+    console.log('response.data:', response.data);
+    
+    // Validate response structure
+    if (!response?.data?.success) {
+      console.error('Respuesta sin success:', response?.data);
+      throw new Error('Error en la respuesta del servidor');
+    }
+    
+    // The backend returns data directly as an array, not nested under data.data
+    const features = response.data.data;
+    console.log('Features extraídas:', features);
+    
+    if (!Array.isArray(features)) {
+      console.error('Features no es un array:', typeof features, features);
+      throw new Error('Formato de datos inválido: se esperaba un array de características');
+    }
+    
+    return features;
   } catch (error) {
     console.error('Error fetching features:', error);
     throw error;
@@ -82,8 +101,6 @@ const defaultValues: PlanFormData = {
 
 export default function CreatePlanPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const planId = searchParams.get('id');
   
   const [features, setFeatures] = useState<Feature[]>([]);
   const [loading, setLoading] = useState(true);
@@ -92,8 +109,6 @@ export default function CreatePlanPage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [submitError, setSubmitError] = useState<string>('');
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentPlan, setCurrentPlan] = useState<Plan | null>(null);
 
   const { control, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<PlanFormData>({
     defaultValues,
@@ -109,69 +124,39 @@ export default function CreatePlanPage() {
       try {
         setError(null);
         
-        // Load features first
+        // Load features
         const fetchedFeatures = await fetchFeatures();
+        
+        // Validate features data
+        if (!fetchedFeatures || !Array.isArray(fetchedFeatures)) {
+          throw new Error('Error al cargar las características: datos inválidos');
+        }
+        
+        console.log('Features cargadas exitosamente:', fetchedFeatures.length, 'características');
         setFeatures(fetchedFeatures);
         
-        // If we have a planId, load the existing plan
-        if (planId) {
-          setIsEditing(true);
-          const planResponse = await getPlanById(planId);
-          const plan = planResponse.data.data;
-          setCurrentPlan(plan);
-          
-          // Populate form with existing plan data
-          setValue('name', plan.name);
-          setValue('description', plan.description);
-          setValue('price', plan.price);
-          setValue('currency', plan.currency);
-          setValue('billingCycle', plan.billingCycle);
-          setValue('status', plan.status);
-          
-          // Map existing plan features to form features
-          const mappedFeatures: PlanFeature[] = fetchedFeatures.map(feature => {
-            const existingPlanFeature = plan.features.find(pf => pf.feature._id === feature._id);
-            if (existingPlanFeature) {
-              return {
-                feature: { ...feature, enabled: true },
-                limits: existingPlanFeature.limits
-              };
-            } else {
-              return {
-                feature: { ...feature, enabled: false },
-                limits: {
-                  max: 0,
-                  min: 0,
-                  unlimited: false
-                }
-              };
-            }
-          });
-          
-          setValue('features', mappedFeatures);
-        } else {
-          // Initialize features array with default values for new plan
-          const initialFeatures: PlanFeature[] = fetchedFeatures.map(feature => ({
-            feature: { ...feature },
-            limits: {
-              max: 0,
-              min: 0,
-              unlimited: false
-            }
-          }));
-          
-          setValue('features', initialFeatures);
-        }
+        // Initialize features array with default values for new plan
+        const initialFeatures: PlanFeature[] = fetchedFeatures.map(feature => ({
+          feature: { ...feature },
+          limits: {
+            max: 0,
+            min: 0,
+            unlimited: false
+          }
+        }));
+        
+        setValue('features', initialFeatures);
       } catch (error: any) {
         console.error('Error loading data:', error);
-        setError('Error al cargar los datos. Por favor, intenta de nuevo.');
+        const errorMessage = error.message || 'Error al cargar los datos. Por favor, intenta de nuevo.';
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
     };
 
     loadData();
-  }, [planId, setValue]);
+  }, [setValue]);
 
   const handleFeatureToggle = (index: number, enabled: boolean) => {
     const currentFeatures = watch('features');
@@ -204,40 +189,30 @@ export default function CreatePlanPage() {
       setSubmitting(true);
       setSubmitError('');
       
-      let response;
-      
-      if (isEditing && planId) {
-        // Update existing plan
-        response = await updateSubscriptionPlan(planId, data);
-      } else {
-        // Create new plan
-        response = await createSubscriptionPlan(data);
-      }
+      const response = await createSubscriptionPlan(data);
       
       if (response.data.success) {
         setShowSuccessModal(true);
         
-        if (!isEditing) {
-          // Reset form after successful creation
-          reset(defaultValues);
-          // Reset features to initial state (all disabled with 0 limits)
-          const resetFeatures: PlanFeature[] = features.map(feature => ({
-            feature: { ...feature, enabled: false },
-            limits: {
-              max: 0,
-              min: 0,
-              unlimited: false
-            }
-          }));
-          setValue('features', resetFeatures);
-        }
+        // Reset form after successful creation
+        reset(defaultValues);
+        // Reset features to initial state (all disabled with 0 limits)
+        const resetFeatures: PlanFeature[] = features.map(feature => ({
+          feature: { ...feature, enabled: false },
+          limits: {
+            max: 0,
+            min: 0,
+            unlimited: false
+          }
+        }));
+        setValue('features', resetFeatures);
       } else {
-        setSubmitError(response.data.message || `Error al ${isEditing ? 'actualizar' : 'crear'} el plan`);
+        setSubmitError(response.data.message || 'Error al crear el plan');
         setShowErrorModal(true);
       }
     } catch (error: any) {
-      console.error(`Error ${isEditing ? 'updating' : 'creating'} plan:`, error);
-      setSubmitError(`Error al ${isEditing ? 'actualizar' : 'crear'} el plan. Por favor, intenta de nuevo.`);
+      console.error('Error creating plan:', error);
+      setSubmitError('Error al crear el plan. Por favor, intenta de nuevo.');
       setShowErrorModal(true);
     } finally {
       setSubmitting(false);
@@ -289,7 +264,7 @@ export default function CreatePlanPage() {
   return (
     <Box sx={{ maxWidth: 1200, margin: '0 auto' }}>
       <Typography variant="h4" gutterBottom>
-        {isEditing ? 'Editar Plan de Suscripción' : 'Crear Nuevo Plan de Suscripción'}
+        Crear Nuevo Plan de Suscripción
       </Typography>
       
       <Paper sx={{ p: 3, mb: 3 }}>
@@ -298,7 +273,7 @@ export default function CreatePlanPage() {
           <Typography variant="h6" gutterBottom>
             Información Básica
           </Typography>
-                    <Grid container spacing={3} sx={{ mb: 3 }}>
+          <Grid container spacing={3} sx={{ mb: 3 }}>
             <Grid item xs={12} md={6}>
               <Controller
                 name="name"
@@ -432,8 +407,6 @@ export default function CreatePlanPage() {
             </Grid>
           </Grid>
 
-
-
           {/* Características del Plan */}
           <Typography variant="h6" gutterBottom>
             Características del Plan
@@ -461,9 +434,9 @@ export default function CreatePlanPage() {
                             )}
                           </Box>
                         }
-                                                 secondary={
-                           <Box>
-                             {planFeature.feature.enabled && (
+                        secondary={
+                          <Box>
+                            {planFeature.feature.enabled && (
                               <Grid container spacing={2} sx={{ mt: 1 }}>
                                 <Grid item xs={12} md={4}>
                                   <FormControlLabel
@@ -538,10 +511,7 @@ export default function CreatePlanPage() {
               disabled={submitting}
               startIcon={submitting ? <CircularProgress size={20} color="inherit" /> : null}
             >
-              {submitting 
-                ? (isEditing ? 'Actualizando Plan...' : 'Creando Plan...') 
-                : (isEditing ? 'Actualizar Plan' : 'Crear Plan')
-              }
+              {submitting ? 'Creando Plan...' : 'Crear Plan'}
             </Button>
           </Box>
         </form>
@@ -550,11 +520,11 @@ export default function CreatePlanPage() {
       {/* Modal de Éxito */}
       <Dialog open={showSuccessModal} onClose={() => setShowSuccessModal(false)} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ color: 'success.main' }}>
-          ¡{isEditing ? 'Plan Actualizado' : 'Plan Creado'} Exitosamente!
+          ¡Plan Creado Exitosamente!
         </DialogTitle>
         <DialogContent>
           <Typography>
-            El plan de suscripción ha sido {isEditing ? 'actualizado' : 'creado'} correctamente y está listo para ser utilizado.
+            El plan de suscripción ha sido creado correctamente y está listo para ser utilizado.
           </Typography>
         </DialogContent>
         <DialogActions>

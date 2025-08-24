@@ -1,63 +1,37 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export const config = {
-  matcher: [
-    "/((?!api/|_next/|_static/|super-admin|subdomain-not-found|crear-tienda|[\\w-]+\\.\\w+).*)",
-  ],
-};
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
-export async function middleware(req: NextRequest) {
-  const url = req.nextUrl;
-  let hostname = req.headers.get("host") || '';
-
-  // Permitir acceso directo a /super-admin y subrutas
-  if (url.pathname.startsWith('/super-admin')) {
-    return NextResponse.next();
-  }
-
-  // Permitir acceso directo a /crear-tienda
-  if (url.pathname.startsWith('/crear-tienda')) {
-    return NextResponse.next();
-  }
-
-  // Remove port if it exists
-  hostname = hostname.split(':')[0];
-
-  // Define allowed domains (including main domain and localhost)
-  const allowedDomains = ["tiendapro.com.ar", "www.tiendapro.com.ar", "localhost"];
-
-  // Check if the current hostname is in the list of allowed domains
-  const isMainDomain = allowedDomains.includes(hostname);
-
-  // Extract subdomain if not a main domain
-  const subdomain = isMainDomain ? null : hostname.split('.')[0];
-
-  console.log('Middleware: Hostname:', hostname);
-  console.log('Middleware: Subdomain:', subdomain);
-
-  // If it's a main domain, allow the request to proceed
-  if (isMainDomain) {
-    console.log('Middleware: Main domain detected, passing through');
-    return NextResponse.next();
-  }
-
-  // Handle subdomain logic
-  if (subdomain) {
-    try {
-      // Usar fetch estándar para verificar si el subdominio existe
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tenant/verify-tenant?subdomain=${subdomain}`);
-      if (response.ok) {
-        console.log('Middleware: Valid subdomain detected, rewriting URL');
-        // Rewrite the URL to a dynamic route based on the subdomain
-        return NextResponse.rewrite(new URL(`/${subdomain}${url.pathname}?${url.search}`, req.url));
-      }
-    } catch (error) {
-      console.error('Middleware: Error fetching tenant:', error);
+  // Subdomain handling for tenant stores
+  if (pathname === '/') {
+    const hostname = request.headers.get('host') || '';
+    const subdomain = hostname.split('.')[0];
+    
+    // Skip for localhost and known domains
+    if (hostname.includes('localhost') || hostname.includes('vercel.app') || hostname.includes('yourdomain.com')) {
+      return NextResponse.next();
+    }
+    
+    // If there's a subdomain, redirect to the subdomain route
+    if (subdomain && subdomain !== 'www' && subdomain !== 'api') {
+      return NextResponse.redirect(new URL(`/${subdomain}`, request.url));
     }
   }
 
-  console.log('Middleware: Invalid subdomain, redirecting to subdomain-not-found page');
-  // If subdomain is invalid, redirect to the subdomain-not-found page
-  return NextResponse.rewrite(new URL('/subdomain-not-found', req.url));
+  return NextResponse.next();
 }
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
+};

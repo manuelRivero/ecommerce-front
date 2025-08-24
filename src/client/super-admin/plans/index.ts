@@ -68,8 +68,8 @@ export const createSubscriptionPlan = async (planData: CreatePlanRequest): Promi
  * Obtiene todos los planes de suscripción
  * @returns Promise con todos los planes
  */
-export const getAllPlans = async (): Promise<AxiosResponse<{plans: Plan[]}>> => {
-  return axiosInstance.get<{plans: Plan[]}>('/plans/get-plans/');
+export const getAllPlans = async ({searchAvailable}:{searchAvailable:boolean}): Promise<AxiosResponse<{plans: Plan[]}>> => {
+  return axiosInstance.get<{plans: Plan[]}>('/plans/get-plans/', {params: {searchAvailable}});
 };
 
 /**
@@ -77,8 +77,8 @@ export const getAllPlans = async (): Promise<AxiosResponse<{plans: Plan[]}>> => 
  * @param planId - ID del plan
  * @returns Promise con el plan específico
  */
-export const getPlanById = async (planId: string): Promise<AxiosResponse<{data: Plan}>> => {
-  return axiosInstance.get<{data: Plan}>(`/plans/get-plan-by-id/${planId}`);
+export const getPlanById = async (planId: string): Promise<AxiosResponse<{plan: Plan}>> => {
+  return axiosInstance.get<{plan: Plan}>(`/plans/get-plan-by-id/${planId}`);
 };
 
 /**
@@ -88,5 +88,5 @@ export const getPlanById = async (planId: string): Promise<AxiosResponse<{data: 
  * @returns Promise con la respuesta del servidor
  */
 export const updateSubscriptionPlan = async (planId: string, planData: CreatePlanRequest): Promise<AxiosResponse<CreatePlanResponse>> => {
-  return axiosInstance.put<CreatePlanResponse>(`/plans/${planId}`, planData);
+  return axiosInstance.put<CreatePlanResponse>(`/plans/edit/${planId}`, planData);
 }; 
