@@ -39,10 +39,7 @@ const Footer = () => {
     {
       title: 'Soporte',
       links: [
-        { text: 'Centro de Ayuda', href: '#help' },
-        { text: 'Documentación', href: '#docs' },
-        { text: 'Contacto', href: '#contact' },
-        { text: 'Estado del Sistema', href: '#status' },
+        { text: 'Contacto', href: '/contacto' },
       ],
     },
     {

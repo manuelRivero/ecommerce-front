@@ -56,13 +56,13 @@ const Header = () => {
     { text: 'Características', href: '#features', icon: <ExtensionIcon /> },
     { text: 'Beneficios', href: '#benefits', icon: <TipsAndUpdatesIcon /> },
     { text: 'Precios', href: '#pricing', icon: <LocalOfferIcon /> },
-    { text: 'Contacto', href: '#contact', icon: <EmailIcon /> },
+    { text: 'Contacto', href: '/contacto', icon: <EmailIcon /> },
   ] : [
     { text: 'Inicio', href: '/', icon: <HomeIcon /> },
     { text: 'Características', href: '/#features', icon: <ExtensionIcon /> },
     { text: 'Beneficios', href: '/#benefits', icon: <TipsAndUpdatesIcon /> },
     { text: 'Precios', href: '/#pricing', icon: <LocalOfferIcon /> },
-    { text: 'Contacto', href: '/#contact', icon: <EmailIcon /> },
+    { text: 'Contacto', href: '/contacto', icon: <EmailIcon /> },
   ];
 
   const drawer = (
