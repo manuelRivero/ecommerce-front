@@ -82,13 +82,13 @@ export async function middleware(req: NextRequest) {
         } else {
           console.log('Subdomain validation failed, redirecting to subdomain-not-found');
           console.log('=== MIDDLEWARE END ===');
-          return NextResponse.redirect(new URL('/subdomain-not-found', `${protocol}://${baseDomain}`));
+          return NextResponse.redirect(new URL('/subdomain-not-found', req.url));
         }
       } catch (error) {
         console.error("Error fetching tenant:", error);
         console.log('API error, redirecting to subdomain-not-found');
         console.log('=== MIDDLEWARE END ===');
-        return NextResponse.redirect(new URL('/subdomain-not-found', `${protocol}://${baseDomain}`));
+        return NextResponse.redirect(new URL('/subdomain-not-found', req.url));
       }
     }
   }
@@ -96,5 +96,5 @@ export async function middleware(req: NextRequest) {
   // Caso 4: Otros dominios (incluyendo localhost) -> redirigir al dominio principal
   console.log('No valid subdomain detected, redirecting to subdomain-not-found');
   console.log('=== MIDDLEWARE END ===');
-  return NextResponse.redirect(new URL('/subdomain-not-found', `${protocol}://${baseDomain}`));
+  return NextResponse.redirect(new URL('/subdomain-not-found', req.url));
 }
