@@ -6,12 +6,12 @@ import ThemeRegistry from './theme-provider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Ecommerce Platform - Transforma tu negocio en una tienda online',
+  title: 'Tienda Pro - Transforma tu negocio en una tienda online',
   description: 'Sistema completo de ecommerce que convierte cualquier negocio en una tienda online profesional y rentable. Gestión de productos, promociones, pagos seguros y más.',
   keywords: 'ecommerce, tienda online, plataforma de ventas, gestión de productos, pagos online, marketing digital',
-  authors: [{ name: 'Ecommerce Platform' }],
+  authors: [{ name: 'Tienda Pro' }],
   openGraph: {
-    title: 'Ecommerce Platform - Transforma tu negocio en una tienda online',
+    title: 'Tienda Pro - Transforma tu negocio en una tienda online',
     description: 'Sistema completo de ecommerce que convierte cualquier negocio en una tienda online profesional y rentable.',
     type: 'website',
     locale: 'es_AR',

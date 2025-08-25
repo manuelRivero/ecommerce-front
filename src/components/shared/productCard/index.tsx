@@ -73,34 +73,34 @@ export default function ProductCard({ data }: Props) {
                 </Typography>
               </Box>
             </Box>
-            <Box
-              sx={{
-                position: "absolute",
-                top: 35,
-                right: 10,
-                flexDirection: "column",
-                display: "flex",
-                alignItems: "end",
-                gap: 1,
-                zIndex: 2,
-              }}
-            >
-              <Box
-                sx={(theme) => ({
-                  padding: 0.5,
-                  borderRadius: 2,
-                  color: theme.palette.primary.contrastText,
-                  background: theme.palette.primary.main,
-                  width: "fit-content",
-                })}
-              >
-                <Typography variant="body1" sx={{ fontSize: 10 }}>
-                  Oferta por tiempo limitado
-                </Typography>
-              </Box>
-            </Box>
           </>
         )}
+        {data.offerDiscount > 0 && <Box
+          sx={{
+            position: "absolute",
+            top: 35,
+            right: 10,
+            flexDirection: "column",
+            display: "flex",
+            alignItems: "end",
+            gap: 1,
+            zIndex: 2,
+          }}
+        >
+          <Box
+            sx={(theme) => ({
+              padding: 0.5,
+              borderRadius: 2,
+              color: theme.palette.primary.contrastText,
+              background: theme.palette.primary.main,
+              width: "fit-content",
+            })}
+          >
+            <Typography variant="body1" sx={{ fontSize: 10 }}>
+              Oferta por tiempo limitado
+            </Typography>
+          </Box>
+        </Box>}
 
         <Box
           sx={{ overflow: "hidden", position: "relative", height: 300 }}

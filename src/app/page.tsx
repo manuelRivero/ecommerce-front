@@ -14,20 +14,6 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import {
-  ShoppingCart,
-  Payment,
-  Analytics,
-  Security,
-  Speed,
-  Support,
-  TrendingUp,
-  Store,
-  Smartphone,
-  Cloud,
-  CheckCircle,
-  ArrowForward,
-} from '@mui/icons-material';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Features from './components/Features';

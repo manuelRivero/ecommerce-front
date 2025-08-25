@@ -73,6 +73,59 @@ export default function Footer() {
             </Typography>
           </Grid>
         </Grid>
+        
+        {/* Nueva sección de feedback */}
+        <Box sx={{ 
+          borderTop: "1px solid rgba(255, 255, 255, 0.2)", 
+          marginTop: 4, 
+          paddingTop: 4,
+          textAlign: "center"
+        }}>
+          <Typography
+            color="#fff"
+            variant="h5"
+            sx={{ 
+              marginBottom: 2,
+              fontWeight: "medium"
+            }}
+          >
+            ¿Te gustó nuestra tienda?
+          </Typography>
+          <Typography
+            color="#fff"
+            variant="body1"
+            sx={{ 
+              marginBottom: 3,
+              opacity: 0.9,
+              maxWidth: 600,
+              margin: "0 auto 24px auto"
+            }}
+          >
+            Si te gustó lo que viste, te invitamos a crear tu propia tienda online con nosotros
+          </Typography>
+          <Typography
+            color="#fff"
+            component={Link}
+            href="https://tiendapro.com.ar"
+            target="_blank"
+            sx={{ 
+              display: "inline-block",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              padding: "12px 24px",
+              borderRadius: 2,
+              textDecoration: "none",
+              border: "1px solid rgba(255, 255, 255, 0.3)",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                backgroundColor: "rgba(255, 255, 255, 0.2)",
+                borderColor: "rgba(255, 255, 255, 0.5)",
+                transform: "translateY(-2px)"
+              }
+            }}
+          >
+            Crear mi tienda online
+          </Typography>
+        </Box>
       </Box>
     </footer>
   );
