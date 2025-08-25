@@ -443,29 +443,6 @@ const Pricing = () => {
             );
           })}
         </Grid>
-
-        <Box sx={{ textAlign: 'center', mt: 6 }}>
-          <Typography
-            variant="h5"
-            color="text.secondary"
-            sx={{ mb: 3 }}
-          >
-            ¿Necesitas un plan personalizado?
-          </Typography>
-          <Button
-            variant="outlined"
-            size="large"
-            endIcon={<ArrowForward />}
-            sx={{
-              px: 4,
-              py: 1.5,
-              fontSize: '1.1rem',
-              fontWeight: 600,
-            }}
-          >
-            Contactar Ventas
-          </Button>
-        </Box>
       </Container>
 
       {/* Modal con información detallada del plan */}
