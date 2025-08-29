@@ -37,6 +37,7 @@ export async function generateMetadata({ params }: any) {
       metadataBase: metadataBase.origin,
       title: data.product.name,
       description: cleanDescription,
+      keywords: data.product.keywords,
       openGraph: {
         title: data.product.name,
         description: cleanDescription,

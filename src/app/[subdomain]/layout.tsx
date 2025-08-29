@@ -17,6 +17,7 @@ export async function generateMetadata({ params }: any) {
   return {
     title: data.config.metadata.title,
     description: data.config.metadata.description,
+    keywords: ['puertas', 'puertas de madera', 'puertas de aluminio', 'puertas blindadas', , 'puertas de lujo', 'puertas de seguridad', 'puertas de apartamento', 'puertas exterior'],
     openGraph: {
       title: data.config.metadata.title,
       description: data.config.metadata.description,

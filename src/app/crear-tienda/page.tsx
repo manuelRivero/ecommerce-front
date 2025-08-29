@@ -239,7 +239,7 @@ const CreateStorePage = () => {
        case 3: // Configuración de Pagos
          if (!formData.mercadoPagoToken.trim()) {
            newErrors.mercadoPagoToken = 'El token de MercadoPago es requerido';
-         } else if (!/^TEST-[a-zA-Z0-9]{32}$|^APP_USR-[a-zA-Z0-9]{32}$/.test(formData.mercadoPagoToken)) {
+         } else if (!/^TEST-[a-zA-Z0-9]{32}$|^APP_USR-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+$/.test(formData.mercadoPagoToken)) {
            newErrors.mercadoPagoToken = 'Formato de token inválido';
          }
          break;
@@ -291,7 +291,7 @@ const CreateStorePage = () => {
       
       case 3: // Configuración de Pagos
         return formData.mercadoPagoToken.trim() !== '' &&
-               /^TEST-[a-zA-Z0-9]{32}$|^APP_USR-[a-zA-Z0-9]{32}$/.test(formData.mercadoPagoToken);
+               /^TEST-[a-zA-Z0-9]{32}$|^APP_USR-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+$/.test(formData.mercadoPagoToken);
       
       default:
         return false;
@@ -681,7 +681,7 @@ const CreateStorePage = () => {
                  value={formData.mercadoPagoToken}
                  onChange={(e) => handleInputChange('mercadoPagoToken', e.target.value)}
                  error={!!errors.mercadoPagoToken}
-                 helperText={errors.mercadoPagoToken || "Ejemplo: APP_USR-12345678901234567890123456789012"}
+                 helperText={errors.mercadoPagoToken || "Ejemplo: APP_USR-4884204008182110-112619-e7f4796d1916ceadb596770b253424fd-1223488958"}
                  placeholder="APP_USR-"
                  InputProps={{
                    startAdornment: <InputAdornment position="start">🔑</InputAdornment>,
