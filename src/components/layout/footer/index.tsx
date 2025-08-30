@@ -45,7 +45,7 @@ export default function Footer() {
             <Typography
                 color="#fff"
                 component={Link}
-                href="/politicas"
+                href="/blogs"
                 sx={{ 
                   display: "block",
                   textDecoration: "none",
