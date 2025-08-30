@@ -30,7 +30,7 @@ const BlogsList: React.FC<BlogsListProps> = ({ blogs, totalBlogs }) => {
   return (
     <>
              {/* Blog Cards */}
-       <Grid container spacing={4}>
+       <Grid container spacing={{xs: 0, md: 4}}>
          {blogs.map((blog) => (
            <Grid item xs={12} key={blog._id}>
              <BlogCard
@@ -41,16 +41,6 @@ const BlogsList: React.FC<BlogsListProps> = ({ blogs, totalBlogs }) => {
            </Grid>
          ))}
        </Grid>
-
-      {/* Estadísticas */}
-      <Box sx={{ textAlign: 'center', mt: 6, py: 4 }}>
-        <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
-          {totalBlogs} artículos publicados
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Más contenido se agregará regularmente para ayudarte a crecer tu negocio.
-        </Typography>
-      </Box>
     </>
   );
 };

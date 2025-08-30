@@ -55,21 +55,11 @@ export default async function BlogsPage({
         <Box sx={{ textAlign: 'center', mb: 6 }}>
           <Typography
             variant="h2"
-            sx={{
-              fontWeight: 700,
-              mb: 2,
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              fontSize: { xs: '2rem', md: '3rem' }
-            }}
           >
             Nuestro Blog
           </Typography>
           <Typography
             variant="h6"
-            color="text.secondary"
             sx={{ maxWidth: 600, mx: 'auto', fontSize: { xs: '1rem', md: '1.25rem' } }}
           >
             Descubre consejos, estrategias y las últimas tendencias
