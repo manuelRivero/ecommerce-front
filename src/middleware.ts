@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 export const config = {
   matcher: [
     "/((?!api/|_next/|_static/|super-admin|subdomain-not-found|[\\w-]+\\.\\w+).*)",
+    "/sitemap.xml",
+    "/robots.txt",
   ],
 };
 
@@ -35,6 +37,49 @@ export async function middleware(req: NextRequest) {
 
   const isMainDomain = allowedMainDomains.includes(host);
 
+  // Determinar el dominio base según el entorno
+  let baseDomain = 'tiendapro.com.ar';
+  let protocol = 'https';
+  
+  if (host.includes('localhost')) {
+    baseDomain = 'localhost:8080';
+    protocol = 'http';
+  }
+
+  // 🔹 Manejar rutas de sitemap y robots para subdominios
+  if (path === "/sitemap.xml" || path === "/robots.txt") {
+    console.log('Sitemap or robots route detected');
+    console.log('isMainDomain:', isMainDomain);
+    console.log('host.endsWith check:', host.endsWith(`.${baseDomain}`));
+    console.log('baseDomain:', baseDomain);
+    
+    // Si es un subdominio, redirigir a la API correspondiente
+    if (!isMainDomain && host.endsWith(`.${baseDomain}`)) {
+      const subdomain = host.replace(`.${baseDomain}`, "");
+      console.log(`Redirecting sitemap/robots for subdomain: ${subdomain}`);
+      console.log('=== MIDDLEWARE END ===');
+      
+      if (path === "/sitemap.xml") {
+        const apiUrl = new URL('/api/sitemap-rewrite', req.url);
+        console.log('Rewriting to API URL:', apiUrl.toString());
+        const response = NextResponse.rewrite(apiUrl);
+        response.headers.set('x-subdomain', subdomain);
+        return response;
+      } else if (path === "/robots.txt") {
+        const apiUrl = new URL('/api/robots-rewrite', req.url);
+        console.log('Rewriting to API URL:', apiUrl.toString());
+        const response = NextResponse.rewrite(apiUrl);
+        response.headers.set('x-subdomain', subdomain);
+        return response;
+      }
+    }
+    
+    // Si es dominio principal, continuar normalmente
+    console.log('Main domain sitemap/robots, proceeding normally');
+    console.log('=== MIDDLEWARE END ===');
+    return NextResponse.next();
+  }
+
   // Caso 1: super admin -> dominio principal/super-admin
   if (isMainDomain && path.startsWith("/super-admin")) {
     console.log('Main domain with super-admin path');
@@ -48,15 +93,6 @@ export async function middleware(req: NextRequest) {
     console.log('Main domain detected, proceeding');
     console.log('=== MIDDLEWARE END ===');
     return NextResponse.next();
-  }
-
-  // Determinar el dominio base según el entorno
-  let baseDomain = 'tiendapro.com.ar';
-  let protocol = 'https';
-  
-  if (host.includes('localhost')) {
-    baseDomain = 'localhost:8080';
-    protocol = 'http';
   }
   
   console.log('baseDomain:', baseDomain);
