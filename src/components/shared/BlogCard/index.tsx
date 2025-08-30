@@ -20,7 +20,7 @@ import {
   Person,
   ArrowForward,
 } from '@mui/icons-material';
-import { type BlogPost } from '@/mocks/blog';
+import { type BlogPost } from '@/client/blogs';
 
 interface BlogCardProps {
   blog: BlogPost;
@@ -78,7 +78,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
           <CardMedia
             component="img"
             height="300"
-            image={blog.image}
+            image={blog.image.url}
             alt={blog.title}
             sx={{
               height: { xs: 200, md: 300 },

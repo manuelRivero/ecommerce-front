@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import {
   Box,
@@ -10,21 +8,38 @@ import {
 import {
   Article,
 } from '@mui/icons-material';
-import { blogPosts, type BlogPost } from '@/mocks/blog';
+import { getPublicBlogs } from '@/client/blogs';
 import Breadcrumb from '@/components/shared/Breadcrumb';
-import BlogCard from '@/components/shared/BlogCard';
+import BlogsList from '@/components/blogs/BlogsList';
 
-const BlogsPage = () => {
-  const handleShare = (title: string, url: string) => {
-    const shareUrl = `https://plus.google.com/share?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`;
-    window.open(shareUrl, '_blank', 'width=600,height=400');
-  };
+export const dynamic = "force-dynamic";
 
-  const handleReadMore = (blog: BlogPost) => {
-    // Aquí puedes implementar la navegación a la página de detalle del blog
-    console.log('Navegar a:', blog.slug);
-    // Por ejemplo: router.push(`/blogs/${blog.slug}`);
-  };
+const getData = async (subdomain: string, page: number = 0) => {
+  try {
+    const blogsData = await getPublicBlogs(subdomain, page, 10);
+    return {
+      blogs: blogsData.data.blogs,
+      totalPages: blogsData.data.totalPages,
+      currentPage: blogsData.data.currentPage,
+      totalBlogs: blogsData.data.totalBlogs,
+    };
+  } catch (error: any) {
+    console.log("error en blogs", error);
+    throw "error";
+  }
+};
+
+export default async function BlogsPage({ 
+  params,
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] };
+  params: Promise<any>;
+}) {
+  const { subdomain } = await params;
+  const parseParams = await searchParams;
+  const page = parseParams["?page"] ? Number(parseParams["?page"]) - 1 : 0;
+  const data = await getData(subdomain, page);
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#f8f9fa' }}>
@@ -57,35 +72,13 @@ const BlogsPage = () => {
             color="text.secondary"
             sx={{ maxWidth: 600, mx: 'auto', fontSize: { xs: '1rem', md: '1.25rem' } }}
           >
-            Descubre consejos, estrategias y las últimas tendencias para hacer crecer tu negocio online
+            Descubre consejos, estrategias y las últimas tendencias
           </Typography>
         </Box>
 
-        {/* Blog Cards */}
-        <Grid container spacing={4}>
-          {blogPosts.map((blog) => (
-            <Grid item xs={12} key={blog.id}>
-              <BlogCard
-                blog={blog}
-                onShare={handleShare}
-                onReadMore={handleReadMore}
-              />
-            </Grid>
-          ))}
-        </Grid>
-
-        {/* Estadísticas */}
-        <Box sx={{ textAlign: 'center', mt: 6, py: 4 }}>
-          <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
-            {blogPosts.length} artículos publicados
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Más contenido se agregará regularmente para ayudarte a crecer tu negocio.
-          </Typography>
-        </Box>
+        {/* Blog List Component */}
+        <BlogsList blogs={data.blogs} totalBlogs={data.totalBlogs} />
       </Container>
     </Box>
   );
-};
-
-export default BlogsPage;
+}
