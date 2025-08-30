@@ -69,49 +69,49 @@ export const getMainDomainUrls = (baseUrl: string): SitemapUrl[] => {
 export const getSubdomainStaticUrls = (subdomain: string, baseUrl: string): SitemapUrl[] => {
   return [
     {
-      url: `https://${subdomain}.${baseUrl}`,
+      url: baseUrl,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1,
     },
     {
-      url: `https://${subdomain}.${baseUrl}/productos`,
+      url: `${baseUrl}/productos`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.9,
     },
     {
-      url: `https://${subdomain}.${baseUrl}/ofertas`,
+      url: `${baseUrl}/ofertas`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.8,
     },
     {
-      url: `https://${subdomain}.${baseUrl}/descuentos`,
+      url: `${baseUrl}/descuentos`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.8,
     },
     {
-      url: `https://${subdomain}.${baseUrl}/mas-vendidos`,
+      url: `${baseUrl}/mas-vendidos`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
-      url: `https://${subdomain}.${baseUrl}/blogs`,
+      url: `${baseUrl}/blogs`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.7,
     },
     {
-      url: `https://${subdomain}.${baseUrl}/politicas`,
+      url: `${baseUrl}/politicas`,
       lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.5,
     },
     {
-      url: `https://${subdomain}.${baseUrl}/como-funciona-el-envio`,
+      url: `${baseUrl}/como-funciona-el-envio`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.6,
@@ -128,7 +128,7 @@ export const getSubdomainProductUrls = async (subdomain: string, baseUrl: string
     const products = response.data?.products || [];
     
     return products.map((product: any) => ({
-      url: `https://${subdomain}.${baseUrl}/detalle-producto/${product._id}`,
+      url: `${baseUrl}/detalle-producto/${product._id}`,
       lastModified: new Date(product.updatedAt || product.createdAt),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
@@ -148,7 +148,7 @@ export const getSubdomainBlogUrls = async (subdomain: string, baseUrl: string): 
     const blogs = blogsResponse.data?.blogs || [];
     
     return blogs.map((blog: any) => ({
-      url: `https://${subdomain}.${baseUrl}/detalle-del-blog/${blog.slug}`,
+      url: `${baseUrl}/detalle-del-blog/${blog.slug}`,
       lastModified: new Date(blog.updatedAt),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
