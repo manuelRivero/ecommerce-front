@@ -21,6 +21,7 @@ import { Menu } from "@mui/icons-material";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import CategoryIcon from "@mui/icons-material/Category";
+import ArticleIcon from "@mui/icons-material/Article";
 import { useRouter } from "next/navigation";
 
 export default function Header() {
@@ -112,6 +113,14 @@ export default function Header() {
                           <ThumbUpOffAltIcon />
                         </ListItemIcon>
                         <ListItemText>Más vendidos</ListItemText>
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => handleNavigation("/blogs")}
+                      >
+                        <ListItemIcon>
+                          <ArticleIcon />
+                        </ListItemIcon>
+                        <ListItemText>Recursos y Guías</ListItemText>
                       </MenuItem>
                     </MenuList>
                   </Paper>

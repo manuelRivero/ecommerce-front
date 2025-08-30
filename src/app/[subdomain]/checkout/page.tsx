@@ -1,12 +1,17 @@
 import CheckoutCart from "@/components/checkout/cart";
 import Form from "@/components/checkout/form";
-import BackButton from "@/components/shared/BackButton";
 import { Box, Container, Grid, Paper } from "@mui/material";
+import Breadcrumb from "@/components/shared/Breadcrumb";
+import { ShoppingCart } from "@mui/icons-material";
 
 export default function Checkout() {
   return (
     <Container sx={{ marginY: 4 }}>
-      <BackButton />
+      <Breadcrumb 
+        items={[
+          { label: 'Checkout', icon: <ShoppingCart sx={{ fontSize: 16 }} /> }
+        ]} 
+      />
       <Box>
         <Grid
           container

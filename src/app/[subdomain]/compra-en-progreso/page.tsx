@@ -11,6 +11,8 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect } from "react";
+import Breadcrumb from "@/components/shared/Breadcrumb";
+import { HourglassEmpty } from "@mui/icons-material";
 
 export default function InProgressSale() {
   const [, dispatch] = useCart();
@@ -21,6 +23,11 @@ export default function InProgressSale() {
   }, []);
   return (
     <Container>
+      <Breadcrumb 
+        items={[
+          { label: 'Compra en Progreso', icon: <HourglassEmpty sx={{ fontSize: 16 }} /> }
+        ]} 
+      />
       <Paper sx={{ padding: 4, marginY: 4 }}>
         <Typography variant="h2" sx={{ marginBottom: 2 }}>
           Tu pedido está siendo procesado, completa el proceso de pago

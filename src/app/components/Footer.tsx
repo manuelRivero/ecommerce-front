@@ -37,6 +37,12 @@ const Footer = () => {
       ],
     },
     {
+      title: 'Recursos',
+      links: [
+        { text: 'Aprende con nosotros', href: '/blogs' },
+      ],
+    },
+    {
       title: 'Soporte',
       links: [
         { text: 'Contacto', href: '/contacto' },
@@ -130,7 +136,7 @@ const Footer = () => {
 
           {/* Footer Links */}
           {footerSections.map((section, index) => (
-            <Grid item xs={12} sm={6} md={2} key={index}>
+            <Grid item xs={12} sm={6} md={2.4} key={index}>
               <Box sx={{ mb: 4 }}>
                 <Typography
                   variant="h6"

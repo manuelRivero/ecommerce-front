@@ -1,15 +1,20 @@
 "use client";
-import BackButton from "@/components/shared/BackButton";
 import { useCart } from "@/context/cart";
 import { Button, Container, Paper, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import React from "react";
+import Breadcrumb from "@/components/shared/Breadcrumb";
+import { LocalShipping } from "@mui/icons-material";
 
 export default function DeliveryInfo() {
   const [{ products }] = useCart();
   return (
     <Container>
-      <BackButton />
+      <Breadcrumb 
+        items={[
+          { label: 'Cómo Funciona el Envío', icon: <LocalShipping sx={{ fontSize: 16 }} /> }
+        ]} 
+      />
       <Paper sx={{ padding: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Envíos desde la ciudad de Rosario

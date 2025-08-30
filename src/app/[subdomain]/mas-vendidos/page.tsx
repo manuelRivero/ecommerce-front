@@ -1,6 +1,8 @@
 import { getBestSellers } from "@/client/products";
 import MainWrapper from "@/components/bestSellers/mainWrapper";
 import { Container } from "@mui/material";
+import Breadcrumb from "@/components/shared/Breadcrumb";
+import { ThumbUpOffAlt } from "@mui/icons-material";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +28,11 @@ export default async function BestSellers({ params }: { params: Promise<any> }) 
   const data = await getData(subdomain);
   return (
     <Container sx={{ marginY: 6 }}>
+      <Breadcrumb 
+        items={[
+          { label: 'Más Vendidos', icon: <ThumbUpOffAlt sx={{ fontSize: 16 }} /> }
+        ]} 
+      />
       <MainWrapper data={data.bestSellers.products} totalPages={data.bestSellers.totalPages} />
     </Container>
   );

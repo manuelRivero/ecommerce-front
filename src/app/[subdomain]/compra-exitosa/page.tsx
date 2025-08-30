@@ -2,6 +2,8 @@ import { getSaleDetail } from "@/client/sales";
 import ProductsDetail from "@/components/successPage/productsDetail";
 import { Container, Paper, Typography } from "@mui/material";
 import React from "react";
+import Breadcrumb from "@/components/shared/Breadcrumb";
+import { CheckCircle } from "@mui/icons-material";
 
 const getData = async (payment_id: string) => {
   console.log("payment_id", payment_id);
@@ -22,6 +24,11 @@ export default async function Success({ searchParams }: any) {
 
   return (
     <Container>
+      <Breadcrumb 
+        items={[
+          { label: 'Compra Exitosa', icon: <CheckCircle sx={{ fontSize: 16 }} /> }
+        ]} 
+      />
       <Paper sx={{ padding: 4, marginY: 4 }}>
         <Typography variant="h2" sx={{ marginBottom: 2 }}>
           Tu pedido ha sido procesado con éxito

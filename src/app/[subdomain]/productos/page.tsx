@@ -1,9 +1,10 @@
 import { getCategoryDetail } from "@/client/categories";
 import { getProducts } from "@/client/products";
 import MainProducts from "@/components/home/mainProdutcs";
-import BackButton from "@/components/shared/BackButton";
 import { Container } from "@mui/material";
 import React from "react";
+import Breadcrumb from "@/components/shared/Breadcrumb";
+import { Category } from "@mui/icons-material";
 
 const getData = async (subdomain: string, category: string, page = '1') => {
   console.log('get data page', page);
@@ -39,7 +40,14 @@ export default async function Categories({
   const data = await getData(subdomain, id, parseParams["?page"] as string);
   return (
     <Container sx={{ marginY: 4 }}>
-      <BackButton goHome />
+      <Breadcrumb 
+        items={[
+          { 
+            label: data.mainProducts.categoryDetail?.name || 'Productos', 
+            icon: <Category sx={{ fontSize: 16 }} /> 
+          }
+        ]} 
+      />
       <MainProducts
         data={data.mainProducts.products}
         categoryDetail={data.mainProducts.categoryDetail}

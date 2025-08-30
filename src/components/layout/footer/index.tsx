@@ -13,8 +13,8 @@ export default function Footer() {
       <Box
         sx={(theme) => ({ background: theme.palette.primary.main, padding: 4 })}
       >
-        <Grid container>
-          <Grid item xs={12} md={4} sx={{ marginBottom: { xs: 2, md: 0 } }}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={3} sx={{ marginBottom: { xs: 2, md: 0 } }}>
             <Stack direction="row" alignItems="center" justifyContent="center">
               <Box sx={{ width: 120 }}>
                 <img
@@ -29,48 +29,121 @@ export default function Footer() {
               </Box>
             </Stack>
           </Grid>
-          <Grid item xs={12} md={4} sx={{ marginBottom: { xs: 2, md: 0 } }}>
+          
+          <Grid item xs={12} md={3} sx={{ marginBottom: { xs: 2, md: 0 } }}>
             <Typography
               color="#fff"
-              variant="h4"
-              sx={{ marginBottom: { sx: 1, md: 2 } }}
+              variant="h5"
+              sx={{ 
+                marginBottom: 2,
+                fontWeight: "bold",
+                textAlign: { xs: "center", md: "left" }
+              }}
+            >
+              Recursos y Guías
+            </Typography>
+            <Typography
+                color="#fff"
+                component={Link}
+                href="/politicas"
+                sx={{ 
+                  display: "block",
+                  textDecoration: "none",
+                  opacity: 0.9,
+                  transition: "opacity 0.3s ease",
+                  textAlign: { xs: "center", md: "left" },
+                  "&:hover": {
+                    opacity: 1
+                  }
+                }}
+              >
+                Aprende con nosotros
+              </Typography>
+          </Grid>
+          
+          <Grid item xs={12} md={3} sx={{ marginBottom: { xs: 2, md: 0 } }}>
+            <Typography
+              color="#fff"
+              variant="h5"
+              sx={{ 
+                marginBottom: 2,
+                fontWeight: "bold",
+                textAlign: { xs: "center", md: "left" }
+              }}
             >
               Legal
             </Typography>
-            <Typography
-              color="#fff"
-              component={Link}
-              href="/politicas"
-              sx={{ display: "block" }}
-            >
-              Políticas de privacidad
-            </Typography>
-            <Typography
-              color="#fff"
-              component={Link}
-              href="/politicas"
-              sx={{ display: "block" }}
-            >
-              Terminos y condiciones
-            </Typography>
+            <Stack spacing={1}>
+              <Typography
+                color="#fff"
+                component={Link}
+                href="/politicas"
+                sx={{ 
+                  display: "block",
+                  textDecoration: "none",
+                  opacity: 0.9,
+                  transition: "opacity 0.3s ease",
+                  textAlign: { xs: "center", md: "left" },
+                  "&:hover": {
+                    opacity: 1
+                  }
+                }}
+              >
+                Políticas de privacidad
+              </Typography>
+              <Typography
+                color="#fff"
+                component={Link}
+                href="/politicas"
+                sx={{ 
+                  display: "block",
+                  textDecoration: "none",
+                  width: "fit-content",
+                  opacity: 0.9,
+                  transition: "opacity 0.3s ease",
+                  textAlign: { xs: "center", md: "left" },
+                  "&:hover": {
+                    opacity: 1
+                  }
+                }}
+              >
+                Terminos y condiciones
+              </Typography>
+            </Stack>
           </Grid>
-          <Grid item xs={12} md={4}>
+          
+          <Grid item xs={12} md={3}>
             <Typography
               color="#fff"
-              variant="h4"
-              sx={{ marginBottom: { sx: 1, md: 2 } }}
+              variant="h5"
+              sx={{ 
+                marginBottom: 2,
+                fontWeight: "bold",
+                textAlign: { xs: "center", md: "left" }
+              }}
             >
               Contacto
             </Typography>
-            <Typography
-              color="#fff"
-              target="_blank"
-              component={Link}
-              href={`https://wa.me/${state.config.phone}?text=Hola, estoy escribiendo desde el enlace de la página web de ${state.config.name} y tengo una consulta`}
-              sx={{ display: "block" }}
-            >
-              Whatsapp: {state.config.phone}
-            </Typography>
+            <Stack spacing={1}>
+              <Typography
+                color="#fff"
+                target="_blank"
+                component={Link}
+                href={`https://wa.me/${state.config.phone}?text=Hola, estoy escribiendo desde el enlace de la página web de ${state.config.name} y tengo una consulta`}
+                sx={{ 
+                  display: "block",
+                  textDecoration: "none",
+                  opacity: 0.9,
+                  transition: "opacity 0.3s ease",
+                  textAlign: { xs: "center", md: "left" },
+                  "&:hover": {
+                    opacity: 1
+                  }
+                }}
+              >
+                Whatsapp: {state.config.phone}
+              </Typography>
+            </Stack>
           </Grid>
         </Grid>
         

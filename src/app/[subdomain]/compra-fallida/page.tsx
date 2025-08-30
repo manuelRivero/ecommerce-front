@@ -9,11 +9,18 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
+import Breadcrumb from "@/components/shared/Breadcrumb";
+import { Error } from "@mui/icons-material";
 
 export default function InProgressSale() {
     const { state } = useITheme();
   return (
     <Container>
+      <Breadcrumb 
+        items={[
+          { label: 'Compra Fallida', icon: <Error sx={{ fontSize: 16 }} /> }
+        ]} 
+      />
       <Paper sx={{ padding: 4, marginY: 4 }}>
         <Typography variant="h2" sx={{ marginBottom: 2 }}>
           Tu compra no pudo completarse

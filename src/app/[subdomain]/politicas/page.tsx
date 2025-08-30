@@ -1,5 +1,4 @@
 "use client";
-import BackButton from "@/components/shared/BackButton";
 import {
   Box,
   Button,
@@ -10,6 +9,8 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import React from "react";
+import Breadcrumb from "@/components/shared/Breadcrumb";
+import { Policy } from "@mui/icons-material";
 
 export default function PrivacyPolicies() {
   // const [, dispatch] = useCart();
@@ -21,7 +22,11 @@ export default function PrivacyPolicies() {
   window.open('http://maryjostyle.localhost:3000/politicas', '_blank')
   return (
     <Container>
-      <BackButton />
+      <Breadcrumb 
+        items={[
+          { label: 'Políticas', icon: <Policy sx={{ fontSize: 16 }} /> }
+        ]} 
+      />
       <Paper sx={{ padding: 4, marginY: 4 }}>
         <Typography variant="h2" sx={{ marginBottom: 2 }}>
           Pagina en construcción

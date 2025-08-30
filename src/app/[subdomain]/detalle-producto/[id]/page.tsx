@@ -3,11 +3,11 @@ import {
   getRandomCategoryProducts,
   getRelatedProducts,
 } from "@/client/products";
+import { getCategoryDetail } from "@/client/categories";
 import Detail from "@/components/productDetail/detail";
 import Gallery from "@/components/productDetail/gallery";
 import RandomCategoryProducts from "@/components/productDetail/randomCategoryProducts";
 import RelatedProducts from "@/components/productDetail/relatedProducts";
-import BackButton from "@/components/shared/BackButton";
 import { cleanHtmlForMetadata } from "@/utils/products";
 import {
   Box,
@@ -20,6 +20,8 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import React from "react";
+import Breadcrumb from "@/components/shared/Breadcrumb";
+import { Category, Inventory } from "@mui/icons-material";
 
 export async function generateMetadata({ params }: any) {
   try {
@@ -62,15 +64,19 @@ const getData = async (id: string, tenant: string) => {
   try {
     const { data } = await getProductDetail(id);
     console.log("data", data);
-    const [relatedProductsData, randomCategoryProducts] = await Promise.all([
+    const [relatedProductsData, randomCategoryProducts, categoryDetailData] = await Promise.all([
       getRelatedProducts(tenant, data.product.category, 0, id),
       getRandomCategoryProducts(tenant, data.product.category),
+      data.product.category 
+        ? getCategoryDetail(tenant, data.product.category)
+        : Promise.resolve({ data: { category: null } }),
     ]);
     return {
       detail: data.product,
+      categoryDetail: categoryDetailData.data.category,
       related: {
         products: relatedProductsData.data.relatedProducts,
-      category: relatedProductsData.data.category
+        category: relatedProductsData.data.category
       },
       random: {
         products: randomCategoryProducts.data.randomCategoryProducts,
@@ -84,12 +90,24 @@ const getData = async (id: string, tenant: string) => {
 
 export default async function ProductDetail({ params }: any) {
   const { id, subdomain } = await params;
-  const { detail, related, random } = await getData(id, subdomain);
+  const { detail, categoryDetail, related, random } = await getData(id, subdomain);
   const images = detail.images.map((image: any) => image.url);
   console.log("random", random);
   return (
     <Container sx={{ marginTop: 4, marginBottom: 4 }}>
-      <BackButton />
+      <Breadcrumb 
+        items={[
+          { 
+            label: categoryDetail?.name || 'Categoría', 
+            href: `/productos/${detail.category}`,
+            icon: <Category sx={{ fontSize: 16 }} />
+          },
+          { 
+            label: detail.name, 
+            icon: <Inventory sx={{ fontSize: 16 }} />
+          }
+        ]} 
+      />
       <Paper>
         <Grid container>
           <Grid item xs={12} md={6}>
