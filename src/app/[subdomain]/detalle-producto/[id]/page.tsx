@@ -4,24 +4,9 @@ import {
   getRelatedProducts,
 } from "@/client/products";
 import { getCategoryDetail } from "@/client/categories";
-import Detail from "@/components/productDetail/detail";
-import Gallery from "@/components/productDetail/gallery";
-import RandomCategoryProducts from "@/components/productDetail/randomCategoryProducts";
-import RelatedProducts from "@/components/productDetail/relatedProducts";
+import ProductDetailClient from "@/components/productDetail/ProductDetailClient";
 import { cleanHtmlForMetadata } from "@/utils/products";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
-import Link from "next/link";
 import React from "react";
-import Breadcrumb from "@/components/shared/Breadcrumb";
-import { Category, Inventory } from "@mui/icons-material";
 
 export async function generateMetadata({ params }: any) {
   try {
@@ -88,60 +73,22 @@ const getData = async (id: string, tenant: string) => {
   }
 };
 
-export default async function ProductDetail({ params }: any) {
+export default async function ProductDetail({ params, searchParams }: any) {
   const { id, subdomain } = await params;
   const { detail, categoryDetail, related, random } = await getData(id, subdomain);
   const images = detail.images.map((image: any) => image.url);
+  const resolvedSearchParams = await searchParams;
+  const token = resolvedSearchParams?.token;
   console.log("random", random);
   return (
-    <Container sx={{ marginTop: 4, marginBottom: 4 }}>
-      <Breadcrumb 
-        items={[
-          { 
-            label: categoryDetail?.name || 'Categoría', 
-            href: `/productos/${detail.category}`,
-            icon: <Category sx={{ fontSize: 16 }} />
-          },
-          { 
-            label: detail.name, 
-            icon: <Inventory sx={{ fontSize: 16 }} />
-          }
-        ]} 
-      />
-      <Paper>
-        <Grid container>
-          <Grid item xs={12} md={6}>
-            <Box sx={{ padding: 4 }}>
-              <Gallery images={images} />
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Box sx={{ padding: 4 }}>
-              <Detail data={detail} />
-            </Box>
-          </Grid>
-          <Grid item xs={12}>
-            <Box sx={{ padding: 4 }}>
-              <RelatedProducts products={related.products[0].data} category={related.category} />
-            </Box>
-          </Grid>
-          <Grid item xs={12}>
-            <Box sx={{ padding: 4 }}>
-              <RandomCategoryProducts products={random.products[0].data} category={random.category} />
-            </Box>
-          </Grid>
-        </Grid>
-      </Paper>
-      <Box sx={{ padding: 4 }}>
-        <Typography variant="h3" sx={{ marginBottom: 4, textAlign: "center" }}>
-          Sigue explorando nuestra tienda
-        </Typography>
-        <Stack direction="row" justifyContent="center" spacing={2}>
-          <Button component={Link} variant="contained" href={`/productos`}>
-            Ver más productos
-          </Button>
-        </Stack>
-      </Box>
-    </Container>
+    <ProductDetailClient
+      detail={detail}
+      categoryDetail={categoryDetail}
+      related={related}
+      random={random}
+      images={images}
+      token={token}
+      tenant={subdomain}
+    />
   );
 }
