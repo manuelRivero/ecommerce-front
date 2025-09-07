@@ -23,6 +23,7 @@ import ReviewsList from "@/components/productDetail/ReviewsList";
 import Breadcrumb from "@/components/shared/Breadcrumb";
 import { Category, Inventory } from "@mui/icons-material";
 import { submitRating } from "@/client/reviews";
+import { ProductReviewsResponse } from "@/client/reviews";
 
 interface ProductDetailClientProps {
   detail: any;
@@ -32,6 +33,7 @@ interface ProductDetailClientProps {
   images: string[];
   token?: string;
   tenant: string;
+  reviews: ProductReviewsResponse['data'];
 }
 
 export default function ProductDetailClient({
@@ -42,6 +44,7 @@ export default function ProductDetailClient({
   images,
   token,
   tenant,
+  reviews,
 }: ProductDetailClientProps) {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -126,14 +129,14 @@ export default function ProductDetailClient({
             </Grid>
             <Grid item xs={12} md={6}>
               <Box sx={{ padding: 4 }}>
-                <Detail data={detail} />
+                <Detail data={detail} reviews={reviews} />
               </Box>
             </Grid>
           </Grid>
         </Paper>
 
         {/* Reviews List Section */}
-        <ReviewsList productName={detail.name} productId={detail._id} />
+        <ReviewsList productName={detail.name} productId={detail._id} reviews={reviews} />
 
         {/* Review Invitation Section */}
         <ReviewInvitation productName={detail.name} productId={detail._id} tenant={tenant} />

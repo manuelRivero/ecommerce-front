@@ -1,22 +1,27 @@
 "use client";
 import ProductCard from "@/components/shared/productCard";
 import { Product } from "@/interfaces/products";
-import { Box, Pagination, Stack, Typography } from "@mui/material";
+import { Box, Pagination, Stack, Typography, IconButton } from "@mui/material";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import CategoryDropdown from "../categoryDropdown";
 import EmptyProducts from "../emptyProducts";
 import { motion } from "motion/react";
+import { Close as CloseIcon } from "@mui/icons-material";
 
 interface Props {
   data: Product[];
   totalPages: number;
   categoryDetail: any;
+  searchQuery?: string;
+  resultsCount?: number;
 }
 export default function MainProducts({
   data,
   totalPages,
   categoryDetail,
+  searchQuery,
+  resultsCount,
 }: Props) {
   const router = useRouter();
   const params = useParams();
@@ -51,12 +56,50 @@ export default function MainProducts({
         alignItems="center"
       >
         <Typography variant="h2">{`${
-          categoryDetail
+          searchQuery
+            ? `Resultados para "${searchQuery}"`
+            : categoryDetail
             ? "Productos en" + " " + categoryDetail.name
             : "Todos nuestros productos"
         } `}</Typography>
         <CategoryDropdown />
       </Stack>
+
+      {/* Indicador de búsqueda - Información complementaria */}
+      {searchQuery && (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+            p: 2,
+            mb: 2,
+          }}
+        >
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              Mostrando resultados para: <strong>"{searchQuery}"</strong>
+              {resultsCount !== undefined && (
+                <span> • {resultsCount} producto{resultsCount !== 1 ? 's' : ''} encontrado{resultsCount !== 1 ? 's' : ''}</span>
+              )}
+            </Typography>
+          </Box>
+
+          <IconButton
+            onClick={() => router.push('/productos')}
+            sx={{
+              color: 'text.secondary',
+              '&:hover': {
+                backgroundColor: 'action.hover',
+                color: 'text.primary',
+              },
+            }}
+            title="Ver todos los productos"
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+      )}
 
       <>
         <Box

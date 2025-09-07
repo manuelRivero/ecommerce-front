@@ -16,12 +16,16 @@ import {
 } from "@mui/material";
 import ShareIcon from "@mui/icons-material/Share";
 import { finalPrice } from "@/utils/products";
+import { formatNumber } from "@/utils/products";
+import { ProductReviewsResponse } from "@/client/reviews";
+import { Rating } from "@mui/material";
 
 interface Props {
   data: Product;
+  reviews?: ProductReviewsResponse['data'];
 }
 
-export default function Detail({ data }: Props) {
+export default function Detail({ data, reviews }: Props) {
   const [, dispatch] = useCart();
   const [quantity, setQuantity] = useState<string>("1");
   const [formAlert, setFormAlert] = useState<boolean>(false);
@@ -113,10 +117,45 @@ export default function Detail({ data }: Props) {
     setFormAlert(false);
   }, [quantity]);
 
-  console.log("groupedFeatures", groupedFeatures);
+  console.log("data", data);
 
   return (
     <Box>
+      {/* Rating promedio del producto - ENCIMA del nombre */}
+      {reviews && reviews.statistics.totalReviews > 0 && (
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
+          <Rating 
+            value={reviews.statistics.averageRating} 
+            precision={0.1} 
+            readOnly 
+            size="large"
+            sx={{ 
+              '& .MuiRating-iconFilled': {
+                color: (theme) => theme.palette.warning.main,
+              },
+              '& .MuiRating-iconHover': {
+                color: (theme) => theme.palette.warning.main,
+              }
+            }}
+          />
+          <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
+            {reviews.statistics.averageRating.toFixed(1)}
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            ({reviews.statistics.totalReviews} reseña{reviews.statistics.totalReviews !== 1 ? 's' : ''})
+          </Typography>
+        </Stack>
+      )}
+      
+      {/* Total de ventas del producto */}
+      {data.totalSales > 0 && (
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ marginBottom: 2 }}>
+          <Typography variant="body1" color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
+            🏆 <strong>{data.totalSales}</strong> unidades vendidas
+          </Typography>
+        </Stack>
+      )}
+      
       <Stack
         direction="row"
         spacing={1}
@@ -133,6 +172,7 @@ export default function Detail({ data }: Props) {
           <ShareIcon />
         </IconButton>
       </Stack>
+      
       <Stack
         direction="row"
         spacing={1}
@@ -141,7 +181,7 @@ export default function Detail({ data }: Props) {
       >
         {data.discount > 0 && (
           <Typography variant="body1" sx={{ textDecoration: "line-through" }}>
-            ${data.price}
+            ${formatNumber(data.price)}
           </Typography>
         )}
         <Box sx={{ position: "relative" }}>
@@ -153,7 +193,7 @@ export default function Detail({ data }: Props) {
               color: theme.palette.primary.main,
             })}
           >
-            ${finalPrice(data.price, data.discount ?? 0 + (data.offerDiscount ?? 0))}
+            ${formatNumber(finalPrice(data.price, data.discount ?? 0 + (data.offerDiscount ?? 0)))}
           </Typography>
           {(data.discount > 0 || data.offerDiscount > 0) && (
               <>

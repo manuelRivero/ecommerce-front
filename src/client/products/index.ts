@@ -6,6 +6,7 @@ export const getProducts = (
   page = 0,
   limit: number = 10,
   category?: string,
+  search?: string,
 ): Promise<AxiosResponse> => {
   return axiosInstance.get("/products/web", {
     params: {
@@ -13,12 +14,13 @@ export const getProducts = (
       page,
       category,
       limit,
+      search,
     },
   });
 };
 
 export const getProductDetail = (id: string): Promise<AxiosResponse> => {
-  return axiosInstance.get("/products/detail/web", {
+  return axiosInstance.get("/products/detail/web?bestSellers=true", {
     params: {
       id,
     },
@@ -70,7 +72,7 @@ export const getBestSellers = (
   page = 0,
   limit: number = 10
 ): Promise<AxiosResponse> => {
-  return axiosInstance.get("/products/best-sallers", {
+  return axiosInstance.get("/products/best-sellers", {
     params: {
       tenant,
       page,

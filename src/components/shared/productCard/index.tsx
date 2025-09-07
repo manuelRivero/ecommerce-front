@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Product } from "@/interfaces/products";
 import { finalPrice, formatNumber } from "@/utils/products";
-import { Box, Button, Paper, Stack, Typography } from "@mui/material";
+import { Box, Button, Paper, Stack, Typography, Rating } from "@mui/material";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion"; // Corregí el import
 
@@ -45,7 +45,7 @@ export default function ProductCard({ data }: Props) {
       }}
     >
       <Stack sx={{ width: "100%", position: "relative", height: "100%" }}>
-        {(data.discount > 0 || data.offerDiscount > 0) && (
+        {((data.discount ?? 0) + (data.offerDiscount ?? 0)) > 0 && (
           <>
             <Box
               sx={{
@@ -69,13 +69,13 @@ export default function ProductCard({ data }: Props) {
                 })}
               >
                 <Typography variant="body1" sx={{ fontSize: 10 }}>
-                  {data.discount ?? 0 + (data.offerDiscount ?? 0)}% Off
+                  {(data.discount ?? 0) + (data.offerDiscount ?? 0)}% Off
                 </Typography>
               </Box>
             </Box>
           </>
         )}
-        {data.offerDiscount > 0 && <Box
+        {(data.offerDiscount ?? 0) > 0 && <Box
           sx={{
             position: "absolute",
             top: 35,
@@ -153,8 +153,29 @@ export default function ProductCard({ data }: Props) {
               </Box>
             )}
             <Typography variant="h5">{data.name}</Typography>
+            
+            {/* Rating */}
+            {data.averageRating !== undefined && data.averageRating > 0 && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
+                <Rating
+                  value={data.averageRating}
+                  precision={0.1}
+                  size="small"
+                  readOnly
+                  sx={{ fontSize: '1rem' }}
+                />
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ fontSize: '0.75rem' }}
+                >
+                  ({data.totalReviews || 0})
+                </Typography>
+              </Box>
+            )}
+            
             <Stack direction="row" spacing={1} alignItems="baseline">
-              {data.discount > 0 && (
+              {data.discount && data.discount > 0 && (
                 <Typography
                   variant="body1"
                   color="#97a2aa"

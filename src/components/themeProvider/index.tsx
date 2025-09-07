@@ -15,10 +15,12 @@ declare module "@mui/material/styles/createPalette" { }
 
 export type State = {
   config: any;
+  subdomain: string;
 };
 
 const initialState: State = {
   config: [],
+  subdomain: '',
 };
 
 const IThemeContext = React.createContext<{
@@ -162,7 +164,7 @@ const ThemeProvider = ({
         });
 
         setTheme(dynamicTheme);
-        setState({ config: data.config });
+        setState({ config: data.config, subdomain: tenant });
 
         // Flags de estado
         const paymentStatus = data.config?.paymentStatus

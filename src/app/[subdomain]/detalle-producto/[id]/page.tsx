@@ -4,6 +4,7 @@ import {
   getRelatedProducts,
 } from "@/client/products";
 import { getCategoryDetail } from "@/client/categories";
+import { getProductReviews } from "@/client/reviews";
 import ProductDetailClient from "@/components/productDetail/ProductDetailClient";
 import { cleanHtmlForMetadata } from "@/utils/products";
 import React from "react";
@@ -49,13 +50,17 @@ const getData = async (id: string, tenant: string) => {
   try {
     const { data } = await getProductDetail(id);
     console.log("data", data);
-    const [relatedProductsData, randomCategoryProducts, categoryDetailData] = await Promise.all([
+    
+    // Cargar reviews del producto en paralelo con otros datos
+    const [relatedProductsData, randomCategoryProducts, categoryDetailData, reviewsData] = await Promise.all([
       getRelatedProducts(tenant, data.product.category, 0, id),
       getRandomCategoryProducts(tenant, data.product.category),
       data.product.category 
         ? getCategoryDetail(tenant, data.product.category)
         : Promise.resolve({ data: { category: null } }),
+      getProductReviews(id, 1, 3), // Cargar primera página de reviews
     ]);
+    
     return {
       detail: data.product,
       categoryDetail: categoryDetailData.data.category,
@@ -67,6 +72,7 @@ const getData = async (id: string, tenant: string) => {
         products: randomCategoryProducts.data.randomCategoryProducts,
         category: randomCategoryProducts.data.category,
       },
+      reviews: reviewsData.data, // Incluir reviews en la respuesta
     };
   } catch (error) {
     throw error;
@@ -75,7 +81,7 @@ const getData = async (id: string, tenant: string) => {
 
 export default async function ProductDetail({ params, searchParams }: any) {
   const { id, subdomain } = await params;
-  const { detail, categoryDetail, related, random } = await getData(id, subdomain);
+  const { detail, categoryDetail, related, random, reviews } = await getData(id, subdomain);
   const images = detail.images.map((image: any) => image.url);
   const resolvedSearchParams = await searchParams;
   const token = resolvedSearchParams?.token;
@@ -89,6 +95,7 @@ export default async function ProductDetail({ params, searchParams }: any) {
       images={images}
       token={token}
       tenant={subdomain}
+      reviews={reviews}
     />
   );
 }

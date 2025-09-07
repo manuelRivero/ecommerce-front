@@ -13,7 +13,7 @@ export default function Footer() {
       <Box
         sx={(theme) => ({ background: theme.palette.primary.main, padding: 4 })}
       >
-        <Grid container spacing={3}>
+        <Grid container spacing={{xs: 0, md: 3}}>
           <Grid item xs={12} md={3} sx={{ marginBottom: { xs: 2, md: 0 } }}>
             <Stack direction="row" alignItems="center" justifyContent="center">
               <Box sx={{ width: 120 }}>
@@ -98,7 +98,6 @@ export default function Footer() {
                 sx={{ 
                   display: "block",
                   textDecoration: "none",
-                  width: "fit-content",
                   opacity: 0.9,
                   transition: "opacity 0.3s ease",
                   textAlign: { xs: "center", md: "left" },

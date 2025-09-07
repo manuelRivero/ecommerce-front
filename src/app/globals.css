@@ -111,3 +111,11 @@ a {
     font-size: 12px;
   }
 } 
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active{
+   -webkit-box-shadow: 0 0 0 1000px white inset;
+   -webkit-text-fill-color: #ffffff !important;
+}

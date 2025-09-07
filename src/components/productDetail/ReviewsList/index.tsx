@@ -15,34 +15,34 @@ import {
     Skeleton,
 } from '@mui/material';
 import { Star, Person } from '@mui/icons-material';
-import { getProductReviews, Review } from '@/client/reviews';
+import { getProductReviews, Review, ProductReviewsResponse } from '@/client/reviews';
 
 interface ReviewsListProps {
     productName: string;
     productId: string;
+    reviews: ProductReviewsResponse['data'];
 }
 
-export default function ReviewsList({ productName, productId }: ReviewsListProps) {
+export default function ReviewsList({ productName, productId, reviews: initialReviews }: ReviewsListProps) {
     const theme = useTheme();
     const [page, setPage] = useState(1);
-    const [reviews, setReviews] = useState<Review[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [reviews, setReviews] = useState<Review[]>(initialReviews.reviews);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [pagination, setPagination] = useState({
-        page: 1,
-        limit: 3,
-        total: 0,
-        pages: 0,
-    });
-    const [statistics, setStatistics] = useState({
-        averageRating: 0,
-        totalReviews: 0,
-        ratingDistribution: {} as { [key: number]: number },
-    });
+    const [pagination, setPagination] = useState(initialReviews.pagination);
+    const [statistics, setStatistics] = useState(initialReviews.statistics);
 
-    // Cargar reviews del producto
+    // Cargar reviews adicionales cuando cambie la página (excepto la primera)
     useEffect(() => {
-        const loadReviews = async () => {
+        const loadMoreReviews = async () => {
+            if (page === 1) {
+                // La primera página ya está cargada
+                setReviews(initialReviews.reviews);
+                setPagination(initialReviews.pagination);
+                setStatistics(initialReviews.statistics);
+                return;
+            }
+
             try {
                 setLoading(true);
                 setError('');
@@ -50,25 +50,27 @@ export default function ReviewsList({ productName, productId }: ReviewsListProps
 
                 setReviews(response.data.reviews);
                 setPagination(response.data.pagination);
-                setStatistics(response.data.statistics);
-                console.log("response", response.data);
+                // Mantener las estadísticas originales ya que no cambian
             } catch (error) {
-                console.error('Error loading reviews:', error);
-                setError(error instanceof Error ? error.message : 'Error al cargar las reseñas');
+                console.error('Error loading more reviews:', error);
+                setError(error instanceof Error ? error.message : 'Error al cargar más reseñas');
             } finally {
                 setLoading(false);
             }
         };
 
-        if (productId) {
-            loadReviews();
+        if (productId && page > 1) {
+            loadMoreReviews();
         }
-    }, [productId, page, pagination.limit]);
+    }, [productId, page, pagination.limit, initialReviews]);
 
     // Reset page when product changes
     useEffect(() => {
         setPage(1);
-    }, [productId]);
+        setReviews(initialReviews.reviews);
+        setPagination(initialReviews.pagination);
+        setStatistics(initialReviews.statistics);
+    }, [productId, initialReviews]);
 
     const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
@@ -152,7 +154,7 @@ export default function ReviewsList({ productName, productId }: ReviewsListProps
                                 .sort(([a], [b]) => parseInt(b) - parseInt(a))
                                 .map(([rating, count]) => (
                                     <Box key={rating} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <Typography variant="body2">{rating} estrellas</Typography>
+                                        <Typography variant="body2"><strong>{rating}</strong> estrellas: {' '}</Typography>
                                         <Typography variant="body2" sx={{ fontWeight: 600 }}>
                                             {count} reseñas
                                         </Typography>
@@ -211,6 +213,25 @@ export default function ReviewsList({ productName, productId }: ReviewsListProps
                             )}
                         </Box>
                     ))}
+                    
+                    {/* Indicador de carga para más reviews */}
+                    {loading && (
+                        <Box sx={{ py: 2 }}>
+                            <Stack spacing={2}>
+                                <Skeleton variant="rectangular" height={100} />
+                                <Skeleton variant="rectangular" height={100} />
+                            </Stack>
+                        </Box>
+                    )}
+                    
+                    {/* Mensaje de error */}
+                    {error && (
+                        <Box sx={{ py: 2, textAlign: 'center' }}>
+                            <Typography variant="body2" color="error">
+                                {error}
+                            </Typography>
+                        </Box>
+                    )}
                 </Stack>
 
                 {/* Paginación */}
