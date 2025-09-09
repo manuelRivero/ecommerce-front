@@ -62,7 +62,6 @@ export default function MainProducts({
             ? "Productos en" + " " + categoryDetail.name
             : "Todos nuestros productos"
         } `}</Typography>
-        <CategoryDropdown />
       </Stack>
 
       {/* Indicador de búsqueda - Información complementaria */}
@@ -104,10 +103,9 @@ export default function MainProducts({
       <>
         <Box
           sx={{
-            display: "flex",
-            gap: 6,
-            flexWrap: "wrap",
-            justifyContent: { xs: "center", md: "center" },
+            display: "grid",
+            gridTemplateColumns: { xs: "repeat(2, 1fr)", md: "repeat(3, 1fr)" },
+            gap: 2,
             marginTop: 4,
           }}
         >

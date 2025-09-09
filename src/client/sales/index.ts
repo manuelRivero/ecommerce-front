@@ -18,3 +18,7 @@ export const getSaleDetail = (id: string): Promise<AxiosResponse> => {
       }
     });
   };
+
+export const markOrderAsReceived = (payment_id: string, tenant: string): Promise<AxiosResponse> => {
+  return axiosInstance.put(`/sale/mark-received/${payment_id}?tenant=${tenant}`);
+};

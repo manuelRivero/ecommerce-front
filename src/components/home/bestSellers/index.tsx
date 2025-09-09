@@ -52,12 +52,9 @@ export default function BestSellers({ data }: Props) {
                 nextEl: ".next-hot-sales",
               }}
               spaceBetween={25}
-              slidesPerView={1}
+              slidesPerView={2}
               style={{ position: "relative", zIndex: 0 }}
               breakpoints={{
-                600: {
-                  slidesPerView: 2,
-                },
                 1200: {
                   slidesPerView: 3,
                 },
@@ -74,22 +71,31 @@ export default function BestSellers({ data }: Props) {
                 </SwiperSlide>
               ))}
               <SwiperSlide style={{ height: "auto" }}>
-                <Box
+                <Paper
                   sx={{
+                    flexDirection: "column",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
                     height: "100%",
+                    padding: 2,
+                    boxSizing: "border-box",
                   }}
                 >
+                  <Typography variant="h3" sx={{ marginBottom: 2, textAlign: "center" }}>
+                    ¿Te gustaron estos productos?
+                  </Typography>
+                  <Typography variant="body1" sx={{ marginBottom: 2, textAlign: "center" }}>
+                    Explorá todos los más vendidos y encontrá tu próximo favorito.
+                  </Typography>
                   <Button
                     variant="contained"
                     component={Link}
                     href={"/descuentos"}
                   >
-                    Ver todos los productos
+                    Ver más
                   </Button>
-                </Box>
+                </Paper>
               </SwiperSlide>
             </Swiper>
           </Box>

@@ -103,7 +103,7 @@ export default function MoreRecents({ data }: Props) {
                 nextEl: ".next-more-recents",
               }}
               spaceBetween={25}
-              slidesPerView={1}
+              slidesPerView={2}
               style={{ position: "relative", zIndex: 0 }}
               breakpoints={{
                 600: {

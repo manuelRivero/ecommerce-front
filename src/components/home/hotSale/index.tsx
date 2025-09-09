@@ -82,7 +82,7 @@ export default function HotSales({ data }: Props) {
       id="hot-sales-container"
       sx={{ position: "relative", minHeight: "60vh" }}
     >
-      {}
+      { }
       {isMobile && (
         <>
           <Stack
@@ -103,10 +103,10 @@ export default function HotSales({ data }: Props) {
                 nextEl: ".next-hot-sales",
               }}
               spaceBetween={25}
-              slidesPerView={1}
+              slidesPerView={2}
               style={{ position: "relative", zIndex: 0 }}
               breakpoints={{
-                600: {
+                1200: {
                   slidesPerView: 2,
                 },
               }}
@@ -122,22 +122,35 @@ export default function HotSales({ data }: Props) {
                 </SwiperSlide>
               ))}
               <SwiperSlide style={{ height: "auto" }}>
-                <Box
+                <Paper
                   sx={{
                     display: "flex",
+                    flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
                     height: "100%",
+                    padding: 2,
+                    boxSizing: "border-box",
                   }}
                 >
+                  <Typography variant="h3" sx={{ marginBottom: 2, textAlign: "center" }}>
+                    ¡No dejes pasar estas ofertas!
+                  </Typography>
+                  <Typography variant="body1" sx={{ marginBottom: 2, textAlign: "center" }}>
+                    Descubre todos los productos con descuento y aprovecha precios
+                    únicos
+                  </Typography>
                   <Button
                     variant="contained"
                     component={Link}
                     href={"/descuentos"}
+                    sx={{
+                      textAlign: "center",
+                    }}
                   >
-                    Ver todos los productos
+                    Ver más
                   </Button>
-                </Box>
+                </Paper>
               </SwiperSlide>
             </Swiper>
           </Box>

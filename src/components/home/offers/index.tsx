@@ -31,6 +31,7 @@ import moment from "moment-timezone";
 import "swiper/css";
 import "swiper/css/navigation";
 import { useState } from "react";
+import ProductCard from "@/components/shared/productCard";
 interface Props {
   data: Offer[];
 }
@@ -112,8 +113,8 @@ export default function Offers({ data }: Props) {
                   loop
                   pagination={true}
                   direction={isMobile ? "horizontal" : "vertical"}
-                  spaceBetween={25}
-                  slidesPerView={1}
+                  spaceBetween={5}
+                  slidesPerView={2}
                   autoHeight={false}
                   style={{
                     maxHeight: isMobile ? 600 : 400,
@@ -128,74 +129,10 @@ export default function Offers({ data }: Props) {
                         justifyContent: "center",
                         gap: "1rem",
                         alignItems: "center",
-                        padding: "1rem",
                         boxSizing: "border-box",
                       }}
                     >
-                      <Paper
-                        sx={{
-                          padding: 4,
-                          display: "flex",
-                          gap: "1rem",
-                          alignItems: "center",
-                          boxShadow: "0px 0px 12px rgba(0, 0, 0, 0.1)",
-                          borderRadius: 2,
-                          p: 2,
-                          width: "100%",
-                          minWidth: { xs: 300, md: 400 },
-                          flexDirection: { xs: "column", md: "row" },
-                        }}
-                      >
-                        <img
-                          src={product.images[0].url}
-                          alt="image"
-                          style={{ maxWidth: "250px", maxHeight: "250px" }}
-                        />
-                        <Box width="100%">
-                          <Typography variant={isMobile ? "h5" : "h3"}>
-                            {product.name}
-                          </Typography>
-                          <Box
-                            display="flex"
-                            alignItems="baseline"
-                            sx={{ gap: 1 }}
-                          >
-                            {product.discount > 0 && (
-                              <Typography
-                                variant={isMobile ? "body1" : "h3"}
-                                color="#97a2aa"
-                                sx={{ textDecoration: "line-through" }}
-                              >
-                                ${product.price}
-                              </Typography>
-                            )}
-                            <Typography
-                              variant={isMobile ? "body1" : "h1"}
-                              sx={(theme) => ({
-                                color: theme.palette.primary.main,
-                              })}
-                            >
-                              <strong>
-                                $
-                                {finalPrice(
-                                  product.price,
-                                  product.discount ?? 0 + product.offerDiscount ?? 0  
-                                )}
-                              </strong>
-                            </Typography>
-                          </Box>
-                          <Stack direction="row" justifyContent="end">
-                            <Button
-                              sx={{ marginTop: 2 }}
-                              variant="contained"
-                              component={Link}
-                              href={"/detalle-producto/" + product._id}
-                            >
-                              Comprar
-                            </Button>
-                          </Stack>
-                        </Box>
-                      </Paper>
+                      <ProductCard data={product} />
                     </SwiperSlide>
                   ))}
                 </Swiper>

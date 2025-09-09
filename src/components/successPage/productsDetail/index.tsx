@@ -14,8 +14,9 @@ import {
 interface Props {
   products: any[];
   orderId: string
+  hasButton?: boolean
 }
-export default function ProductsDetail({products, orderId}: Props) {
+export default function ProductsDetail({products, orderId, hasButton = true}: Props) {
   const { state } = useITheme();
 
   const WhatsAppLinkWithExternalURL = () => {
@@ -48,7 +49,7 @@ export default function ProductsDetail({products, orderId}: Props) {
           </strong>
         </Typography>
       </Box>{" "}
-      <Stack
+      {hasButton && <Stack
         direction="row"
         justifyContent={"flex-end"}
         alignItems="center"
@@ -56,7 +57,7 @@ export default function ProductsDetail({products, orderId}: Props) {
         sx={{ marginTop: 2 }}
       >
         <Button component="a" target="_blank" variant="contained" href={WhatsAppLinkWithExternalURL()}>Coordinar envío</Button>
-      </Stack>
+      </Stack>}
       {products.length === 0 && <Typography>El carrito está vacío</Typography>}
     </>
   );

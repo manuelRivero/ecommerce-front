@@ -103,7 +103,7 @@ export default function ProductCard({ data }: Props) {
         </Box>}
 
         <Box
-          sx={{ overflow: "hidden", position: "relative", height: 300 }}
+          sx={{ overflow: "hidden", position: "relative", height: {xs: 200, md: 300} }}
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
         >

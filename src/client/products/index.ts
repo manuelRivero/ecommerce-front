@@ -7,16 +7,34 @@ export const getProducts = (
   limit: number = 10,
   category?: string,
   search?: string,
+  filters?: {
+    minPrice?: number;
+    maxPrice?: number;
+    colors?: string[];
+    sizes?: string[];
+    categories?: string[];
+    hasDiscount?: boolean;
+  }
 ): Promise<AxiosResponse> => {
-  return axiosInstance.get("/products/web", {
-    params: {
-      tenant,
-      page,
-      category,
-      limit,
-      search,
-    },
-  });
+  const params: any = {
+    tenant,
+    page,
+    category,
+    limit,
+    search,
+  };
+
+  // Agregar filtros si existen
+  if (filters) {
+    if (filters.minPrice !== undefined) params.minPrice = filters.minPrice;
+    if (filters.maxPrice !== undefined) params.maxPrice = filters.maxPrice;
+    if (filters.colors && filters.colors.length > 0) params.colors = filters.colors.join(',');
+    if (filters.sizes && filters.sizes.length > 0) params.sizes = filters.sizes.join(',');
+    if (filters.categories && filters.categories.length > 0) params.categories = filters.categories.join(',');
+    if (filters.hasDiscount) params.hasDiscount = filters.hasDiscount;
+  }
+
+  return axiosInstance.get("/products/web", { params });
 };
 
 export const getProductDetail = (id: string): Promise<AxiosResponse> => {
