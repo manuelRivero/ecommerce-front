@@ -7,13 +7,21 @@ import {
   SearchResult, 
   SearchSuggestion 
 } from '@/client/search';
-import { Product } from '@/interfaces/products';
+import { Product, SearchProduct } from '@/interfaces/products';
+
+// Función para transformar SearchProduct a Product
+const transformSearchProductToProduct = (searchProduct: SearchProduct): Product => {
+  return {
+    ...searchProduct,
+    categoryDetail: searchProduct.categoryDetail ? [searchProduct.categoryDetail] : [],
+  };
+};
 
 // Función para transformar datos del backend al formato esperado por el frontend
 const transformBackendSuggestions = (backendSuggestions: any[]): SearchSuggestion[] => {
   return backendSuggestions.map((item) => {
-    // Si es un producto
-    if (item.name && item.price !== undefined) {
+    // Si es un producto (tiene price y images)
+    if (item.name && item.price !== undefined && item.images) {
       return {
         id: `product-${item._id}`,
         type: 'product' as const,
@@ -27,8 +35,8 @@ const transformBackendSuggestions = (backendSuggestions: any[]): SearchSuggestio
       };
     }
     
-    // Si es una categoría
-    if (item.type === 'category' || (item.name && !item.price)) {
+    // Si es una categoría (tiene name, image pero NO price)
+    if (item.name && item.price === undefined && item.image && !item.images) {
       return {
         id: `category-${item._id}`,
         type: 'category' as const,
@@ -41,7 +49,7 @@ const transformBackendSuggestions = (backendSuggestions: any[]): SearchSuggestio
       };
     }
     
-    // Fallback
+    // Fallback - asumir que es producto si no se puede determinar
     return {
       id: `item-${item._id}`,
       type: 'product' as const,
@@ -49,7 +57,7 @@ const transformBackendSuggestions = (backendSuggestions: any[]): SearchSuggestio
       relevance: item.relevanceScore || 0,
       metadata: {
         productId: item._id,
-        imageUrl: item.images?.[0]?.url,
+        imageUrl: item.images?.[0]?.url || item.image?.url,
       },
     };
   });
@@ -129,7 +137,7 @@ export function useSmartSearch(options: UseSmartSearchOptions): UseSmartSearchRe
   const previousQueryRef = useRef<string>('');
   
   // Cache de resultados
-  const resultsCache = useRef<Map<string, SearchResult>>(new Map());
+  const resultsCache = useRef<Map<string, { products: Product[], total: number, query: string, executionTime: number, searchType: string }>>(new Map());
   const suggestionsCache = useRef<Map<string, SearchSuggestion[]>>(new Map());
   
   /**
@@ -187,15 +195,30 @@ export function useSmartSearch(options: UseSmartSearchOptions): UseSmartSearchRe
       
       const response = await getSearchSuggestions(searchQuery, config.tenant, config.maxSuggestions || 10);
       
-      if (response.ok && response.data.suggestions) {
-        // Transformar las sugerencias del backend al formato esperado
-        const transformedSuggestions = transformBackendSuggestions(response.data.suggestions);
-        setSuggestions(transformedSuggestions);
-        setShowSuggestions(true);
+      if (response.ok && response.data) {
+        // Combinar productos y sugerencias del backend
+        const allSuggestions = [];
         
-        // Guardar en cache
-        if (config.cacheResults) {
-          suggestionsCache.current.set(cacheKey, transformedSuggestions);
+        // Agregar productos si existen
+        if (response.data.products && response.data.products.length > 0) {
+          allSuggestions.push(...response.data.products);
+        }
+        
+        // Agregar categorías si existen
+        if (response.data.suggestions && response.data.suggestions.length > 0) {
+          allSuggestions.push(...response.data.suggestions);
+        }
+        
+        if (allSuggestions.length > 0) {
+          // Transformar las sugerencias del backend al formato esperado
+          const transformedSuggestions = transformBackendSuggestions(allSuggestions);
+          setSuggestions(transformedSuggestions);
+          setShowSuggestions(true);
+          
+          // Guardar en cache
+          if (config.cacheResults) {
+            suggestionsCache.current.set(cacheKey, transformedSuggestions);
+          }
         }
       }
     } catch (error: any) {
@@ -243,7 +266,9 @@ export function useSmartSearch(options: UseSmartSearchOptions): UseSmartSearchRe
       
       if (response.ok && response.data) {
         const { products, total: totalResults } = response.data;
-        setResults(products);
+        // Transformar SearchProduct[] a Product[]
+        const transformedProducts = products.map(transformSearchProductToProduct);
+        setResults(transformedProducts);
         setTotal(totalResults);
         setShowResults(true);
         setHasSearched(true);
@@ -251,7 +276,7 @@ export function useSmartSearch(options: UseSmartSearchOptions): UseSmartSearchRe
         // Guardar en cache
         if (config.cacheResults) {
           resultsCache.current.set(cacheKey, {
-            products,
+            products: transformedProducts,
             total: totalResults,
             query: response.data.query,
             executionTime: response.data.executionTime,

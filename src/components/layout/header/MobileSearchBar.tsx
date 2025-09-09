@@ -78,7 +78,10 @@ export default function MobileSearchBar({
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ 
+      width: '100%',
+      position: 'relative',
+    }}>
       <form onSubmit={handleSubmit}>
         <TextField
           value={query}
@@ -124,7 +127,20 @@ export default function MobileSearchBar({
 
       {/* Sugerencias colapsables */}
       <Collapse in={expanded && suggestions.length > 0}>
-        <Box sx={{ mt: 1 }}>
+        <Box sx={{ 
+          mt: 1,
+          position: 'absolute',
+          top: '100%',
+          left: 0,
+          right: 0,
+          zIndex: theme.zIndex.modal,
+          backgroundColor: theme.palette.background.paper,
+          borderRadius: 2,
+          boxShadow: theme.shadows[4],
+          border: `1px solid ${theme.palette.divider}`,
+          maxHeight: '70vh',
+          overflowY: 'auto',
+        }}>
           <SearchSuggestions
             suggestions={suggestions}
             onSelect={handleSuggestionSelect}

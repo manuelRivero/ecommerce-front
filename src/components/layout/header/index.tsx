@@ -74,7 +74,7 @@ export default function Header() {
           height: 60,
           borderBottom: "solid 1px #fff",
           justifyContent: "center",
-          zIndex: 1,
+          zIndex: theme.zIndex.appBar,
         }}
       >
         <Toolbar variant="dense" sx={{ width: "100%" }}>
@@ -130,7 +130,7 @@ export default function Header() {
                 flex: 1, 
                 mx: 2,
                 position: 'relative',
-                zIndex: theme.zIndex.modal + 1,
+                zIndex: theme.zIndex.appBar + 1,
               }}>
                 <MobileSearchBar
                   tenant={state.subdomain}
