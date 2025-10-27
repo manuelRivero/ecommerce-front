@@ -125,9 +125,11 @@ export default function FeaturesListPage() {
               <TableRow>
                 <TableCell>Nombre</TableCell>
                 <TableCell>Título</TableCell>
+                <TableCell>Tipo</TableCell>
                 <TableCell>Descripción</TableCell>
                 <TableCell>Estado</TableCell>
                 <TableCell>Activa</TableCell>
+                <TableCell>Oculta</TableCell>
                 <TableCell>Fecha Creación</TableCell>
                 <TableCell>Acciones</TableCell>
               </TableRow>
@@ -144,6 +146,14 @@ export default function FeaturesListPage() {
                     <Typography variant="body2">
                       {feature.title}
                     </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={feature.featureType === 'binary' ? 'Binaria' : 'Contable'}
+                      color={feature.featureType === 'binary' ? 'primary' : 'secondary'}
+                      size="small"
+                      variant="outlined"
+                    />
                   </TableCell>
                   <TableCell>
                     <Typography variant="body2" sx={{ maxWidth: 200 }}>
@@ -170,7 +180,13 @@ export default function FeaturesListPage() {
                       label={feature.isActive ? 'Activa' : 'Inactiva'}
                       color={feature.isActive ? 'success' : 'default'}
                       size="small"
-                      variant="outlined"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={feature.hidden ? 'Oculta' : 'Visible'}
+                      color={feature.hidden ? 'secondary' : 'primary'}
+                      size="small"
                     />
                   </TableCell>
                   <TableCell>

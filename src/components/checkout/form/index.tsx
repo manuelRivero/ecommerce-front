@@ -1,6 +1,7 @@
 "use client";
 import { createSale } from "@/client/sales";
 import { cleanCart, useCart } from "@/context/cart";
+import ErrorModal from "@/components/shared/ErrorModal";
 import {
   Box,
   Button,
@@ -31,6 +32,7 @@ export default function Form() {
   const [loading, setLoading] = useState<boolean>(false);
   const [showFormAlert, setShowFormAlert] = useState<boolean>(false);
   const [redirect, setRedirect] = useState<string | null>(null);
+  const [showErrorModal, setShowErrorModal] = useState<boolean>(false);
 
   const {
     control,
@@ -49,6 +51,7 @@ export default function Form() {
       setRedirect(response.data.init_point);
     } catch (error: any) {
       console.log("error", error);
+      setShowErrorModal(true);
     } finally {
       setLoading(false);
     }
@@ -61,6 +64,16 @@ export default function Form() {
         router.push("compra-en-progreso");
       }, 1000);
     }
+  };
+
+  const handleCloseErrorModal = () => {
+    setShowErrorModal(false);
+  };
+
+  const handleRetryPayment = () => {
+    setShowErrorModal(false);
+    // Re-ejecutar el submit con los valores actuales del formulario
+    handleSubmit(submit)();
   };
   return products.length > 0 ? (
     <form onSubmit={handleSubmit(submit)}>
@@ -303,6 +316,14 @@ export default function Form() {
           </Stack>
         </>
       )}
+      
+      <ErrorModal
+        open={showErrorModal}
+        onClose={handleCloseErrorModal}
+        onRetry={handleRetryPayment}
+        title="Error al procesar el pago"
+        message="No pudimos procesar tu pago en este momento. Por favor, verifica tus datos e intenta nuevamente."
+      />
     </form>
   ) : (
     <>

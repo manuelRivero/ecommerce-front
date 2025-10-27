@@ -168,6 +168,53 @@ export default function FeatureDetailPage() {
             </Card>
           </Grid>
 
+          <Grid item xs={12} md={6}>
+            <Card variant="outlined">
+              <CardContent>
+                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                  Tipo de Característica
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Chip
+                    label={feature.featureType === 'binary' ? 'Binaria' : 'Contable'}
+                    color={feature.featureType === 'binary' ? 'primary' : 'secondary'}
+                    variant="outlined"
+                  />
+                  <Typography variant="body2" color="text.secondary">
+                    {feature.featureType === 'binary' ? 'Sí/No' : 'Con límites'}
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Card variant="outlined">
+              <CardContent>
+                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                  Estado
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Chip
+                    label={feature.enabled ? 'Habilitada' : 'Deshabilitada'}
+                    color={feature.enabled ? 'success' : 'error'}
+                    variant="outlined"
+                  />
+                  <Chip
+                    label={feature.isActive ? 'Activa' : 'Inactiva'}
+                    color={feature.isActive ? 'success' : 'error'}
+                    variant="outlined"
+                  />
+                  <Chip
+                    label={feature.hidden ? 'Oculta' : 'Visible'}
+                    color={feature.hidden ? 'secondary' : 'primary'}
+                    variant="outlined"
+                  />
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+
           <Grid item xs={12}>
             <Card variant="outlined">
               <CardContent>

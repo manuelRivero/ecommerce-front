@@ -7,6 +7,7 @@ import { SuperAdminAuthProvider } from "@/context/super-admin-auth";
 import { ProtectedRoute } from "@/components/super-admin/ProtectedRoute";
 import { ClientOnly } from "@/components/super-admin/ClientOnly";
 import { usePathname } from "next/navigation";
+import '../globals.css';
 
 function SuperAdminContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

@@ -4,13 +4,19 @@ import { Feature } from '../features';
 
 export interface FeatureLimit {
   max: number;
-  min: number;
   unlimited: boolean;
 }
 
+export interface PlanFeatureInfo {
+  name: string;
+  title: string;
+  featureType: 'binary' | 'countable';
+}
+
 export interface PlanFeature {
-  feature: Feature;
-  limits: FeatureLimit;
+  feature: PlanFeatureInfo;
+  enabled: boolean;
+  limits?: FeatureLimit; // Solo para featureType 'countable'
 }
 
 export interface CreatePlanRequest {

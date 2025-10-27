@@ -29,19 +29,8 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
-import { getPlanFeatures, Feature, createSubscriptionPlan } from '@/client';
-
-interface FeatureLimit {
-  max: number;
-  min: number;
-  unlimited: boolean;
-}
-
-interface PlanFeature {
-  feature: Feature;
-  limits: FeatureLimit;
-}
+import { useRouter, useSearchParams } from 'next/navigation';
+import { getPlanFeatures, Feature, createSubscriptionPlan, getPlanById, updateSubscriptionPlan, FeatureLimit, PlanFeature, PlanFeatureInfo } from '@/client';
 
 interface PlanFormData {
   name: string;
@@ -101,6 +90,9 @@ const defaultValues: PlanFormData = {
 
 export default function CreatePlanPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const planId = searchParams.get('id');
+  const isEditMode = !!planId;
   
   const [features, setFeatures] = useState<Feature[]>([]);
   const [loading, setLoading] = useState(true);
@@ -135,17 +127,78 @@ export default function CreatePlanPage() {
         console.log('Features cargadas exitosamente:', fetchedFeatures.length, 'características');
         setFeatures(fetchedFeatures);
         
-        // Initialize features array with default values for new plan
-        const initialFeatures: PlanFeature[] = fetchedFeatures.map(feature => ({
-          feature: { ...feature },
-          limits: {
-            max: 0,
-            min: 0,
-            unlimited: false
-          }
-        }));
-        
-        setValue('features', initialFeatures);
+        if (isEditMode && planId) {
+          // Load existing plan data for editing
+          console.log('Cargando datos del plan existente:', planId);
+          const planResponse = await getPlanById(planId);
+          const existingPlan = planResponse.data.plan;
+          
+          console.log('Plan existente cargado:', existingPlan);
+          
+          // Set form values with existing plan data
+          setValue('name', existingPlan.name || '');
+          setValue('description', existingPlan.description || '');
+          setValue('price', existingPlan.price || 0);
+          setValue('currency', existingPlan.currency || 'ARS');
+          setValue('billingCycle', existingPlan.billingCycle || { frequency: 1, frequencyType: 'days' });
+          setValue('status', existingPlan.status || 'active');
+          
+          // Map existing plan features with fetched features (read-only for display)
+          console.log('Fetched features:', fetchedFeatures);
+          console.log('Existing plan features:', existingPlan.features);
+          
+          const planFeatures: PlanFeature[] = fetchedFeatures.map(feature => {
+            console.log('Processing feature:', feature);
+            
+            // Find if this feature exists in the plan
+            const existingFeature = existingPlan.features?.find(pf => {
+              console.log('Comparing:', pf.feature?.name, 'with', feature.name);
+              return pf.feature?.name === feature.name;
+            });
+            
+            console.log('Found existing feature:', existingFeature);
+            
+            // Create the new structure
+            const planFeatureInfo: PlanFeatureInfo = {
+              name: feature.name || 'unknown',
+              title: feature.title || feature.name || 'Característica sin nombre',
+              featureType: (feature as any).featureType || 'binary'
+            };
+            
+            if (existingFeature) {
+              return {
+                feature: planFeatureInfo,
+                enabled: existingFeature.enabled || false,
+                limits: existingFeature.limits || ((feature as any).featureType === 'countable' ? { max: 0, unlimited: false } : undefined)
+              };
+            } else {
+              return {
+                feature: planFeatureInfo,
+                enabled: false,
+                limits: (feature as any).featureType === 'countable' ? { max: 0, unlimited: false } : undefined
+              };
+            }
+          });
+          
+          setValue('features', planFeatures);
+        } else {
+          // Initialize features array with default values for new plan
+          const initialFeatures: PlanFeature[] = fetchedFeatures.map(feature => {
+            const planFeatureInfo: PlanFeatureInfo = {
+              name: feature.name || 'unknown',
+              title: feature.title || feature.name || 'Característica sin nombre',
+              featureType: (feature as any).featureType || 'binary'
+            };
+            
+            return {
+              feature: planFeatureInfo,
+              enabled: false,
+              limits: (feature as any).featureType === 'countable' ? { max: 0, unlimited: false } : undefined
+            };
+          });
+          
+          setValue('features', initialFeatures);
+        }
       } catch (error: any) {
         console.error('Error loading data:', error);
         const errorMessage = error.message || 'Error al cargar los datos. Por favor, intenta de nuevo.';
@@ -156,17 +209,15 @@ export default function CreatePlanPage() {
     };
 
     loadData();
-  }, [setValue]);
+  }, [setValue, isEditMode, planId]);
+
 
   const handleFeatureToggle = (index: number, enabled: boolean) => {
     const currentFeatures = watch('features');
     const updatedFeatures = [...currentFeatures];
     updatedFeatures[index] = {
       ...updatedFeatures[index],
-      feature: {
-        ...updatedFeatures[index].feature,
-        enabled
-      }
+      enabled
     };
     setValue('features', updatedFeatures);
   };
@@ -174,14 +225,35 @@ export default function CreatePlanPage() {
   const handleLimitChange = (index: number, field: keyof FeatureLimit, value: any) => {
     const currentFeatures = watch('features');
     const updatedFeatures = [...currentFeatures];
+    
+    // Asegurar que limits existe y tiene la estructura correcta
+    const currentLimits = updatedFeatures[index]?.limits || { max: 0, unlimited: false };
+    
     updatedFeatures[index] = {
       ...updatedFeatures[index],
       limits: {
-        ...updatedFeatures[index].limits,
+        ...currentLimits,
         [field]: value
       }
     };
     setValue('features', updatedFeatures);
+  };
+
+  // Función para validar entrada de números positivos sin decimales
+  const validatePositiveInteger = (value: string): string => {
+    // Remover cualquier carácter que no sea dígito
+    const cleaned = value.replace(/[^0-9]/g, '');
+    return cleaned;
+  };
+
+  // Función para manejar el cambio de límites con validación
+  const handleLimitInputChange = (index: number, field: 'max', value: string) => {
+    const validatedValue = validatePositiveInteger(value);
+    const numericValue = validatedValue === '' ? 0 : parseInt(validatedValue);
+    
+    // Asegurar que el valor sea un número válido
+    const finalValue = isNaN(numericValue) ? 0 : numericValue;
+    handleLimitChange(index, field, finalValue);
   };
 
   const onSubmit = async (data: PlanFormData) => {
@@ -189,23 +261,36 @@ export default function CreatePlanPage() {
       setSubmitting(true);
       setSubmitError('');
       
-      const response = await createSubscriptionPlan(data);
+      let response;
+      
+      if (isEditMode && planId) {
+        // Update existing plan
+        console.log('Actualizando plan existente:', planId, data);
+        response = await updateSubscriptionPlan(planId, data);
+      } else {
+        // Create new plan
+        console.log('Creando nuevo plan:', data);
+        response = await createSubscriptionPlan(data);
+      }
       
       if (response.data.success) {
         setShowSuccessModal(true);
         
-        // Reset form after successful creation
-        reset(defaultValues);
-        // Reset features to initial state (all disabled with 0 limits)
-        const resetFeatures: PlanFeature[] = features.map(feature => ({
-          feature: { ...feature, enabled: false },
-          limits: {
-            max: 0,
-            min: 0,
-            unlimited: false
-          }
-        }));
-        setValue('features', resetFeatures);
+        if (!isEditMode) {
+          // Reset form after successful creation (only for new plans)
+          reset(defaultValues);
+          // Reset features to initial state (all disabled with 0 limits)
+          const resetFeatures: PlanFeature[] = features.map(feature => ({
+            feature: {
+              name: feature.name || 'unknown',
+              title: feature.title || feature.name || 'Característica sin nombre',
+              featureType: (feature as any).featureType || 'binary'
+            },
+            enabled: false,
+            limits: (feature as any).featureType === 'countable' ? { max: 0, unlimited: false } : undefined
+          }));
+          setValue('features', resetFeatures);
+        }
       } else {
         setSubmitError(response.data.message || 'Error al crear el plan');
         setShowErrorModal(true);
@@ -231,7 +316,7 @@ export default function CreatePlanPage() {
     return (
       <Box sx={{ maxWidth: 1200, margin: '0 auto' }}>
         <Typography variant="h4" gutterBottom>
-          Crear Nuevo Plan de Suscripción
+          {isEditMode ? 'Editar Plan de Suscripción' : 'Crear Nuevo Plan de Suscripción'}
         </Typography>
         
         <Paper sx={{ p: 3, mb: 3 }}>
@@ -264,7 +349,7 @@ export default function CreatePlanPage() {
   return (
     <Box sx={{ maxWidth: 1200, margin: '0 auto' }}>
       <Typography variant="h4" gutterBottom>
-        Crear Nuevo Plan de Suscripción
+        {isEditMode ? 'Editar Plan de Suscripción' : 'Crear Nuevo Plan de Suscripción'}
       </Typography>
       
       <Paper sx={{ p: 3, mb: 3 }}>
@@ -409,14 +494,17 @@ export default function CreatePlanPage() {
 
           {/* Características del Plan */}
           <Typography variant="h6" gutterBottom>
-            Características del Plan
+            Características del Plan (Solo Lectura)
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Las características se configuran desde el módulo de Features. Aquí solo se muestra información.
           </Typography>
           
           <Card sx={{ mb: 3 }}>
             <CardContent>
               <List>
                 {watch('features')?.map((planFeature, index) => (
-                  <React.Fragment key={planFeature.feature._id}>
+                  <React.Fragment key={planFeature.feature.name}>
                     <ListItem>
                       <ListItemText
                         primary={
@@ -424,7 +512,7 @@ export default function CreatePlanPage() {
                             <Typography variant="subtitle1" fontWeight="medium">
                               {planFeature.feature.title}
                             </Typography>
-                            {planFeature.feature.enabled && (
+                            {planFeature.enabled && (
                               <Chip 
                                 label="Activo" 
                                 color="success" 
@@ -432,11 +520,17 @@ export default function CreatePlanPage() {
                                 variant="outlined" 
                               />
                             )}
+                            <Chip 
+                              label={planFeature.feature.featureType === 'binary' ? 'Binaria' : 'Contable'} 
+                              color={planFeature.feature.featureType === 'binary' ? 'primary' : 'secondary'} 
+                              size="small" 
+                              variant="outlined" 
+                            />
                           </Box>
                         }
                         secondary={
                           <Box>
-                            {planFeature.feature.enabled && (
+                            {planFeature.enabled && planFeature.feature.featureType === 'countable' && planFeature.limits && (
                               <Grid container spacing={2} sx={{ mt: 1 }}>
                                 <Grid item xs={12} md={4}>
                                   <FormControlLabel
@@ -451,28 +545,21 @@ export default function CreatePlanPage() {
                                   />
                                 </Grid>
                                 {!planFeature.limits.unlimited && (
-                                  <>
-                                    <Grid item xs={12} md={4}>
-                                      <TextField
-                                        label="Mínimo"
-                                        type="number"
-                                        value={planFeature.limits.min}
-                                        onChange={(e) => handleLimitChange(index, 'min', parseInt(e.target.value) || 0)}
-                                        size="small"
-                                        fullWidth
-                                      />
-                                    </Grid>
-                                    <Grid item xs={12} md={4}>
-                                      <TextField
-                                        label="Máximo"
-                                        type="number"
-                                        value={planFeature.limits.max}
-                                        onChange={(e) => handleLimitChange(index, 'max', parseInt(e.target.value) || 0)}
-                                        size="small"
-                                        fullWidth
-                                      />
-                                    </Grid>
-                                  </>
+                                  <Grid item xs={12} md={6}>
+                                    <TextField
+                                      label="Máximo"
+                                      type="text"
+                                      value={planFeature.limits?.max?.toString() || '0'}
+                                      onChange={(e) => handleLimitInputChange(index, 'max', e.target.value)}
+                                      size="small"
+                                      fullWidth
+                                      inputProps={{
+                                        inputMode: 'numeric',
+                                        pattern: '[0-9]*'
+                                      }}
+                                      helperText="Solo números positivos"
+                                    />
+                                  </Grid>
                                 )}
                               </Grid>
                             )}
@@ -480,11 +567,19 @@ export default function CreatePlanPage() {
                         }
                       />
                       <ListItemSecondaryAction>
-                        <Switch
-                          checked={planFeature.feature.enabled}
-                          onChange={(e) => handleFeatureToggle(index, e.target.checked)}
-                          color="primary"
-                        />
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'flex-end' }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Typography variant="caption" color="text.secondary">
+                              Habilitado
+                            </Typography>
+                            <Switch
+                              checked={planFeature.enabled}
+                              onChange={(e) => handleFeatureToggle(index, e.target.checked)}
+                              color="primary"
+                              size="small"
+                            />
+                          </Box>
+                        </Box>
                       </ListItemSecondaryAction>
                     </ListItem>
                     {index < watch('features')?.length - 1 && <Divider />}
@@ -520,11 +615,14 @@ export default function CreatePlanPage() {
       {/* Modal de Éxito */}
       <Dialog open={showSuccessModal} onClose={() => setShowSuccessModal(false)} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ color: 'success.main' }}>
-          ¡Plan Creado Exitosamente!
+          {isEditMode ? '¡Plan Actualizado Exitosamente!' : '¡Plan Creado Exitosamente!'}
         </DialogTitle>
         <DialogContent>
           <Typography>
-            El plan de suscripción ha sido creado correctamente y está listo para ser utilizado.
+            {isEditMode 
+              ? 'El plan de suscripción ha sido actualizado correctamente.'
+              : 'El plan de suscripción ha sido creado correctamente y está listo para ser utilizado.'
+            }
           </Typography>
         </DialogContent>
         <DialogActions>

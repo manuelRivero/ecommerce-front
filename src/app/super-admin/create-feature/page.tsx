@@ -25,11 +25,14 @@ import {
   DialogContent,
   DialogActions,
   CircularProgress,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import { getPlanFeatureById, Feature, ExtendedDescription } from '@/client';
+import { getPlanFeatureById, Feature, ExtendedDescription, createFeature, updateFeature, CreateFeatureRequest } from '@/client';
 
 interface FeatureFormData {
   name: string;
@@ -38,6 +41,8 @@ interface FeatureFormData {
   description: string;
   extendedDescription: ExtendedDescription;
   isActive: boolean;
+  hidden: boolean;
+  featureType: 'binary' | 'countable';
 }
 
 const defaultValues: FeatureFormData = {
@@ -53,6 +58,8 @@ const defaultValues: FeatureFormData = {
     closing: '',
   },
   isActive: true,
+  hidden: false,
+  featureType: 'binary',
 };
 
 export default function CreateFeaturePage() {
@@ -86,7 +93,9 @@ export default function CreateFeaturePage() {
       
       const response = await getPlanFeatureById(id);
       const feature = response.data.data;
-      console.log('feature', feature);
+      console.log('Loaded feature data:', feature);
+      console.log('Feature type:', feature.featureType);
+      console.log('Feature hidden:', feature.hidden);
       
       // Set form values
       setValue('name', feature.name);
@@ -99,6 +108,8 @@ export default function CreateFeaturePage() {
       setValue('extendedDescription.lossReasons', feature.extendedDescription.lossReasons);
       setValue('extendedDescription.closing', feature.extendedDescription.closing);
       setValue('isActive', feature.isActive);
+      setValue('hidden', feature.hidden || false);
+      setValue('featureType', feature.featureType || 'binary');
       
     } catch (error: any) {
       console.error('Error loading feature:', error);
@@ -150,22 +161,56 @@ export default function CreateFeaturePage() {
       setSubmitting(true);
       setSubmitError('');
       
-      if (isEditing) {
-        // TODO: Implement updateFeature API call
-        console.log('Updating feature with ID:', featureId, 'Data:', data);
-        // const response = await updateFeature(featureId, data);
-      } else {
-        // TODO: Implement createFeature API call
-        console.log('Creating new feature:', data);
-        // const response = await createFeature(data);
+      // Validar que featureType esté presente
+      if (!data.featureType) {
+        setSubmitError('El tipo de característica es requerido.');
+        setShowErrorModal(true);
+        return;
       }
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Validar que hidden sea un booleano
+      if (typeof data.hidden !== 'boolean') {
+        data.hidden = false; // Valor por defecto
+      }
       
-      setShowSuccessModal(true);
-      // Reset form after successful submission
-      reset(defaultValues);
+      console.log('Form validation passed. Data to send:', {
+        ...data,
+        featureType: data.featureType,
+        hidden: data.hidden
+      });
+      
+      if (isEditing) {
+        console.log('Updating feature with ID:', featureId);
+        console.log('Feature data to send:', data);
+        console.log('Feature type being sent:', data.featureType);
+        console.log('Feature hidden being sent:', data.hidden);
+        
+        const response = await updateFeature(featureId, data as CreateFeatureRequest);
+        
+        if (response.data.success) {
+          setShowSuccessModal(true);
+          console.log('Feature updated successfully:', response.data.data);
+        } else {
+          setSubmitError(response.data.message || 'Error al actualizar la característica.');
+          setShowErrorModal(true);
+        }
+      } else {
+        console.log('Creating new feature:', data);
+        console.log('Feature type being sent:', data.featureType);
+        console.log('Feature hidden being sent:', data.hidden);
+        
+        const response = await createFeature(data as CreateFeatureRequest);
+        
+        if (response.data.success) {
+          setShowSuccessModal(true);
+          console.log('Feature created successfully:', response.data.data);
+          // Reset form after successful creation
+          reset(defaultValues);
+        } else {
+          setSubmitError(response.data.message || 'Error al crear la característica.');
+          setShowErrorModal(true);
+        }
+      }
     } catch (error: any) {
       console.error('Error saving feature:', error);
       setSubmitError(`Error al ${isEditing ? 'actualizar' : 'crear'} la característica. Por favor, intenta de nuevo.`);
@@ -287,6 +332,48 @@ export default function CreateFeaturePage() {
                   />
                 }
                 label="Activa"
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <FormControlLabel
+                control={
+                  <Controller
+                    name="hidden"
+                    control={control}
+                    render={({ field }) => (
+                      <Switch
+                        checked={field.value}
+                        onChange={field.onChange}
+                        color="secondary"
+                      />
+                    )}
+                  />
+                }
+                label="Oculta"
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Controller
+                name="featureType"
+                control={control}
+                rules={{ required: 'El tipo de característica es requerido' }}
+                render={({ field }) => (
+                  <FormControl fullWidth error={!!errors.featureType}>
+                    <InputLabel>Tipo de Característica</InputLabel>
+                    <Select
+                      {...field}
+                      label="Tipo de Característica"
+                    >
+                      <MenuItem value="binary">Binaria (Sí/No)</MenuItem>
+                      <MenuItem value="countable">Contable (Con límites)</MenuItem>
+                    </Select>
+                    {errors.featureType && (
+                      <Typography variant="caption" color="error" sx={{ mt: 1 }}>
+                        {errors.featureType.message}
+                      </Typography>
+                    )}
+                  </FormControl>
+                )}
               />
             </Grid>
           </Grid>

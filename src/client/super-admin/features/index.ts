@@ -17,6 +17,8 @@ export interface Feature {
   description: string;
   extendedDescription: ExtendedDescription;
   isActive: boolean;
+  hidden: boolean;
+  featureType: 'binary' | 'countable';
   createdAt?: string;
   updatedAt?: string;
 }
@@ -43,6 +45,42 @@ export const getAllPlanFeatures = async (): Promise<AxiosResponse<FeaturesRespon
   return axiosInstance.get<FeaturesResponse>(`/plan-features`);       
 }; 
 
+export interface CreateFeatureRequest {
+  name: string;
+  enabled: boolean;
+  title: string;
+  description: string;
+  extendedDescription: ExtendedDescription;
+  isActive: boolean;
+  hidden: boolean;
+  featureType: 'binary' | 'countable';
+}
+
+export interface CreateFeatureResponse {
+  success: boolean;
+  data: Feature;
+  message?: string;
+}
+
 export const getPlanFeatureById = async (featureId: string): Promise<AxiosResponse<{data:Feature}>> => {
     return axiosInstance.get<Feature>(`/plan-features/${featureId}`);       
-  }; 
+  };
+
+/**
+ * Crea una nueva característica de plan
+ * @param featureData - Datos de la característica a crear
+ * @returns Promise con la respuesta del servidor
+ */
+export const createFeature = async (featureData: CreateFeatureRequest): Promise<AxiosResponse<CreateFeatureResponse>> => {
+  return axiosInstance.post<CreateFeatureResponse>('/plan-features', featureData);
+};
+
+/**
+ * Actualiza una característica de plan existente
+ * @param featureId - ID de la característica a actualizar
+ * @param featureData - Datos de la característica actualizados
+ * @returns Promise con la respuesta del servidor
+ */
+export const updateFeature = async (featureId: string, featureData: CreateFeatureRequest): Promise<AxiosResponse<CreateFeatureResponse>> => {
+  return axiosInstance.put<CreateFeatureResponse>(`/plan-features/${featureId}`, featureData);
+}; 
