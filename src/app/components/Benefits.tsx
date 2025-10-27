@@ -28,13 +28,6 @@ const Benefits = () => {
 
   const benefits = [
     {
-      icon: <CheckCircle sx={{ fontSize: 40, color: 'success.main' }} />,
-      title: '0% Comisión por Ventas',
-      description: 'Mantén el 100% de tus ganancias. No cobramos comisiones por transacciones.',
-      metrics: ['Sin comisiones ocultas', '100% de ganancias', 'Transparencia total'],
-      color: 'success',
-    },
-    {
       icon: <TrendingUp sx={{ fontSize: 40, color: 'success.main' }} />,
       title: 'Aumento de Ventas',
       description: 'Optimización de conversiones y reducción de abandonos de carrito.',

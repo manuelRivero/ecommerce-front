@@ -33,7 +33,6 @@ export interface CreateStoreRequest {
       logo?: string;
     };
   };
-  mercadoPagoToken: string;
   password: string;
   confirmPassword: string;
 }

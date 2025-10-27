@@ -293,42 +293,6 @@ const Pricing = () => {
             </Stack>
           </Box>
 
-          {/* Mensaje destacado de 0% comisión */}
-          <Box
-            sx={{
-              p: 3,
-              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-              borderRadius: 3,
-              border: '2px solid #10b981',
-              maxWidth: 500,
-              mx: 'auto',
-              mb: 4,
-            }}
-          >
-            <Stack direction="row" spacing={2} alignItems="center" justifyContent="center">
-              <CheckCircle sx={{ color: 'white', fontSize: 28 }} />
-              <Typography
-                variant="h6"
-                sx={{
-                  color: 'white',
-                  fontWeight: 600,
-                  textAlign: 'center',
-                }}
-              >
-                ¡0% comisión por ventas! - Mantén el 100% de tus ganancias
-              </Typography>
-            </Stack>
-            <Typography
-              variant="body2"
-              sx={{
-                color: 'rgba(255, 255, 255, 0.9)',
-                textAlign: 'center',
-                mt: 1,
-              }}
-            >
-              Sin comisiones ocultas ni cargos adicionales por transacciones
-            </Typography>
-          </Box>
         </Box>
 
         <Grid container spacing={4} justifyContent="center">

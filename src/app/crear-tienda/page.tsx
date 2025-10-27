@@ -1,24 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
   Typography,
   Card,
   CardContent,
-  TextField,
   Button,
-  Grid,
   Stepper,
   Step,
   StepLabel,
   CircularProgress,
   Alert,
-  Stack,
   Divider,
-  InputAdornment,
-  FormHelperText,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -27,21 +22,21 @@ import {
 } from '@mui/material';
 import {
   Store,
-  Business,
-  ContactMail,
-  LocationOn,
   CheckCircle,
   ArrowForward,
   ArrowBack,
-  Payment,
-  Security,
   Close,
   Error,
   OpenInNew,
 } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { createStore } from '@/client/tenants';
+import { fetchProvinces } from '@/client/geo';
 import MobileStepper from '@/components/landingComponents/mobileStepper';
+import StoreInformationStep from '@/components/landingComponents/storeInformationStep';
+import ContactInformationStep from '@/components/landingComponents/contactInformationStep';
+import AddressInformationStep from '@/components/landingComponents/addressInformationStep';
+import ReviewAndCreateStep from '@/components/landingComponents/reviewAndCreateStep';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 
@@ -49,7 +44,6 @@ const steps = [
   'Información de la Tienda',
   'Información de Contacto',
   'Dirección',
-  'Configuración de Pagos',
   'Revisar y Crear'
 ];
 
@@ -64,6 +58,7 @@ const CreateStorePage = () => {
   const [verifyingSubdomain, setVerifyingSubdomain] = useState(false);
   const [subdomainVerified, setSubdomainVerified] = useState(false);
   const [subdomainError, setSubdomainError] = useState<string | null>(null);
+  const [provinces, setProvinces] = useState<Array<{ id: string; nombre: string }>>([]);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -84,12 +79,25 @@ const CreateStorePage = () => {
         logo: '',
       },
     },
-    mercadoPagoToken: '',
     password: '',
     confirmPassword: '',
   });
 
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  // Load provinces on component mount
+  useEffect(() => {
+    const loadProvinces = async () => {
+      try {
+        const data = await fetchProvinces();
+        setProvinces(data);
+      } catch (error) {
+        console.error('Error loading provinces:', error);
+      }
+    };
+
+    loadProvinces();
+  }, []);
 
   const handleInputChange = (field: string, value: any) => {
     if (field.includes('.')) {
@@ -236,13 +244,6 @@ const CreateStorePage = () => {
          }
          break;
 
-       case 3: // Configuración de Pagos
-         if (!formData.mercadoPagoToken.trim()) {
-           newErrors.mercadoPagoToken = 'El token de MercadoPago es requerido';
-         } else if (!/^TEST-[a-zA-Z0-9]{32}$|^APP_USR-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+$/.test(formData.mercadoPagoToken)) {
-           newErrors.mercadoPagoToken = 'Formato de token inválido';
-         }
-         break;
     }
 
     setErrors(newErrors);
@@ -289,9 +290,6 @@ const CreateStorePage = () => {
                formData.config.locality.trim() !== '' &&
                formData.config.postalCode.trim() !== '';
       
-      case 3: // Configuración de Pagos
-        return formData.mercadoPagoToken.trim() !== '' &&
-               /^TEST-[a-zA-Z0-9]{32}$|^APP_USR-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+$/.test(formData.mercadoPagoToken);
       
       default:
         return false;
@@ -314,7 +312,7 @@ const CreateStorePage = () => {
       setError(null);
       setSuccess(null);
 
-      // Llamada a la API para crear la tienda
+      // Llamada a la API para crear la tienda (sin MercadoPago token)
       const response = await createStore(formData);
       
              // Verificar si la respuesta es exitosa (200 OK o 201 Created)
@@ -360,459 +358,41 @@ const CreateStorePage = () => {
     switch (step) {
       case 0:
         return (
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                Información Básica de tu Tienda
-              </Typography>
-            </Grid>
-            
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Subdominio"
-                value={formData.subdomain}
-                onChange={(e) => handleInputChange('subdomain', e.target.value.toLowerCase())}
-                error={!!errors.subdomain || !!subdomainError}
-                helperText={
-                  subdomainError || 
-                  errors.subdomain || 
-                  (subdomainVerified ? '✅ Subdominio disponible' : `${formData.subdomain}.tiendapro.com.ar`)
-                }
-                InputProps={{
-                  endAdornment: <InputAdornment position="end">.tiendapro.com.ar</InputAdornment>,
-                }}
-                placeholder="mi-tienda"
-              />
-              <Button
-                variant="outlined"
-                onClick={verifySubdomain}
-                disabled={verifyingSubdomain || !formData.subdomain.trim() || !/^[a-z0-9-]+$/.test(formData.subdomain) || formData.subdomain.length < 3}
-                startIcon={verifyingSubdomain ? <CircularProgress size={16} /> : null}
-                sx={{ mt: 1, width: '100%' }}
-              >
-                {verifyingSubdomain ? 'Verificando...' : 'Verificar Disponibilidad'}
-              </Button>
-            </Grid>
-            
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Nombre de la Tienda"
-                value={formData.config.metadata.title}
-                onChange={(e) => handleInputChange('config.metadata.title', e.target.value)}
-                error={!!errors['config.metadata.title']}
-                helperText={errors['config.metadata.title']}
-                placeholder="Mi Tienda Online"
-              />
-            </Grid>
-            
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Descripción de la Tienda"
-                multiline
-                rows={3}
-                value={formData.config.metadata.description}
-                onChange={(e) => handleInputChange('config.metadata.description', e.target.value)}
-                placeholder="Describe brevemente tu tienda y los productos que vendes..."
-              />
-            </Grid>
-            
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="URL del Logo (opcional)"
-                value={formData.config.metadata.logo}
-                onChange={(e) => handleInputChange('config.metadata.logo', e.target.value)}
-                placeholder="https://ejemplo.com/logo.png"
-                helperText="Puedes agregar tu logo más tarde desde el panel de administración"
-              />
-            </Grid>
-          </Grid>
+          <StoreInformationStep
+            formData={formData}
+            errors={errors}
+            subdomainError={subdomainError}
+            subdomainVerified={subdomainVerified}
+            verifyingSubdomain={verifyingSubdomain}
+            onInputChange={handleInputChange}
+            onVerifySubdomain={verifySubdomain}
+          />
         );
 
              case 1:
          return (
-           <Grid container spacing={3}>
-             <Grid item xs={12}>
-               <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                 Información de Contacto
-               </Typography>
-             </Grid>
-             
-             <Grid item xs={12} md={6}>
-               <TextField
-                 fullWidth
-                 label="Nombre"
-                 value={formData.config.firstName}
-                 onChange={(e) => handleInputChange('config.firstName', e.target.value)}
-                 error={!!errors['config.firstName']}
-                 helperText={errors['config.firstName']}
-                 placeholder="Juan"
-               />
-             </Grid>
-             
-             <Grid item xs={12} md={6}>
-               <TextField
-                 fullWidth
-                 label="Apellido"
-                 value={formData.config.lastName}
-                 onChange={(e) => handleInputChange('config.lastName', e.target.value)}
-                 error={!!errors['config.lastName']}
-                 helperText={errors['config.lastName']}
-                 placeholder="Pérez"
-               />
-             </Grid>
-             
-             <Grid item xs={12} md={6}>
-               <TextField
-                 fullWidth
-                 label="Email de Contacto"
-                 type="email"
-                 value={formData.config.email}
-                 onChange={(e) => handleInputChange('config.email', e.target.value)}
-                 error={!!errors['config.email']}
-                 helperText={errors['config.email']}
-                 placeholder="contacto@mitienda.com"
-               />
-             </Grid>
-             
-             <Grid item xs={12} md={6}>
-               <TextField
-                 fullWidth
-                 label="Teléfono"
-                 value={formData.config.phone}
-                 onChange={(e) => {
-                   // Solo permitir números
-                   const numericValue = e.target.value.replace(/\D/g, '');
-                   handleInputChange('config.phone', numericValue);
-                 }}
-                 error={!!errors['config.phone']}
-                 helperText={errors['config.phone'] || "+54"}
-                 placeholder="11 1234-5678"
-                 InputProps={{
-                   startAdornment: <InputAdornment position="start">+54</InputAdornment>,
-                 }}
-               />
-             </Grid>
-             
-                           <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="CUIL"
-                  value={formData.config.cuil}
-                  onChange={(e) => handleInputChange('config.cuil', e.target.value)}
-                  error={!!errors['config.cuil']}
-                  helperText={errors['config.cuil'] || "Formato: XX-XXXXXXXX-X"}
-                  placeholder="20-12345678-9"
-                  required
-                />
-              </Grid>
-              
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Contraseña"
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
-                  error={!!errors.password}
-                  helperText={errors.password || "Mínimo 8 caracteres"}
-                  placeholder="••••••••"
-                  required
-                />
-              </Grid>
-              
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Confirmar Contraseña"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                  error={!!errors.confirmPassword}
-                  helperText={errors.confirmPassword || "Repite tu contraseña"}
-                  placeholder="••••••••"
-                  required
-                />
-              </Grid>
-            </Grid>
+          <ContactInformationStep
+            formData={formData}
+            errors={errors}
+            onInputChange={handleInputChange}
+          />
           );
 
       case 2:
         return (
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                Dirección de la Empresa
-              </Typography>
-            </Grid>
-            
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Dirección"
-                value={formData.config.address}
-                onChange={(e) => handleInputChange('config.address', e.target.value)}
-                error={!!errors['config.address']}
-                helperText={errors['config.address']}
-                placeholder="Av. Corrientes 1234"
-                required
-              />
-            </Grid>
-            
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                label="Provincia"
-                value={formData.config.province}
-                onChange={(e) => handleInputChange('config.province', e.target.value)}
-                error={!!errors['config.province']}
-                helperText={errors['config.province']}
-                placeholder="Buenos Aires"
-                required
-              />
-            </Grid>
-            
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                label="Localidad"
-                value={formData.config.locality}
-                onChange={(e) => handleInputChange('config.locality', e.target.value)}
-                error={!!errors['config.locality']}
-                helperText={errors['config.locality']}
-                placeholder="Ciudad Autónoma de Buenos Aires"
-                required
-              />
-            </Grid>
-            
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                label="Código Postal"
-                value={formData.config.postalCode}
-                onChange={(e) => handleInputChange('config.postalCode', e.target.value)}
-                error={!!errors['config.postalCode']}
-                helperText={errors['config.postalCode']}
-                placeholder="1001"
-                required
-              />
-            </Grid>
-          </Grid>
+          <AddressInformationStep
+            formData={formData}
+            errors={errors}
+            onInputChange={handleInputChange}
+          />
                  );
 
        case 3:
          return (
-           <Grid container spacing={3}>
-             <Grid item xs={12}>
-               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                 <Payment sx={{ fontSize: 28, color: 'primary.main' }} />
-                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                   Configuración de Pagos - MercadoPago
-                 </Typography>
-               </Box>
-               <Alert severity="info" sx={{ mb: 3 }}>
-                 <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
-                   ⚠️ IMPORTANTE: Este paso es fundamental para recibir pagos
-                 </Typography>
-                 <Typography variant="body2">
-                   Necesitamos tu token de MercadoPago para conectar tu cuenta y que puedas recibir 
-                   el dinero de las ventas directamente en tu cuenta bancaria.
-                 </Typography>
-               </Alert>
-             </Grid>
-             
-             <Grid item xs={12}>
-               <Card variant="outlined" sx={{ mb: 3 }}>
-                 <CardContent>
-                   <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2, color: 'primary.main' }}>
-                     📋 Cómo obtener tu Token de MercadoPago:
-                   </Typography>
-                   <Box component="ol" sx={{ pl: 2, mb: 2 }}>
-                     <Box component="li" sx={{ mb: 1 }}>
-                       <Typography variant="body2">
-                         Ve a <strong>mercadopago.com.ar</strong> e inicia sesión en tu cuenta
-                       </Typography>
-                     </Box>
-                     <Box component="li" sx={{ mb: 1 }}>
-                       <Typography variant="body2">
-                         Haz clic en tu nombre en la esquina superior derecha
-                       </Typography>
-                     </Box>
-                     <Box component="li" sx={{ mb: 1 }}>
-                       <Typography variant="body2">
-                         Selecciona <strong>"Configuración"</strong> en el menú
-                       </Typography>
-                     </Box>
-                     <Box component="li" sx={{ mb: 1 }}>
-                       <Typography variant="body2">
-                         Ve a la sección <strong>"Credenciales"</strong>
-                       </Typography>
-                     </Box>
-                     <Box component="li" sx={{ mb: 1 }}>
-                       <Typography variant="body2">
-                         Copia tu <strong>"Access Token"</strong> (empieza con APP_USR-)
-                       </Typography>
-                     </Box>
-                     <Box component="li">
-                       <Typography variant="body2">
-                         Pégala en el campo de abajo
-                       </Typography>
-                     </Box>
-                   </Box>
-                   <Alert severity="warning" sx={{ mt: 2 }}>
-                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                       <Security sx={{ fontSize: 20 }} />
-                       <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                         Seguridad: Tu token es privado y seguro. Solo lo usamos para conectar tu cuenta.
-                       </Typography>
-                     </Box>
-                   </Alert>
-                 </CardContent>
-               </Card>
-             </Grid>
-             
-             <Grid item xs={12}>
-               <TextField
-                 fullWidth
-                 label="Token de MercadoPago"
-                 value={formData.mercadoPagoToken}
-                 onChange={(e) => handleInputChange('mercadoPagoToken', e.target.value)}
-                 error={!!errors.mercadoPagoToken}
-                 helperText={errors.mercadoPagoToken || "Ejemplo: APP_USR-4884204008182110-112619-e7f4796d1916ceadb596770b253424fd-1223488958"}
-                 placeholder="APP_USR-"
-                 InputProps={{
-                   startAdornment: <InputAdornment position="start">🔑</InputAdornment>,
-                 }}
-               />
-             </Grid>
-             
-             <Grid item xs={12}>
-               <Alert severity="success" sx={{ mt: 2 }}>
-                 <Typography variant="body2">
-                   <strong>✅ Beneficios de conectar MercadoPago:</strong>
-                 </Typography>
-                 <Box component="ul" sx={{ mt: 1, pl: 2 }}>
-                   <Box component="li">
-                     <Typography variant="body2">Recibirás pagos directamente en tu cuenta bancaria</Typography>
-                   </Box>
-                   <Box component="li">
-                     <Typography variant="body2">Acceso a todas las formas de pago (tarjetas, efectivo, transferencias)</Typography>
-                   </Box>
-                   <Box component="li">
-                     <Typography variant="body2">Reportes detallados de ventas y comisiones</Typography>
-                   </Box>
-                   <Box component="li">
-                     <Typography variant="body2">Soporte técnico especializado de MercadoPago</Typography>
-                   </Box>
-                 </Box>
-               </Alert>
-             </Grid>
-           </Grid>
-         );
-
-       case 4:
-        return (
-          <Box>
-            <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
-              Revisa la información de tu tienda
-            </Typography>
-            
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
-                <Card variant="outlined">
-                  <CardContent>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
-                      Información de la Tienda
-                    </Typography>
-                    <Stack spacing={1}>
-                      <Box>
-                        <Typography variant="body2" color="text.secondary">URL:</Typography>
-                        <Typography variant="body1" sx={{ fontFamily: 'monospace' }}>
-                          {formData.subdomain}.tiendapro.com.ar
-                        </Typography>
-                      </Box>
-                      <Box>
-                        <Typography variant="body2" color="text.secondary">Nombre:</Typography>
-                        <Typography variant="body1">{formData.config.metadata.title}</Typography>
-                      </Box>
-                      {formData.config.metadata.description && (
-                        <Box>
-                          <Typography variant="body2" color="text.secondary">Descripción:</Typography>
-                          <Typography variant="body1">{formData.config.metadata.description}</Typography>
-                        </Box>
-                      )}
-                    </Stack>
-                  </CardContent>
-                </Card>
-              </Grid>
-              
-                             <Grid item xs={12} md={6}>
-                 <Card variant="outlined">
-                   <CardContent>
-                     <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
-                       Información de Contacto
-                     </Typography>
-                     <Stack spacing={1}>
-                       <Box>
-                         <Typography variant="body2" color="text.secondary">Nombre:</Typography>
-                         <Typography variant="body1">{formData.config.firstName} {formData.config.lastName}</Typography>
-                       </Box>
-                       <Box>
-                         <Typography variant="body2" color="text.secondary">Email:</Typography>
-                         <Typography variant="body1">{formData.config.email}</Typography>
-                       </Box>
-                       <Box>
-                         <Typography variant="body2" color="text.secondary">Teléfono:</Typography>
-                         <Typography variant="body1">{formData.config.phone}</Typography>
-                       </Box>
-                       <Box>
-                         <Typography variant="body2" color="text.secondary">CUIL:</Typography>
-                         <Typography variant="body1">{formData.config.cuil}</Typography>
-                       </Box>
-                       <Box>
-                         <Typography variant="body2" color="text.secondary">Contraseña:</Typography>
-                         <Typography variant="body1" sx={{ fontFamily: 'monospace' }}>
-                           {formData.password ? '••••••••' : 'No configurada'}
-                         </Typography>
-                       </Box>
-                     </Stack>
-                   </CardContent>
-                 </Card>
-               </Grid>
-              
-                             <Grid item xs={12} md={6}>
-                 <Card variant="outlined">
-                   <CardContent>
-                     <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
-                       Dirección
-                     </Typography>
-                     <Typography variant="body1">
-                       {formData.config.address}, {formData.config.locality}, {formData.config.province} ({formData.config.postalCode})
-                     </Typography>
-                   </CardContent>
-                 </Card>
-               </Grid>
-               
-               <Grid item xs={12} md={6}>
-                 <Card variant="outlined">
-                   <CardContent>
-                     <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
-                       Configuración de Pagos
-                     </Typography>
-                     <Box>
-                       <Typography variant="body2" color="text.secondary">MercadoPago Token:</Typography>
-                       <Typography variant="body1" sx={{ fontFamily: 'monospace', fontSize: '0.9rem' }}>
-                         {formData.mercadoPagoToken ? `${formData.mercadoPagoToken.substring(0, 20)}...` : 'No configurado'}
-                       </Typography>
-                     </Box>
-                   </CardContent>
-                 </Card>
-               </Grid>
-            </Grid>
-          </Box>
+          <ReviewAndCreateStep
+            formData={formData}
+            provinces={provinces}
+          />
         );
 
       default:
@@ -1073,7 +653,10 @@ const CreateStorePage = () => {
         {/* Modal de Éxito */}
         <Dialog
           open={showSuccessModal}
-          onClose={() => setShowSuccessModal(false)}
+          onClose={() => {
+            setShowSuccessModal(false);
+            window.location.href = '/#pricing';
+          }}
           maxWidth="sm"
           fullWidth
           PaperProps={{
@@ -1094,7 +677,10 @@ const CreateStorePage = () => {
             <CheckCircle sx={{ fontSize: 28 }} />
             ¡Tienda Creada Exitosamente!
             <IconButton
-              onClick={() => setShowSuccessModal(false)}
+              onClick={() => {
+                setShowSuccessModal(false);
+                window.location.href = '/#pricing';
+              }}
               sx={{ ml: 'auto', color: 'text.secondary' }}
             >
               <Close />
@@ -1105,8 +691,67 @@ const CreateStorePage = () => {
               ¡Felicitaciones! Tu tienda <strong>{formData.config.metadata.title}</strong> ha sido creada exitosamente.
             </Typography>
             <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
-              Tu tienda estará disponible en: <strong>{formData.subdomain}.tiendapro.com.ar</strong>
+              Tu tienda estará disponible en:
             </Typography>
+            <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box>
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 600, color: 'text.secondary' }}>
+                  🛍️ Tienda Pública (Vista para Clientes)
+                </Typography>
+                <Button
+                  variant="outlined"
+                  startIcon={<OpenInNew />}
+                  onClick={() => {
+                    window.open(`https://${formData.subdomain}.tiendapro.com.ar`, '_self');
+                  }}
+                  sx={{
+                    justifyContent: 'flex-start',
+                    textTransform: 'none',
+                    borderColor: 'primary.main',
+                    color: 'primary.main',
+                    width: '100%',
+                    '&:hover': {
+                      borderColor: 'primary.dark',
+                      backgroundColor: 'primary.light',
+                      color: 'primary.dark',
+                    },
+                  }}
+                >
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    {formData.subdomain}.tiendapro.com.ar
+                  </Typography>
+                </Button>
+              </Box>
+              
+              <Box>
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 600, color: 'text.secondary' }}>
+                  ⚙️ Dashboard de Administración (Vista para Tienda)
+                </Typography>
+                <Button
+                  variant="outlined"
+                  startIcon={<OpenInNew />}
+                  onClick={() => {
+                    window.open(`https://${formData.subdomain}.admin.tiendapro.com.ar`, '_self');
+                  }}
+                  sx={{
+                    justifyContent: 'flex-start',
+                    textTransform: 'none',
+                    borderColor: 'secondary.main',
+                    color: 'secondary.main',
+                    width: '100%',
+                    '&:hover': {
+                      borderColor: 'secondary.dark',
+                      backgroundColor: 'secondary.light',
+                      color: 'secondary.dark',
+                    },
+                  }}
+                >
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    {formData.subdomain}.admin.tiendapro.com.ar
+                  </Typography>
+                </Button>
+              </Box>
+            </Box>
             <Alert severity="info" sx={{ mt: 2 }}>
               <Typography variant="body2">
                 <strong>Próximos pasos:</strong>
@@ -1129,7 +774,10 @@ const CreateStorePage = () => {
           </DialogContent>
           <DialogActions sx={{ p: 3, pt: 1 }}>
             <Button
-              onClick={() => setShowSuccessModal(false)}
+              onClick={() => {
+                setShowSuccessModal(false);
+                window.location.href = '/#pricing';
+              }}
               variant="outlined"
               sx={{ mr: 1 }}
             >
@@ -1138,7 +786,7 @@ const CreateStorePage = () => {
             <Button
               onClick={() => {
                 setShowSuccessModal(false);
-                window.location.href = `https://${formData.subdomain}.admin.tiendapro.com.ar`;
+                window.open(`https://${formData.subdomain}.admin.tiendapro.com.ar`, '_self');
               }}
               variant="contained"
               startIcon={<OpenInNew />}
