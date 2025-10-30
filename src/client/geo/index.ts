@@ -1,5 +1,7 @@
 // lib/georef.ts
-const BASE_URL = "https://apis.datos.gob.ar/georef/api";
+const GEOREF_BASE_URL = "https://apis.datos.gob.ar/georef/api";
+const PROVINCES_API = "/api/provincias";
+const LOCALITIES_API = "/api/localidades";
 
 interface Province {
   id: string;
@@ -12,29 +14,32 @@ interface Locality {
 }
 
 interface GeorefResponse<T> {
-  [key: string]: T[] | string | any;
-  cantidad: string;
-  total: string;
+  [key: string]: T[] | number | string | any;
+  cantidad: number;
+  total: number;
+  inicio?: number;
   parametros: any;
 }
 
 export async function fetchProvinces(): Promise<Province[]> {
-  const url = `${BASE_URL}/provincias?campos=id,nombre`;
+  const url = PROVINCES_API;
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error(`Error fetching provinces: ${res.status}`);
   }
   const body: GeorefResponse<Province> = await res.json();
-  return body.provincias.sort((a, b) => a.nombre.localeCompare(b.nombre));
+  const provincias = (body.provincias as Province[]) || [];
+  return provincias.sort((a: Province, b: Province) => a.nombre.localeCompare(b.nombre));
 }
 
 export async function fetchLocalities(provinceId: string): Promise<Locality[]> {
-  const url = `${BASE_URL}/localidades?provincia=${provinceId}&campos=id,nombre&max=1000`;
+  const url = `${LOCALITIES_API}?provincia=${encodeURIComponent(provinceId)}&campos=id,nombre&max=1000`;
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error(`Error fetching localities: ${res.status}`);
   }
   const body: GeorefResponse<Locality> = await res.json();
-  return body.localidades.sort((a, b) => a.nombre.localeCompare(b.nombre));
+  const localidades = (body.localidades as Locality[]) || [];
+  return localidades.sort((a: Locality, b: Locality) => a.nombre.localeCompare(b.nombre));
 }
 
