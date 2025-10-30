@@ -18,6 +18,7 @@ import {
 
 import Link from "next/link";
 import Cart from "../cart";
+import TenantLogo from "@/components/shared/TenantLogo";
 import { useITheme } from "../../themeProvider";
 import { Menu } from "@mui/icons-material";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
@@ -91,17 +92,12 @@ export default function Header() {
               <Box>
                 <Link href={"/"} style={{ textDecoration: "none" }}>
                   <Stack direction="row" alignItems="center">
-                    <Box sx={{ width: 45 }}>
-                      <img
-                        src={state.config.metadata.logo}
-                        alt="Logo"
-                        style={{
-                          maxWidth: "100%",
-                          borderRadius: 9999,
-                          overflow: "hideen",
-                        }}
-                      />
-                    </Box>
+                    <TenantLogo 
+                      width={45} 
+                      height={45}
+                      borderRadius={9999}
+                      alt="Logo"
+                    />
                   </Stack>
                 </Link>
               </Box>

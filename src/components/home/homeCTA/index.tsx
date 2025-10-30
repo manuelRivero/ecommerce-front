@@ -24,14 +24,11 @@ export default function HomeCTA() {
           height: "100%",
         }}
       >
-        <Box
-          sx={(theme) => ({ color: theme.palette.primary.contrastText })}
-        ></Box>
         <Button
           variant="contained"
-          component={Link}
-          href={"/productos"}
           color="inherit"
+          href={"/productos"} target="_blank"
+          sx={(theme) => ({ backgroundColor: theme.palette.primary.contrastText, color: theme.palette.primary.main, marginBottom: 3 })}
         >
           Ver todos los productos
         </Button>

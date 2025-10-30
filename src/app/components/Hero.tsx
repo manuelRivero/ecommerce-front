@@ -104,7 +104,7 @@ const Hero = () => {
                   ¡Crear tienda ahora!
                   
                 </Button>
-                <Button
+                {/*<Button
                   variant="outlined"
                   size="large"
                   startIcon={<PlayArrow />}
@@ -122,7 +122,7 @@ const Hero = () => {
                   }}
                 >
                   Ver Demo
-                </Button>
+                </Button>*/}
               </Stack>
             </Box>
           </Grid>

@@ -1,14 +1,17 @@
 "use client";
 
 import { Box, Paper, Typography } from "@mui/material";
-import BestSellers from "../bestSellers";
-import HotSales from "../hotSale";
-import MoreRecents from "../moreRecents";
+import BestSellers from "@/components/home/bestSellers";
+import HotSales from "@/components/home/hotSale";
+import MoreRecents from "@/components/home/moreRecents";
 import { Product } from "@/interfaces/products";
-import Offers from "../offers";
-import Categories from "../categories";
+import Offers from "@/components/home/offers";
+import Categories from "@/components/home/categories";
+import HomeCTA from "@/components/home/homeCTA";
 import { Category } from "@/interfaces/categories";
 import { Offer } from "@/interfaces/offers";
+import { useITheme } from "@/components/adminThemeProvider";
+import { useEffect } from "react";
 interface Props {
   data: {
     hotSales: Data;
@@ -27,6 +30,8 @@ interface Data {
 }
 export default function MainWrapper({ data }: Props) {
   console.log("MainWrapper", data.moreRecents);
+  const { state, setState } = useITheme();
+
   
   // Verificar si toda la tienda está vacía
   const isStoreEmpty = 
@@ -121,6 +126,7 @@ export default function MainWrapper({ data }: Props) {
           totalPages={data.hotSales.totalPages}
         />
       </Box>
+      <HomeCTA />
     </>
   );
 }

@@ -31,6 +31,7 @@ import {
 } from '@mui/icons-material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getTenantById, Tenant } from '@/client/super-admin/tenants';
+import TenantLogo from '@/components/shared/TenantLogo';
 
 const TenantDetailPage = () => {
   const router = useRouter();
@@ -556,11 +557,12 @@ const TenantDetailPage = () => {
                         Logo
                       </Typography>
                       <Typography variant="body1">
-                        {tenant.config.metadata.logo ? (
-                          <Box component="img" src={tenant.config.metadata.logo} alt="Logo" sx={{ height: 40, maxWidth: 200 }} />
-                        ) : (
-                          'No disponible'
-                        )}
+                        <TenantLogo 
+                          width={200} 
+                          height={40}
+                          alt="Logo"
+                          showFallback={true}
+                        />
                       </Typography>
                     </Box>
                   </Grid>

@@ -77,7 +77,6 @@ export default async function Home({
         <BannerSwiper section="HOME-FOOTER" />
       </Box>
     </Container>
-    <HomeCTA />
     </>
   );
 }
