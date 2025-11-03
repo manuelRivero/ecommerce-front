@@ -29,7 +29,10 @@ export interface FiltersResponse {
 }
 
 export interface FilterState {
-  priceRange: [number, number];
+  priceRange: {
+    min: number;
+    max: number;
+  };
   selectedColors: string[];
   selectedSizes: string[];
   selectedCategories: string[];

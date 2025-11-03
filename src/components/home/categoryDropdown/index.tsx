@@ -73,7 +73,7 @@ export default function CategoryDropdown() {
     <Stack
       direction={{ xs: "column", md: "row" }}
       spacing={1}
-      alignItems={{sx:"center", md:"flex-end"}}
+      alignItems={{xs:"center", md:"flex-end"}}
     >
       <FormControl variant="outlined" style={{ minWidth: 200 }}>
         <InputLabel id="category-label">Buscar por categoría</InputLabel>

@@ -1,12 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Box,
   Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   FormControlLabel,
   Checkbox,
   Slider,
@@ -25,6 +22,7 @@ import {
 } from '@mui/icons-material';
 import { useTheme, useMediaQuery } from '@mui/material';
 import { ProductFilters, FilterState } from '@/interfaces/filters';
+import FilterSection from './FilterSection';
 
 interface ProductFiltersProps {
   filters: ProductFilters;
@@ -44,16 +42,22 @@ export default function ProductFiltersComponent({
   onClose,
 }: ProductFiltersProps) {
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
-    console.log("filters", filters)
+  
   const [filterState, setFilterState] = useState<FilterState>({
-    priceRange: [filters.priceRange.min, filters.priceRange.max],
+    priceRange: {
+      min: filters.priceRange.min,
+      max: filters.priceRange.max,
+    },
     selectedColors: [],
     selectedSizes: [],
     selectedCategories: [],
     hasDiscount: false,
   });
-
+  
+  // Estado local para feedback visual del slider (array para MUI Slider)
+  const [priceRange, setPriceRange] = useState<[number, number]>([filters.priceRange.min, filters.priceRange.max]);
+  // Ref para evitar que el useEffect interfiera cuando actualizamos desde onChangeCommitted
+  const isUpdatingFromCommitRef = useRef(false);
   const [expandedSections, setExpandedSections] = useState({
     price: true,
     colors: true,
@@ -62,24 +66,53 @@ export default function ProductFiltersComponent({
     discount: true,
   });
 
-  // Inicializar filtros si se proporcionan
+  // Ref para evitar notificaciones durante la inicialización
+  const isInitializingRef = useRef(true);
+  const hasInitializedRef = useRef(false);
+
+  // Inicializar filtros si se proporcionan (solo una vez)
   useEffect(() => {
-    if (initialFilters) {
+    if (initialFilters && !hasInitializedRef.current) {
+      isInitializingRef.current = true;
       setFilterState(initialFilters);
+      setPriceRange([initialFilters.priceRange.min, initialFilters.priceRange.max]);
+      hasInitializedRef.current = true;
+      // Permitir notificaciones después de un pequeño delay
+      setTimeout(() => {
+        isInitializingRef.current = false;
+      }, 100);
+    } else if (!initialFilters && !hasInitializedRef.current) {
+      // Si no hay initialFilters, inicializar con valores por defecto
+      hasInitializedRef.current = true;
+      isInitializingRef.current = false;
     }
   }, [initialFilters]);
 
-  // Notificar cambios de filtros
+  // Sincronizar priceRange con filterState.priceRange cuando cambia desde otras fuentes
+  // NO cuando el cambio viene de onChangeCommitted (para evitar loops)
   useEffect(() => {
-    onFiltersChange(filterState);
+    if (isUpdatingFromCommitRef.current) {
+      isUpdatingFromCommitRef.current = false;
+      return; // Ignorar este cambio, ya que viene de onChangeCommitted
+    }
+    const { min: newMin, max: newMax } = filterState.priceRange;
+    setPriceRange(prev => {
+      const [prevMin, prevMax] = prev;
+      // Solo actualizar si los valores realmente cambiaron
+      if (prevMin !== newMin || prevMax !== newMax) {
+        return [newMin, newMax];
+      }
+      return prev;
+    });
+  }, [filterState.priceRange.min, filterState.priceRange.max]);
+
+  // Notificar cambios de filtros (solo cuando no está inicializando)
+  useEffect(() => {
+    if (!isInitializingRef.current && hasInitializedRef.current) {
+      onFiltersChange(filterState);
+    }
   }, [filterState, onFiltersChange]);
 
-  const handlePriceChange = (event: Event, newValue: number | number[]) => {
-    setFilterState(prev => ({
-      ...prev,
-      priceRange: newValue as [number, number],
-    }));
-  };
 
   const handleColorToggle = (color: string) => {
     setFilterState(prev => ({
@@ -117,7 +150,10 @@ export default function ProductFiltersComponent({
 
   const clearAllFilters = () => {
     setFilterState({
-      priceRange: [filters.priceRange.min, filters.priceRange.max],
+      priceRange: {
+        min: filters.priceRange.min,
+        max: filters.priceRange.max,
+      },
       selectedColors: [],
       selectedSizes: [],
       selectedCategories: [],
@@ -127,8 +163,8 @@ export default function ProductFiltersComponent({
 
   const hasActiveFilters = () => {
     return (
-      filterState.priceRange[0] !== filters.priceRange.min ||
-      filterState.priceRange[1] !== filters.priceRange.max ||
+      filterState.priceRange.min !== filters.priceRange.min ||
+      filterState.priceRange.max !== filters.priceRange.max ||
       filterState.selectedColors.length > 0 ||
       filterState.selectedSizes.length > 0 ||
       filterState.selectedCategories.length > 0 ||
@@ -151,46 +187,9 @@ export default function ProductFiltersComponent({
     }).format(price);
   };
 
-  const FilterSection = ({ title, children, sectionKey }: { title: string; children: React.ReactNode; sectionKey: keyof typeof expandedSections }) => (
-    <Accordion
-      expanded={expandedSections[sectionKey]}
-      onChange={() => toggleSection(sectionKey)}
-      sx={(theme)=>({
-        boxShadow: 'none',
-        border: `1px solid ${theme.palette.divider}`,
-        '&:before': { display: 'none' },
-        '&.Mui-expanded': {
-          margin: 0,
-        },
-      })}
-    >
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        sx={{
-          minHeight: 48,
-          '&.Mui-expanded': {
-            minHeight: 48,
-          },
-          '& .MuiAccordionSummary-content': {
-            margin: '12px 0',
-            '&.Mui-expanded': {
-              margin: '12px 0',
-            },
-          },
-        }}
-      >
-        <Typography variant="subtitle2" fontWeight={600}>
-          {title}
-        </Typography>
-      </AccordionSummary>
-      <AccordionDetails sx={{ pt: 0 }}>
-        {children}
-      </AccordionDetails>
-    </Accordion>
-  );
-
-  const FilterContent = () => (
-    <Box sx={{ p: 2 }}>
+  // Contenido de filtros unificado para móvil y desktop
+  const renderFiltersContent = () => (
+    <>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
         <Typography variant="h6" fontWeight={600}>
@@ -214,43 +213,92 @@ export default function ProductFiltersComponent({
       </Typography>
 
       <Stack spacing={2}>
-        {/* Rango de precios */}
-        <FilterSection title="Rango de precios" sectionKey="price">
-          <Box sx={{ px: 1 }}>
-            <Slider
-              value={filterState.priceRange}
-              onChange={handlePriceChange}
-              valueLabelDisplay="auto"
-              min={filters.priceRange.min}
-              max={filters.priceRange.max}
-              step={100}
-              valueLabelFormat={formatPrice}
+        {/* Rango de precios - Sin Accordion para evitar interferencias */}
+        <Box sx={(theme) => ({
+          boxShadow: 'none',
+          border: `1px solid ${theme.palette.divider}`,
+          borderRadius: 1,
+          overflow: 'hidden',
+        })}>
+          <Box
+            onClick={() => toggleSection('price')}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              minHeight: 48,
+              px: 2,
+              cursor: 'pointer',
+              '&:hover': {
+                backgroundColor: 'action.hover',
+              },
+            }}
+          >
+            <Typography variant="subtitle2" fontWeight={600}>
+              Rango de precios
+            </Typography>
+            <ExpandMoreIcon
               sx={{
-                color: theme.palette.primary.main,
-                '& .MuiSlider-thumb': {
-                  width: 20,
-                  height: 20,
-                },
+                transform: expandedSections.price ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s',
               }}
             />
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-              <Typography variant="caption" color="text.secondary">
-                {formatPrice(filterState.priceRange[0])}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {formatPrice(filterState.priceRange[1])}
-              </Typography>
-            </Box>
           </Box>
-        </FilterSection>
+          {expandedSections.price && (
+            <Box sx={{ px: 2, pb: 2 }}>
+              <Slider
+                value={priceRange}
+                onChange={(_, newValue) => {
+                  setPriceRange(newValue as [number, number]);
+                }}
+                onChangeCommitted={(_, newValue) => {
+                  // Actualizar los filtros solo cuando suelta
+                  const [min, max] = newValue as number[];
+                  isUpdatingFromCommitRef.current = true; // Marcar que viene de aquí
+                  setFilterState(prev => ({
+                    ...prev,
+                    priceRange: { min, max },
+                  }));
+                }}
+                valueLabelDisplay="auto"
+                min={filters.priceRange.min}
+                max={filters.priceRange.max}
+                step={1}
+                disableSwap
+                sx={{
+                  color: theme.palette.primary.main,
+                  '& .MuiSlider-thumb': {
+                    width: 20,
+                    height: 20,
+                  },
+                }}
+              />
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                <Typography variant="caption" color="text.secondary">
+                  {formatPrice(priceRange[0])}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {formatPrice(priceRange[1])}
+                </Typography>
+              </Box>
+            </Box>
+          )}
+        </Box>
 
         {/* Colores */}
-        {filters.colors.length > 0 && (
-          <FilterSection title="Colores" sectionKey="colors">
+        {filters.colors.filter(color => color.value && color.value.trim() !== '').length > 0 && (
+          <FilterSection 
+            title="Colores" 
+            sectionKey="colors"
+            expanded={expandedSections.colors}
+            onToggle={() => toggleSection('colors')}
+          >
             <Stack spacing={1}>
-              {filters.colors.map((color) => (
+              {filters.colors
+                .filter(color => color.value && color.value.trim() !== '')
+                .map((color) => (
                  <FormControlLabel
-                   key={color.value || `color-${Math.random()}`}
+                   key={color.value}
                   control={
                     <Checkbox
                       checked={filterState.selectedColors.includes(color.value)}
@@ -259,20 +307,9 @@ export default function ProductFiltersComponent({
                     />
                   }
                   label={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                       <Box
-                         sx={{
-                           width: 16,
-                           height: 16,
-                           borderRadius: '50%',
-                           backgroundColor: color.value?.toLowerCase() || '#ccc',
-                           border: `1px solid ${theme.palette.divider}`,
-                         }}
-                       />
-                       <Typography variant="body2">
-                         {color.value || 'Sin nombre'} ({color.count || 0})
-                       </Typography>
-                    </Box>
+                    <Typography variant="body2">
+                      {color.value} ({color.count || 0})
+                    </Typography>
                   }
                 />
               ))}
@@ -281,13 +318,20 @@ export default function ProductFiltersComponent({
         )}
 
         {/* Tallas */}
-        {filters.sizes.length > 0 && (
-          <FilterSection title="Tallas" sectionKey="sizes">
+        {filters.sizes.filter(size => size.value && size.value.trim() !== '').length > 0 && (
+          <FilterSection 
+            title="Tallas" 
+            sectionKey="sizes"
+            expanded={expandedSections.sizes}
+            onToggle={() => toggleSection('sizes')}
+          >
             <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-              {filters.sizes.map((size) => (
+              {filters.sizes
+                .filter(size => size.value && size.value.trim() !== '')
+                .map((size) => (
                 <Chip
-                  key={size.value || `size-${Math.random()}`}
-                   label={`${size.value || 'Sin talla'} (${size.count || 0})`}
+                  key={size.value}
+                  label={`${size.value} (${size.count || 0})`}
                   variant={filterState.selectedSizes.includes(size.value) ? 'filled' : 'outlined'}
                   onClick={() => handleSizeToggle(size.value)}
                   size="small"
@@ -305,7 +349,12 @@ export default function ProductFiltersComponent({
 
         {/* Categorías */}
         {filters.categories.length > 0 && (
-          <FilterSection title="Categorías" sectionKey="categories">
+          <FilterSection 
+            title="Categorías" 
+            sectionKey="categories"
+            expanded={expandedSections.categories}
+            onToggle={() => toggleSection('categories')}
+          >
             <Stack spacing={1}>
               {filters.categories.map((category) => (
                 <FormControlLabel
@@ -330,7 +379,12 @@ export default function ProductFiltersComponent({
 
         {/* Descuentos */}
         {filters.hasDiscount && (
-          <FilterSection title="Ofertas" sectionKey="discount">
+          <FilterSection 
+            title="Ofertas" 
+            sectionKey="discount"
+            expanded={expandedSections.discount}
+            onToggle={() => toggleSection('discount')}
+          >
             <FormControlLabel
               control={
                 <Checkbox
@@ -348,7 +402,7 @@ export default function ProductFiltersComponent({
           </FilterSection>
         )}
       </Stack>
-    </Box>
+    </>
   );
 
   if (isMobile) {
@@ -399,7 +453,9 @@ export default function ProductFiltersComponent({
 
             {/* Contenido con scroll */}
             <Box sx={{ maxHeight: 'calc(80vh - 80px)', overflowY: 'auto' }}>
-              <FilterContent />
+              <Box sx={{ p: 2 }}>
+                {renderFiltersContent()}
+              </Box>
             </Box>
           </Box>
         </Box>
@@ -421,7 +477,9 @@ export default function ProductFiltersComponent({
         overflowY: 'auto',
       }}
     >
-      <FilterContent />
+      <Box sx={{ p: 2 }}>
+        {renderFiltersContent()}
+      </Box>
     </Box>
   );
 }

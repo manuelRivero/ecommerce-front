@@ -4,7 +4,6 @@ import { Product } from "@/interfaces/products";
 import { Box, Pagination, Stack, Typography, IconButton } from "@mui/material";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import CategoryDropdown from "../categoryDropdown";
 import EmptyProducts from "../emptyProducts";
 import { motion } from "motion/react";
 import { Close as CloseIcon } from "@mui/icons-material";

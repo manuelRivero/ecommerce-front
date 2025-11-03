@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Box, Grid, IconButton, Fab, useMediaQuery, useTheme, Button } from '@mui/material';
 import { FilterList as FilterListIcon } from '@mui/icons-material';
 import ProductFiltersComponent from './index';
@@ -30,6 +30,13 @@ export default function ProductFiltersWrapper({
     min: filters.priceRange.min,
     max: filters.priceRange.max,
   });
+  
+  // Preparar initialFilters solo una vez cuando se monta el componente
+  const initialFiltersRef = useRef<typeof filterState | null>(null);
+  if (initialFiltersRef.current === null) {
+    initialFiltersRef.current = filterState;
+  }
+  const initialFilters = initialFiltersRef.current;
 
   const handleFiltersToggle = () => {
     setIsFiltersOpen(!isFiltersOpen);
@@ -63,6 +70,7 @@ export default function ProductFiltersWrapper({
         <ProductFiltersComponent
           filters={filters}
           onFiltersChange={handleFiltersChange}
+          initialFilters={initialFilters}
           isMobile={true}
           isOpen={isFiltersOpen}
           onClose={handleFiltersClose}
@@ -83,6 +91,7 @@ export default function ProductFiltersWrapper({
         <ProductFiltersComponent
           filters={filters}
           onFiltersChange={handleFiltersChange}
+          initialFilters={initialFilters}
           isMobile={false}
         />
       </Grid>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FilterState } from '@/interfaces/filters';
 
@@ -12,7 +12,10 @@ export const useProductFilters = (defaultPriceRange?: { min: number; max: number
   const defaultMax = defaultPriceRange?.max || 100000;
   
   const [filters, setFilters] = useState<FilterState>({
-    priceRange: [defaultMin, defaultMax],
+    priceRange: {
+      min: defaultMin,
+      max: defaultMax,
+    },
     selectedColors: [],
     selectedSizes: [],
     selectedCategories: [],
@@ -20,22 +23,27 @@ export const useProductFilters = (defaultPriceRange?: { min: number; max: number
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  // Ref para asegurar que solo se inicialice desde URL una vez
+  const initializedFromURLRef = useRef(false);
 
-  // Inicializar filtros desde URL
+  // Inicializar filtros desde URL solo la primera vez
   useEffect(() => {
-    const urlFilters: FilterState = {
-      priceRange: [
-        Number(searchParams.get('minPrice')) || defaultMin,
-        Number(searchParams.get('maxPrice')) || defaultMax,
-      ],
-      selectedColors: searchParams.get('colors')?.split(',').filter(Boolean) || [],
-      selectedSizes: searchParams.get('sizes')?.split(',').filter(Boolean) || [],
-      selectedCategories: searchParams.get('categories')?.split(',').filter(Boolean) || [],
-      hasDiscount: searchParams.get('hasDiscount') === 'true',
-    };
-    
-    setFilters(urlFilters);
-  }, [searchParams, defaultMin, defaultMax]);
+    if (!initializedFromURLRef.current) {
+      const urlFilters: FilterState = {
+        priceRange: {
+          min: Number(searchParams.get('minPrice')) || defaultMin,
+          max: Number(searchParams.get('maxPrice')) || defaultMax,
+        },
+        selectedColors: searchParams.get('colors')?.split(',').filter(Boolean) || [],
+        selectedSizes: searchParams.get('sizes')?.split(',').filter(Boolean) || [],
+        selectedCategories: searchParams.get('categories')?.split(',').filter(Boolean) || [],
+        hasDiscount: searchParams.get('hasDiscount') === 'true',
+      };
+      
+      setFilters(urlFilters);
+      initializedFromURLRef.current = true;
+    }
+  }, []);
 
   // Actualizar URL cuando cambien los filtros
   const updateURL = useCallback((newFilters: FilterState) => {
@@ -50,11 +58,11 @@ export const useProductFilters = (defaultPriceRange?: { min: number; max: number
     params.delete('hasDiscount');
     
     // Agregar nuevos parámetros si tienen valores (solo si no son los valores por defecto)
-    if (newFilters.priceRange[0] > defaultMin) {
-      params.set('minPrice', newFilters.priceRange[0].toString());
+    if (newFilters.priceRange.min > defaultMin) {
+      params.set('minPrice', newFilters.priceRange.min.toString());
     }
-    if (newFilters.priceRange[1] < defaultMax) {
-      params.set('maxPrice', newFilters.priceRange[1].toString());
+    if (newFilters.priceRange.max < defaultMax) {
+      params.set('maxPrice', newFilters.priceRange.max.toString());
     }
     if (newFilters.selectedColors.length > 0) {
       params.set('colors', newFilters.selectedColors.join(','));
@@ -81,7 +89,10 @@ export const useProductFilters = (defaultPriceRange?: { min: number; max: number
 
   const clearFilters = useCallback(() => {
     const defaultFilters: FilterState = {
-      priceRange: [defaultMin, defaultMax],
+      priceRange: {
+        min: defaultMin,
+        max: defaultMax,
+      },
       selectedColors: [],
       selectedSizes: [],
       selectedCategories: [],

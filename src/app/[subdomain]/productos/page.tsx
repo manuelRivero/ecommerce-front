@@ -2,7 +2,8 @@ import { getCategoryDetail } from "@/client/categories";
 import { getProducts } from "@/client/products";
 import { getProductFilters } from "@/client/filters";
 import MainProducts from "@/components/home/mainProdutcs";
-import { Container } from "@mui/material";
+import CategoryDropdown from "@/components/home/categoryDropdown";
+import { Container, Box } from "@mui/material";
 import React from "react";
 import Breadcrumb from "@/components/shared/Breadcrumb";
 import { Category, Search, ShoppingBag } from "@mui/icons-material";
@@ -53,7 +54,8 @@ export default async function Categories({
   const parseParams = await searchParams;
   const { subdomain, id } = await params;
   const search = parseParams.search as string;
-  const data = await getData(subdomain, id, parseParams["?page"] as string, search, parseParams);
+  const page = (parseParams.page as string) || '1';
+  const data = await getData(subdomain, id, page, search, parseParams);
 
   return (
     <Container sx={{ marginY: 4 }}>
@@ -73,6 +75,13 @@ export default async function Categories({
           }] : [])
         ]}
       />
+
+      {/* Selector de categorías - solo cuando hay id en la ruta y no hay búsqueda */}
+      {id && !search && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+          <CategoryDropdown />
+        </Box>
+      )}
 
       <ProductFiltersWrapper
         filters={data.filters}

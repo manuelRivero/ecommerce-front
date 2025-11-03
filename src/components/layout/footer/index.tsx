@@ -141,7 +141,7 @@ export default function Footer() {
           </Grid>
 
           <Grid item xs={12} md={3} sx={{ marginBottom: { xs: 2, md: 0 }, padding: 2 }}>
-            {(state.config.socialMedia.instagram || state.config.socialMedia.facebook) && (
+            {(state.config.socialMedia?.instagram || state.config.socialMedia?.facebook) && (
               <>
                 <Typography
                   color="#fff"
