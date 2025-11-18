@@ -36,12 +36,12 @@ export default function Detail({ data, reviews }: Props) {
 
   const groupedFeatures = data.features.reduce((acc, feature) => {
     // Extraer el nombre del color (puede ser string o objeto)
-    const colorName = typeof feature.color === 'string' 
-      ? feature.color 
+    const colorName = typeof feature.color === 'string'
+      ? feature.color
       : feature.color?.name;
     // Extraer el nombre del size (puede ser string o objeto)
-    const sizeName = typeof feature.size === 'string' 
-      ? feature.size 
+    const sizeName = typeof feature.size === 'string'
+      ? feature.size
       : feature.size?.name;
     const { stock, _id } = feature;
 
@@ -132,12 +132,12 @@ export default function Detail({ data, reviews }: Props) {
       {/* Rating promedio del producto - ENCIMA del nombre */}
       {reviews && reviews.statistics.totalReviews > 0 && (
         <Stack direction="row" spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
-          <Rating 
-            value={reviews.statistics.averageRating} 
-            precision={0.1} 
-            readOnly 
+          <Rating
+            value={reviews.statistics.averageRating}
+            precision={0.1}
+            readOnly
             size="large"
-            sx={{ 
+            sx={{
               '& .MuiRating-iconFilled': {
                 color: (theme) => theme.palette.warning.main,
               },
@@ -154,16 +154,16 @@ export default function Detail({ data, reviews }: Props) {
           </Typography>
         </Stack>
       )}
-      
+
       {/* Total de ventas del producto */}
-      {data.totalSales > 0 && (
+      {(data.totalSales ?? 0) > 0 && (
         <Stack direction="row" spacing={1} alignItems="center" sx={{ marginBottom: 2 }}>
           <Typography variant="body1" color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
             🏆 <strong>{data.totalSales}</strong> unidades vendidas
           </Typography>
         </Stack>
       )}
-      
+
       <Stack
         direction="row"
         spacing={1}
@@ -180,14 +180,14 @@ export default function Detail({ data, reviews }: Props) {
           <ShareIcon />
         </IconButton>
       </Stack>
-      
+
       <Stack
         direction="row"
         spacing={1}
         alignItems="baseline"
         sx={{ marginTop: 2 }}
       >
-        {data.discount > 0 && (
+        {(data.discount ?? 0) > 0 && (
           <Typography variant="body1" sx={{ textDecoration: "line-through" }}>
             ${formatNumber(data.price)}
           </Typography>
@@ -203,8 +203,8 @@ export default function Detail({ data, reviews }: Props) {
           >
             ${formatNumber(finalPrice(data.price, data.discount ?? 0 + (data.offerDiscount ?? 0)))}
           </Typography>
-          {(data.discount > 0 || data.offerDiscount > 0) && (
-              <>
+          {((data.offerDiscount ?? 0)) > 0 && (
+            <>
               <Box
                 sx={(theme) => ({
                   position: "absolute",
@@ -223,23 +223,23 @@ export default function Detail({ data, reviews }: Props) {
                 </Typography>
               </Box>
               <Box
-              sx={(theme) => ({
-                position: "absolute",
-                top: 0,
-                right: -60,
-                transform: "translateX(100%)",
-                padding: 0.5,
-                borderRadius: 2,
-                color: theme.palette.primary.contrastText,
-                background: theme.palette.primary.main,
-                width: "max-content",
-              })}
-            >
-              <Typography variant="body1" sx={{ fontSize: 10 }}>
-                Oferta por tiempo limitado
-              </Typography>
-            </Box>
-              </>
+                sx={(theme) => ({
+                  position: "absolute",
+                  top: 0,
+                  right: -60,
+                  transform: "translateX(100%)",
+                  padding: 0.5,
+                  borderRadius: 2,
+                  color: theme.palette.primary.contrastText,
+                  background: theme.palette.primary.main,
+                  width: "max-content",
+                })}
+              >
+                <Typography variant="body1" sx={{ fontSize: 10 }}>
+                  Oferta por tiempo limitado
+                </Typography>
+              </Box>
+            </>
           )}
         </Box>
       </Stack>
@@ -280,9 +280,8 @@ export default function Detail({ data, reviews }: Props) {
                           onChange={() => setSelectedSize(feature.size ?? null)}
                         />
                       }
-                      label={`Talle: ${feature.size} ${
-                        Number(feature.stock) === 0 ? "(Sin stock)" : ""
-                      } `}
+                      label={`Talle: ${feature.size} ${Number(feature.stock) === 0 ? "(Sin stock)" : ""
+                        } `}
                     />
                   ))}
                 </>
