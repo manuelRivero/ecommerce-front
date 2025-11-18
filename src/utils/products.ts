@@ -47,12 +47,21 @@ export function compareProducts(
     // Agrupar las features del producto actualizado
     const groupedUpdateFeatures = updatedProduct.features.reduce(
       (acc, feature) => {
-        const { color, size, stock, _id } = feature;
-        if (color) {
-          if (!acc[color]) {
-            acc[color] = [];
+        // Extraer el nombre del color (puede ser string o objeto)
+        const colorName = typeof feature.color === 'string' 
+          ? feature.color 
+          : feature.color?.name;
+        // Extraer el nombre del size (puede ser string o objeto)
+        const sizeName = typeof feature.size === 'string' 
+          ? feature.size 
+          : feature.size?.name;
+        const { stock, _id } = feature;
+        
+        if (colorName) {
+          if (!acc[colorName]) {
+            acc[colorName] = [];
           }
-          acc[color].push({ size, stock, _id });
+          acc[colorName].push({ size: sizeName, stock, _id });
         }
         return acc;
       },

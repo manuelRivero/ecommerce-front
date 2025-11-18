@@ -92,7 +92,7 @@ export default function Cart() {
                       {products.reduce(
                         (acc, item) =>
                           acc +
-                          finalPrice(item.price, (item.discount + (item.offerDiscount || 0))) * item.quantity,
+                          finalPrice(item.price, ((item.discount ?? 0) + (item.offerDiscount ?? 0))) * item.quantity,
                         0
                       )}
                     </strong>

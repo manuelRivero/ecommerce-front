@@ -40,10 +40,48 @@ export interface Product {
 }
 
 export interface Features {
-  color: string;
-  size: string;
+  color: string | {
+    _id: string;
+    name: string;
+    hexCode?: string | null;
+    tenant: string;
+    deleted: boolean;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+  };
+  size: string | {
+    _id: string;
+    name: string;
+    order?: number;
+    tenant: string;
+    deleted: boolean;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+  };
   stock: number;
   _id: string;
+  colorData?: Array<{
+    _id: string;
+    name: string;
+    hexCode?: string | null;
+    tenant: string;
+    deleted: boolean;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+  }>;
+  sizeData?: Array<{
+    _id: string;
+    name: string;
+    order?: number;
+    tenant: string;
+    deleted: boolean;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+  }>;
 }
 export interface CartProduct extends Product {
   quantity: number;

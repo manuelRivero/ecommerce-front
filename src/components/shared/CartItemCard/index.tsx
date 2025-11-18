@@ -10,6 +10,7 @@ interface Props {
   hasDelete?: boolean;
 }
 export default function CartItemCard({ data, hasDelete = true }: Props) {
+  console.log('cart data', data);
   const [, dispatch] = useCart();
   const handleDelete = () => {
     removeProductToCart(dispatch, data._id);
@@ -31,7 +32,7 @@ export default function CartItemCard({ data, hasDelete = true }: Props) {
           <Typography variant="h5">{data.name}</Typography>
           <Typography variant="body1" fontWeight="bold">
             $
-            {finalPrice(data.price, data.discount + (data.offerDiscount || 0)) *
+            {finalPrice(data.price, (data.discount ?? 0) + (data.offerDiscount ?? 0)) *
               data.quantity}
           </Typography>
           <Typography variant="body1">

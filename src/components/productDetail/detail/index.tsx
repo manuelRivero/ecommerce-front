@@ -35,15 +35,23 @@ export default function Detail({ data, reviews }: Props) {
   console.log("data", data.features[0].stock);
 
   const groupedFeatures = data.features.reduce((acc, feature) => {
-    const { color, size, stock, _id } = feature;
+    // Extraer el nombre del color (puede ser string o objeto)
+    const colorName = typeof feature.color === 'string' 
+      ? feature.color 
+      : feature.color?.name;
+    // Extraer el nombre del size (puede ser string o objeto)
+    const sizeName = typeof feature.size === 'string' 
+      ? feature.size 
+      : feature.size?.name;
+    const { stock, _id } = feature;
 
-    // Asegurarnos de que color no sea undefined antes de usarlo
-    if (color) {
-      if (!acc[color]) {
-        acc[color] = [];
+    // Asegurarnos de que colorName no sea undefined antes de usarlo
+    if (colorName) {
+      if (!acc[colorName]) {
+        acc[colorName] = [];
       }
 
-      acc[color].push({ size, stock, _id });
+      acc[colorName].push({ size: sizeName, stock, _id });
     }
 
     return acc;

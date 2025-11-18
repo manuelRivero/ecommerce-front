@@ -25,7 +25,19 @@ export interface ISalesForm {
   postalCode: string;
 }
 
-export default function Form() {
+interface FormProps {
+  appliedCoupon?: {
+    code: string;
+    discount: number;
+    type: string;
+    name: string;
+    value?: number;
+    maximumDiscount?: number;
+    minimumAmount?: number;
+  } | null;
+}
+
+export default function Form({ appliedCoupon }: FormProps) {
   const params = useParams();
   const router = useRouter();
   const [{ products }, dispatch] = useCart();
@@ -33,6 +45,7 @@ export default function Form() {
   const [showFormAlert, setShowFormAlert] = useState<boolean>(false);
   const [redirect, setRedirect] = useState<string | null>(null);
   const [showErrorModal, setShowErrorModal] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const {
     control,
@@ -43,14 +56,25 @@ export default function Form() {
     console.log("values", values, products);
     try {
       setLoading(true);
+      const saleData: any = { ...values, products };
+      
+      // Agregar couponCode si hay un cupón aplicado
+      if (appliedCoupon) {
+        saleData.couponCode = appliedCoupon.code;
+      }
+      
       const response = await createSale(
-        { ...values, products },
+        saleData,
         params.subdomain as string
       );
       setShowFormAlert(true);
       setRedirect(response.data.init_point);
     } catch (error: any) {
       console.log("error", error);
+      // Extraer el mensaje de error de la respuesta si existe
+      const errorMsg = error.response?.data?.message ??
+                      "No pudimos procesar tu pago en este momento. Por favor, verifica tus datos e intenta nuevamente.";
+      setErrorMessage(errorMsg);
       setShowErrorModal(true);
     } finally {
       setLoading(false);
@@ -68,6 +92,7 @@ export default function Form() {
 
   const handleCloseErrorModal = () => {
     setShowErrorModal(false);
+    setErrorMessage(""); // Limpiar el mensaje al cerrar
   };
 
   const handleRetryPayment = () => {
@@ -297,13 +322,13 @@ export default function Form() {
           type="submit"
           disabled={!isDirty || !isValid}
         >
-          {loading ? <CircularProgress /> : "Finalizar compra"}
+          {loading ? <CircularProgress /> : "Realizar pedido"}
         </Button>
       </Stack>
       {showFormAlert && (
         <>
           <Typography variant="h5" sx={{ marginTop: 2, textAlign: "center" }}>
-            Todo listo, puedes proceder a mercado pago.
+            Todo listo, puedes proceder a pagar tu pedido.
           </Typography>
           <Stack direction="row" justifyContent="center">
             <Button
@@ -322,7 +347,7 @@ export default function Form() {
         onClose={handleCloseErrorModal}
         onRetry={handleRetryPayment}
         title="Error al procesar el pago"
-        message="No pudimos procesar tu pago en este momento. Por favor, verifica tus datos e intenta nuevamente."
+        message={errorMessage || "No pudimos procesar tu pago en este momento. Por favor, verifica tus datos e intenta nuevamente."}
       />
     </form>
   ) : (

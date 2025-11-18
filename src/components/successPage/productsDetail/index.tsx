@@ -15,8 +15,14 @@ interface Props {
   products: any[];
   orderId: string
   hasButton?: boolean
+  coupon?: {
+    code: string | null;
+    couponId: string | null;
+    discount: number;
+    totalBeforeCoupon: number | null;
+  } | null;
 }
-export default function ProductsDetail({products, orderId, hasButton = true}: Props) {
+export default function ProductsDetail({products, orderId, hasButton = true, coupon}: Props) {
   const { state } = useITheme();
 
   const WhatsAppLinkWithExternalURL = () => {
@@ -40,14 +46,65 @@ export default function ProductsDetail({products, orderId, hasButton = true}: Pr
         ))}
       <Divider />
       <Box sx={{ marginTop: 2 }}>
-        <Typography textAlign="right">
-          Total:{" "}
-          <strong>
-            $
-            {products
-              .reduce((acc, item) => acc + finalPrice( item.data.price, ((item.data.discount || 0) + (item.data.offerDiscount || 0))) * item.quantity, 0)}
-          </strong>
-        </Typography>
+        {/* Calcular subtotal */}
+        {(() => {
+          const subtotal = products.reduce((acc, item) => {
+            console.log('item', item);
+            return acc + finalPrice(
+              item.data.price,
+              ((item.details[0].discount ?? 0) + (item.details[0].offerDiscount ?? 0))
+            ) * item.quantity;
+          }, 0);
+          console.log('coupon', coupon);
+          const couponDiscount = coupon?.discount || 0;
+          const total = subtotal - couponDiscount;
+          
+          return (
+            <>
+              {/* Subtotal */}
+              <Typography textAlign="right" sx={{ mb: coupon && coupon.discount > 0 ? 1 : 0 }}>
+                Subtotal:{" "}
+                <strong>${subtotal.toFixed(2)}</strong>
+              </Typography>
+              
+              {/* Descuento del cupón */}
+              {coupon && coupon.discount > 0 && coupon.code && (
+                <Box sx={{ mb: 1 }}>
+                  <Typography 
+                    textAlign="right" 
+                    sx={{ 
+                      color: "success.main",
+                      fontWeight: 500
+                    }}
+                  >
+                    Descuento ({coupon.code}):{" "}
+                    <strong>-${coupon.discount.toFixed(2)}</strong>
+                  </Typography>
+                  {/* Información adicional del cupón si está disponible */}
+                  {coupon.totalBeforeCoupon && (
+                    <Typography 
+                      textAlign="right" 
+                      variant="caption"
+                      sx={{ 
+                        color: "text.secondary",
+                        display: "block",
+                        mt: 0.5
+                      }}
+                    >
+                      Aplicado sobre ${coupon.totalBeforeCoupon.toFixed(2)}
+                    </Typography>
+                  )}
+                </Box>
+              )}
+              
+              {/* Total */}
+              <Typography textAlign="right" sx={{ mt: coupon && coupon.discount > 0 ? 1 : 0 }}>
+                Total:{" "}
+                <strong>${total.toFixed(2)}</strong>
+              </Typography>
+            </>
+          );
+        })()}
       </Box>{" "}
       {hasButton && <Stack
         direction="row"

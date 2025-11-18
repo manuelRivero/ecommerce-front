@@ -99,7 +99,12 @@ export default async function OrderReceived({ searchParams, params }: any) {
           Dirección: <strong>{`${detail.address}`}</strong>
         </Typography>
       
-        <ProductsDetail hasButton={false} products={detail.products} orderId={detail._id} />
+        <ProductsDetail 
+          hasButton={false} 
+          products={detail.products} 
+          orderId={detail._id} 
+          coupon={detail.coupon}
+        />
       </Paper>
     </Container>
   );

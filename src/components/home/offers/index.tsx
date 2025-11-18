@@ -114,7 +114,7 @@ export default function Offers({ data }: Props) {
                   pagination={true}
                   direction={isMobile ? "horizontal" : "vertical"}
                   spaceBetween={5}
-                  slidesPerView={2}
+                  slidesPerView={1}
                   autoHeight={false}
                   style={{
                     maxHeight: isMobile ? 600 : 400,
