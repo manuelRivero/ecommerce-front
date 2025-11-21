@@ -14,11 +14,11 @@ const getData = async (subdomain: string,) => {
     const [ hotSalesData, bestSellersData, offersData, categoriesData, moreRecentsData] = await Promise.all([
       getHotSales(subdomain, 0, 12),
       getBestSellers(subdomain, 0, 12),
-      getOffers(subdomain, 0, 4),
+      getOffers(subdomain, 0, 8),
       getCategories(subdomain, 0, 100),
       getProducts(subdomain, 0, 12),
     ]);
-    console.log("moreRecentsData", moreRecentsData.data.products);
+    console.log("offersData", offersData.data);
     return {
     
       hotSales: {

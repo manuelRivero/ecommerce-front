@@ -40,7 +40,15 @@ export default function RelatedProducts({ products, category }: Props) {
             nextEl: `.related-next`,
           }}
           spaceBetween={50}
-          slidesPerView={"auto"}
+          slidesPerView={1}
+          breakpoints={{
+            600: {
+              slidesPerView: 2,
+            },
+            1200: {
+              slidesPerView: 3,
+            },
+          }}
           style={{ position: "relative", zIndex: 0 }}
         >
           {products.map((product: Product) => (

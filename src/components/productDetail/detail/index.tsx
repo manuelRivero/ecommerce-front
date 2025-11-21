@@ -203,6 +203,25 @@ export default function Detail({ data, reviews }: Props) {
           >
             ${formatNumber(finalPrice(data.price, data.discount ?? 0 + (data.offerDiscount ?? 0)))}
           </Typography>
+          {(data.discount ?? 0) && (!data.offerDiscount) && (
+            <Box
+              sx={(theme) => ({
+                position: "absolute",
+                top: 0,
+                right: -10,
+                transform: "translateX(100%)",
+                padding: 0.5,
+                borderRadius: 2,
+                color: theme.palette.primary.contrastText,
+                background: theme.palette.error.main,
+                width: "max-content",
+              })}
+            >
+              <Typography variant="body1" sx={{ fontSize: 10 }}>
+                {data.discount}% off
+              </Typography>
+            </Box>
+          )}
           {((data.offerDiscount ?? 0)) > 0 && (
             <>
               <Box
@@ -219,7 +238,7 @@ export default function Detail({ data, reviews }: Props) {
                 })}
               >
                 <Typography variant="body1" sx={{ fontSize: 10 }}>
-                  {data.discount ?? 0 + (data.offerDiscount ?? 0)}% off
+                  {(data.discount ?? 0) + (data.offerDiscount ?? 0)}% off
                 </Typography>
               </Box>
               <Box

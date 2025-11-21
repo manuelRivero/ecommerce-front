@@ -12,7 +12,7 @@ export default function OffersCard({ data }: Props) {
         <Typography variant="h6" mb={1} textAlign="center">
           {data.name}
         </Typography>
-        {data.discount && (
+        {(data.discount ?? 0) > 0 && (
           <>
             <Typography variant="h2" mb={1} textAlign="center">
               {data.discount}% de descuento

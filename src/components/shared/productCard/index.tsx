@@ -103,7 +103,7 @@ export default function ProductCard({ data }: Props) {
         </Box>}
 
         <Box
-          sx={{ overflow: "hidden", position: "relative", height: {xs: 200, md: 300} }}
+          sx={{ overflow: "hidden", position: "relative", height: { xs: 200, md: 300 } }}
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
         >
@@ -153,7 +153,7 @@ export default function ProductCard({ data }: Props) {
               </Box>
             )}
             <Typography variant="h5">{data.name}</Typography>
-            
+
             {/* Rating */}
             {data.averageRating !== undefined && data.averageRating > 0 && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
@@ -173,8 +173,8 @@ export default function ProductCard({ data }: Props) {
                 </Typography>
               </Box>
             )}
-            
-            <Stack direction="row" spacing={1} alignItems="baseline">
+
+            <Stack direction={{ sx: "column", md: "row" }} spacing={1} alignItems="baseline">
               {(data.discount ?? 0) > 0 && (
                 <Typography
                   variant="body1"

@@ -38,6 +38,7 @@ interface Props {
 export default function Offers({ data }: Props) {
   const isMobile = useMediaQuery("(max-width:1200px)");
   const [completed, setCompleted] = useState(false);
+  console.log("data offers", data);
   return data.length > 0 ? (
     <Box id="offers-sales-container" sx={{ position: "relative" }}>
       <Stack
