@@ -205,7 +205,7 @@ export default function Offers({ data }: Props) {
                     <Button
                       variant="contained"
                       component={Link}
-                      href={"/ofertas"}
+                      href={"/ofertas?offerId=" + offer._id}
                     >
                       Ver productos
                     </Button>

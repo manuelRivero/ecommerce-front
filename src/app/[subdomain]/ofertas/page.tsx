@@ -1,4 +1,4 @@
-import { getOffers } from "@/client/offers";
+import { getOfferDetail, getOffers } from "@/client/offers";
 import MainWrapper from "@/components/offers/mainWrapper";
 import { Container } from "@mui/material";
 import Breadcrumb from "@/components/shared/Breadcrumb";
@@ -6,15 +6,16 @@ import { LocalOffer } from "@mui/icons-material";
 
 export const dynamic = "force-dynamic";
 
-const getData = async (subdomain: string ) => {
+const getData = async (subdomain: string, offerId: string, page = '1') => {
   try {
-    const [offers] = await Promise.all([
-      getOffers(subdomain, 0, 4)
+    const [offerResponse] = await Promise.all([
+      getOfferDetail(offerId, subdomain, Number(page) - 1, 6)
     ]);
     return {
       offers: {
-        products: offers.data.offers[0].products,
-        detail: offers.data.offers[0]
+        products: offerResponse.data.offer?.products || [],
+        detail: offerResponse.data.offer,
+        totalPages: offerResponse.data.offer?.totalPages || 1
       },
     };
   } catch (error: any) {
@@ -22,10 +23,18 @@ const getData = async (subdomain: string ) => {
     throw "error";
   }
 };
-export default async function Offers({ params }: { params: Promise<any> }) {
+export default async function Offers({ 
+  params, 
+  searchParams 
+}: { 
+  params: Promise<any>;
+  searchParams: { [key: string]: string | string[] };
+}) {
   const { subdomain } = await params;
-  const data = await getData(subdomain);
-  console.log('data', data.offers.products)
+  const parseParams = await searchParams;
+  const page = (parseParams.page as string) || '1';
+  const offerId = (parseParams.offerId as string) || '';
+  const data = await getData(subdomain, offerId, page);
   return (
     <Container sx={{ marginY: 6 }}>
       <Breadcrumb 
@@ -33,7 +42,13 @@ export default async function Offers({ params }: { params: Promise<any> }) {
           { label: 'Ofertas', icon: <LocalOffer sx={{ fontSize: 16 }} /> }
         ]} 
       />
-      <MainWrapper data={data.offers.products} detail={data.offers.detail} />
+      {data.offers.detail && (
+        <MainWrapper 
+          data={data.offers.products} 
+          detail={data.offers.detail} 
+          totalPages={data.offers.totalPages}
+        />
+      )}
     </Container>
   );
 }
