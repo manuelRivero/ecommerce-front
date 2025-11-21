@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Product } from "@/interfaces/products";
-import { finalPrice, formatNumber } from "@/utils/products";
+import { finalPrice, formatCurrency } from "@/utils/products";
 import { Box, Button, Paper, Stack, Typography, Rating } from "@mui/material";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion"; // Corregí el import
@@ -181,7 +181,7 @@ export default function ProductCard({ data }: Props) {
                   color="#97a2aa"
                   sx={{ textDecoration: "line-through" }}
                 >
-                  ${formatNumber(data.price)}
+                  {formatCurrency(data.price)}
                 </Typography>
               )}
               <Typography
@@ -192,8 +192,7 @@ export default function ProductCard({ data }: Props) {
                 })}
               >
                 <strong>
-                  $
-                  {formatNumber(
+                  {formatCurrency(
                     finalPrice(
                       data.price,
                       (data.discount ?? 0) + (data.offerDiscount ?? 0)

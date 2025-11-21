@@ -6,7 +6,8 @@ import React, { useMemo } from "react";
 import CartItemCard from "../CartItemCard";
 import HelpIcon from "@mui/icons-material/Help";
 import Link from "next/link";
-import { finalPrice } from "@/utils/products";
+import { finalPrice, formatCurrency } from "@/utils/products";
+import { useITheme } from "@/components/themeProvider";
 
 interface CartListProps {
   appliedCoupon?: {
@@ -21,8 +22,9 @@ interface CartListProps {
 }
 
 export default function CartList({ appliedCoupon }: CartListProps) {
+  const { state: { config } } = useITheme();
+  const { defaultDeliveryType, locality, province, postalCode, address } = config
   const [{ products }] = useCart();
-  console.log('products', products);
   // Calcular subtotal
   const subtotal = useMemo(() => {
     return products.reduce(
@@ -32,7 +34,7 @@ export default function CartList({ appliedCoupon }: CartListProps) {
           item.price,
           (item.discount ?? 0) + (item.offerDiscount ?? 0)
         ) *
-          item.quantity,
+        item.quantity,
       0
     );
   }, [products]);
@@ -60,64 +62,71 @@ export default function CartList({ appliedCoupon }: CartListProps) {
 
       <>
         <Stack
-          direction="row"
+          direction="column"
           justifyContent={"flex-end"}
-          alignItems="center"
+          alignItems="flex-start"
           spacing={1}
           sx={{ marginTop: 2 }}
         >
-          <Typography sx={{ textAlign: "right" }}>
-            Envío : <strong>Coordinar con el vendedor</strong>
-          </Typography>
-          <Tooltip title="Una vez completada tu compra pordrás coordinar tu envío con el vendedor">
+          {defaultDeliveryType === 'PICK-UP' && (
+            <>
+              <Typography>
+                Metodo de entrega: Retiro en la tienda
+              </Typography>
+              <Typography >
+                Dirección de entrega: <span style={{ textTransform: "uppercase" }}>{address}, {province}, {locality}, {postalCode}</span>
+              </Typography>
+            </>
+          )}
+          {/*<Tooltip title="Una vez completada tu compra pordrás coordinar tu envío con el vendedor">
             <HelpIcon />
-          </Tooltip>
+          </Tooltip>*/}
         </Stack>
         <Box sx={{ marginTop: 2 }}>
           {/* Subtotal */}
           <Typography textAlign="right" sx={{ mb: appliedCoupon ? 1 : 0 }}>
             Subtotal:{" "}
-            <strong>${subtotal.toFixed(2)}</strong>
+            <strong>{formatCurrency(subtotal)}</strong>
           </Typography>
-          
+
           {/* Descuento del cupón */}
           {appliedCoupon && couponDiscount > 0 && (
             <Box sx={{ mb: 1 }}>
-              <Typography 
-                textAlign="right" 
-                sx={{ 
+              <Typography
+                textAlign="right"
+                sx={{
                   color: "success.main",
                   fontWeight: 500
                 }}
               >
                 Descuento ({appliedCoupon.code}):{" "}
-                <strong>-${couponDiscount.toFixed(2)}</strong>
+                <strong>-{formatCurrency(couponDiscount)}</strong>
               </Typography>
               {/* Información adicional del cupón */}
               {appliedCoupon.type === 'percentage' && appliedCoupon.value && (
-                <Typography 
-                  textAlign="right" 
+                <Typography
+                  textAlign="right"
                   variant="caption"
-                  sx={{ 
+                  sx={{
                     color: "text.secondary",
                     display: "block",
                     mt: 0.5
                   }}
                 >
                   {appliedCoupon.value}% de descuento
-                  {appliedCoupon.maximumDiscount && 
+                  {appliedCoupon.maximumDiscount &&
                     couponDiscount >= appliedCoupon.maximumDiscount && (
-                    <span> • Máximo aplicado (${appliedCoupon.maximumDiscount})</span>
-                  )}
+                      <span> • Máximo aplicado (${appliedCoupon.maximumDiscount})</span>
+                    )}
                 </Typography>
               )}
             </Box>
           )}
-          
+
           {/* Total */}
           <Typography textAlign="right" sx={{ mt: appliedCoupon ? 1 : 0 }}>
             Total:{" "}
-            <strong>${total.toFixed(2)}</strong>
+            <strong>{formatCurrency(total)}</strong>
           </Typography>
           <Link href="/como-funciona-el-envio">
             <Typography sx={{ textAlign: "right", marginTop: 2 }}>

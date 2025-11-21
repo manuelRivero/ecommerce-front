@@ -28,6 +28,15 @@ export const formatNumber = (value: number) => {
   }).format(value);
 };
 
+export const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat('es-AR', {
+    style: 'currency',
+    currency: 'ARS',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(value);
+};
+
 export function compareProducts(
   original: CartProduct[],
   updated: Product[]

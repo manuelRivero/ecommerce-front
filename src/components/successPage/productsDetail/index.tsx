@@ -2,7 +2,7 @@
 import CartItemCard from "@/components/shared/CartItemCard";
 import { useITheme } from "@/components/themeProvider";
 import { Product } from "@/interfaces/products";
-import { finalPrice } from "@/utils/products";
+import { finalPrice, formatCurrency } from "@/utils/products";
 import {
   Box,
   Button,
@@ -64,7 +64,7 @@ export default function ProductsDetail({products, orderId, hasButton = true, cou
               {/* Subtotal */}
               <Typography textAlign="right" sx={{ mb: coupon && coupon.discount > 0 ? 1 : 0 }}>
                 Subtotal:{" "}
-                <strong>${subtotal.toFixed(2)}</strong>
+                <strong>{formatCurrency(subtotal)}</strong>
               </Typography>
               
               {/* Descuento del cupón */}
@@ -78,7 +78,7 @@ export default function ProductsDetail({products, orderId, hasButton = true, cou
                     }}
                   >
                     Descuento ({coupon.code}):{" "}
-                    <strong>-${coupon.discount.toFixed(2)}</strong>
+                    <strong>-{formatCurrency(coupon.discount)}</strong>
                   </Typography>
                   {/* Información adicional del cupón si está disponible */}
                   {coupon.totalBeforeCoupon && (
@@ -91,7 +91,7 @@ export default function ProductsDetail({products, orderId, hasButton = true, cou
                         mt: 0.5
                       }}
                     >
-                      Aplicado sobre ${coupon.totalBeforeCoupon.toFixed(2)}
+                      Aplicado sobre {formatCurrency(coupon.totalBeforeCoupon)}
                     </Typography>
                   )}
                 </Box>
@@ -100,7 +100,7 @@ export default function ProductsDetail({products, orderId, hasButton = true, cou
               {/* Total */}
               <Typography textAlign="right" sx={{ mt: coupon && coupon.discount > 0 ? 1 : 0 }}>
                 Total:{" "}
-                <strong>${total.toFixed(2)}</strong>
+                <strong>{formatCurrency(total)}</strong>
               </Typography>
             </>
           );

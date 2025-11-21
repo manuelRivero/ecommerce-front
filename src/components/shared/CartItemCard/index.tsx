@@ -3,7 +3,7 @@ import { Box, IconButton, Stack, Typography } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { CartProduct } from "@/interfaces/products";
 import { removeProductToCart, useCart } from "@/context/cart";
-import { finalPrice } from "@/utils/products";
+import { finalPrice, formatCurrency } from "@/utils/products";
 
 interface Props {
   data: CartProduct;
@@ -31,9 +31,10 @@ export default function CartItemCard({ data, hasDelete = true }: Props) {
         <Box sx={{ width: "100%" }}>
           <Typography variant="h5">{data.name}</Typography>
           <Typography variant="body1" fontWeight="bold">
-            $
-            {finalPrice(data.price, (data.discount ?? 0) + (data.offerDiscount ?? 0)) *
-              data.quantity}
+            {formatCurrency(
+              finalPrice(data.price, (data.discount ?? 0) + (data.offerDiscount ?? 0)) *
+              data.quantity
+            )}
           </Typography>
           <Typography variant="body1">
             Cant. <strong>{data.quantity}</strong>

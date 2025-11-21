@@ -15,7 +15,7 @@ import CartItemCard from "@/components/shared/CartItemCard";
 import { toggleCart, useCart } from "@/context/cart";
 import { CartProduct } from "@/interfaces/products";
 import { useRouter } from "next/navigation";
-import { finalPrice } from "@/utils/products";
+import { finalPrice, formatCurrency } from "@/utils/products";
 
 export default function Cart() {
   const router = useRouter();
@@ -88,12 +88,13 @@ export default function Cart() {
                   <Typography textAlign="right">
                     Subtotal:{" "}
                     <strong>
-                      $
-                      {products.reduce(
-                        (acc, item) =>
-                          acc +
-                          finalPrice(item.price, ((item.discount ?? 0) + (item.offerDiscount ?? 0))) * item.quantity,
-                        0
+                      {formatCurrency(
+                        products.reduce(
+                          (acc, item) =>
+                            acc +
+                            finalPrice(item.price, ((item.discount ?? 0) + (item.offerDiscount ?? 0))) * item.quantity,
+                          0
+                        )
                       )}
                     </strong>
                   </Typography>

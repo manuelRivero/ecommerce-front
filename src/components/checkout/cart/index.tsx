@@ -3,11 +3,12 @@ import { getProductsById } from "@/client/products";
 import CartList from "@/components/shared/cartList";
 import { setCart, useCart } from "@/context/cart";
 import { Features, Product } from "@/interfaces/products";
-import { compareProducts, finalPrice } from "@/utils/products";
+import { compareProducts, finalPrice, formatCurrency } from "@/utils/products";
 import { Typography, TextField, Button, Box, Alert } from "@mui/material";
 import React, { useEffect, useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { validateCoupon } from "@/client/coupons";
+import { useITheme } from "@/components/themeProvider";
 
 interface CheckoutCartProps {
   appliedCoupon?: {
@@ -36,8 +37,8 @@ export default function CheckoutCart({ appliedCoupon, onCouponApplied }: Checkou
   const params = useParams();
   const [couponCode, setCouponCode] = useState<string>("");
   const [validatingCoupon, setValidatingCoupon] = useState<boolean>(false);
-  const [couponMessage, setCouponMessage] = useState<{ 
-    type: "success" | "error"; 
+  const [couponMessage, setCouponMessage] = useState<{
+    type: "success" | "error";
     text: string;
     minimumAmount?: number;
     currentAmount?: number;
@@ -52,7 +53,7 @@ export default function CheckoutCart({ appliedCoupon, onCouponApplied }: Checkou
           item.price,
           (item.discount || 0) + (item.offerDiscount || 0)
         ) *
-          item.quantity,
+        item.quantity,
       0
     );
   }, [products]);
@@ -82,14 +83,14 @@ export default function CheckoutCart({ appliedCoupon, onCouponApplied }: Checkou
         const selectedFeature = localFeatures.find(
           (feature: Features) => {
             // Extraer el nombre del color (puede ser string o objeto)
-            const featureColor = typeof feature.color === 'string' 
-              ? feature.color 
+            const featureColor = typeof feature.color === 'string'
+              ? feature.color
               : feature.color?.name;
             // Extraer el nombre del size (puede ser string o objeto)
-            const featureSize = typeof feature.size === 'string' 
-              ? feature.size 
+            const featureSize = typeof feature.size === 'string'
+              ? feature.size
               : feature.size?.name;
-            
+
             return featureColor === selectedColor && featureSize === selectedSize;
           }
         );
@@ -130,14 +131,14 @@ export default function CheckoutCart({ appliedCoupon, onCouponApplied }: Checkou
         orderAmount,
         params.subdomain as string
       );
-      
+
       // Guardar el cupón aplicado
       if (response.data?.ok && response.data?.coupon) {
         const coupon = response.data.coupon;
         const discount = response.data.discount || 0;
         const maximumDiscount = coupon.maximumDiscount;
         const isMaxDiscountReached = maximumDiscount && discount >= maximumDiscount;
-        
+
         const newCoupon = {
           code: coupon.code,
           discount: discount,
@@ -148,13 +149,13 @@ export default function CheckoutCart({ appliedCoupon, onCouponApplied }: Checkou
           minimumAmount: coupon.minimumAmount,
         };
         onCouponApplied?.(newCoupon);
-        
+
         // Mensaje mejorado con información del cupón
         let successMessage = `Cupón "${coupon.code}" aplicado correctamente`;
         if (coupon.type === 'percentage' && coupon.value) {
           successMessage += ` (${coupon.value}% de descuento`;
           if (isMaxDiscountReached && maximumDiscount) {
-            successMessage += `, máximo $${maximumDiscount} aplicado)`;
+            successMessage += `, máximo ${formatCurrency(maximumDiscount)} aplicado)`;
           } else {
             successMessage += ')';
           }
@@ -163,27 +164,27 @@ export default function CheckoutCart({ appliedCoupon, onCouponApplied }: Checkou
       } else {
         setCouponMessage({ type: "success", text: "Cupón válido aplicado correctamente" });
       }
-      
+
       console.log("Coupon response:", response.data);
     } catch (error: any) {
       // Limpiar cupón aplicado si hay error
       onCouponApplied?.(null);
-      
+
       // Manejar errores de validación del backend
       const errorData = error.response?.data;
       let errorMessage = "El cupón no es válido o ha expirado";
-      
+
       if (errorData) {
         // Priorizar el campo 'error' si existe, luego 'message'
         errorMessage = errorData.error || errorData.message || errorMessage;
       }
-      
+
       // Si existe minimumAmount, incluir información adicional
       const minimumAmount = errorData?.minimumAmount;
       const currentAmount = errorData?.currentAmount;
-      
-      setCouponMessage({ 
-        type: "error", 
+
+      setCouponMessage({
+        type: "error",
         text: errorMessage,
         ...(minimumAmount !== undefined && { minimumAmount }),
         ...(currentAmount !== undefined && { currentAmount }),
@@ -215,7 +216,7 @@ export default function CheckoutCart({ appliedCoupon, onCouponApplied }: Checkou
           <Typography variant="h4" sx={{ marginBottom: 2 }}>
             Tú compra
           </Typography>
-          
+
           {/* Sección de cupón */}
           <Box sx={{ marginBottom: 2 }}>
             <Box sx={{ display: "flex", gap: 1, marginBottom: 1 }}>
@@ -250,8 +251,8 @@ export default function CheckoutCart({ appliedCoupon, onCouponApplied }: Checkou
               </Button>
             </Box>
             {couponMessage && (
-              <Alert 
-                severity={couponMessage.type} 
+              <Alert
+                severity={couponMessage.type}
                 sx={{ marginTop: 1 }}
                 onClose={() => setCouponMessage(null)}
               >
@@ -259,7 +260,7 @@ export default function CheckoutCart({ appliedCoupon, onCouponApplied }: Checkou
                   <Typography variant="body2" sx={{ marginBottom: (couponMessage.minimumAmount !== undefined || appliedCoupon) ? 1 : 0 }}>
                     {couponMessage.text}
                   </Typography>
-                  
+
                   {/* Información adicional del cupón aplicado exitosamente */}
                   {couponMessage.type === 'success' && appliedCoupon && (
                     <Box sx={{ mt: 1, pt: 1, borderTop: '1px solid rgba(46, 125, 50, 0.2)' }}>
@@ -270,22 +271,22 @@ export default function CheckoutCart({ appliedCoupon, onCouponApplied }: Checkou
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
                           Descuento: <strong>{appliedCoupon.value}%</strong>
                           {appliedCoupon.maximumDiscount && (
-                            <span> (máximo ${appliedCoupon.maximumDiscount})</span>
+                            <span> (máximo {formatCurrency(appliedCoupon.maximumDiscount)})</span>
                           )}
                         </Typography>
                       )}
                       <Typography variant="body2" color="text.secondary">
-                        Descuento aplicado: <strong>${appliedCoupon.discount.toFixed(2)}</strong>
-                        {appliedCoupon.maximumDiscount && 
-                         appliedCoupon.discount >= appliedCoupon.maximumDiscount && (
-                          <span style={{ color: 'var(--mui-palette-success-main)', fontWeight: 600 }}>
-                            {' '}• Máximo alcanzado
-                          </span>
-                        )}
+                        Descuento aplicado: <strong>{formatCurrency(appliedCoupon.discount)}</strong>
+                        {appliedCoupon.maximumDiscount &&
+                          appliedCoupon.discount >= appliedCoupon.maximumDiscount && (
+                            <span style={{ color: 'var(--mui-palette-success-main)', fontWeight: 600 }}>
+                              {' '}• Máximo alcanzado
+                            </span>
+                          )}
                       </Typography>
                     </Box>
                   )}
-                  
+
                   {/* Información de error con minimumAmount */}
                   {couponMessage.minimumAmount !== undefined && (
                     <Box sx={{ mt: 1, pt: 1, borderTop: `1px solid ${couponMessage.type === 'error' ? 'rgba(211, 47, 47, 0.2)' : 'rgba(46, 125, 50, 0.2)'}` }}>
@@ -293,15 +294,15 @@ export default function CheckoutCart({ appliedCoupon, onCouponApplied }: Checkou
                         Información del cupón:
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Monto mínimo requerido: <strong>${couponMessage.minimumAmount.toFixed(2)}</strong>
+                        Monto mínimo requerido: <strong>{formatCurrency(couponMessage.minimumAmount)}</strong>
                       </Typography>
                       {couponMessage.currentAmount !== undefined && (
                         <>
                           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                            Monto actual de tu compra: <strong>${couponMessage.currentAmount.toFixed(2)}</strong>
+                            Monto actual de tu compra: <strong>{formatCurrency(couponMessage.currentAmount)}</strong>
                           </Typography>
                           <Typography variant="body2" color="primary.main" sx={{ mt: 0.5, fontWeight: 600 }}>
-                            Te faltan: <strong>${(couponMessage.minimumAmount - couponMessage.currentAmount).toFixed(2)}</strong>
+                            Te faltan: <strong>{formatCurrency(couponMessage.minimumAmount - couponMessage.currentAmount)}</strong>
                           </Typography>
                         </>
                       )}
