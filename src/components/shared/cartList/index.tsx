@@ -128,11 +128,11 @@ export default function CartList({ appliedCoupon }: CartListProps) {
             Total:{" "}
             <strong>{formatCurrency(total)}</strong>
           </Typography>
-          <Link href="/como-funciona-el-envio">
+          {defaultDeliveryType === 'DELIVERY' && <Link href="/como-funciona-el-envio">
             <Typography sx={{ textAlign: "right", marginTop: 2 }}>
               ¿Como funciona el envío?
             </Typography>
-          </Link>
+          </Link>}
         </Box>
       </>
     </>
