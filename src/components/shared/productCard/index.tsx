@@ -175,7 +175,7 @@ export default function ProductCard({ data }: Props) {
             )}
             
             <Stack direction="row" spacing={1} alignItems="baseline">
-              {data.discount && data.discount > 0 && (
+              {(data.discount ?? 0) > 0 && (
                 <Typography
                   variant="body1"
                   color="#97a2aa"
@@ -196,7 +196,7 @@ export default function ProductCard({ data }: Props) {
                   {formatNumber(
                     finalPrice(
                       data.price,
-                      (data.discount || 0) + (data.offerDiscount || 0)
+                      (data.discount ?? 0) + (data.offerDiscount ?? 0)
                     )
                   )}
                 </strong>
