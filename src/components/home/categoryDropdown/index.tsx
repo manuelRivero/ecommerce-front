@@ -35,9 +35,12 @@ export default function CategoryDropdown() {
         );
         setCategories(dataCategories.categories);
 
-        const initialCategory = params.id as string;
-        if (initialCategory) {
-          setSelectedCategory(initialCategory);
+        // Obtener categoría inicial de searchParams
+        const categoriesParam = searchParams.get("categories");
+        if (categoriesParam) {
+          // Si hay múltiples categorías, usar solo la primera para el dropdown
+          const firstCategory = categoriesParam.split(',')[0];
+          setSelectedCategory(firstCategory);
         }
       } catch (error: any) {
         console.error("Error al obtener categorías:", error);
@@ -45,12 +48,25 @@ export default function CategoryDropdown() {
     };
 
     getData();
-  }, [params.id]);
+  }, [params.subdomain, searchParams]);
 
   const handleChangeCategory = (categoryId: string) => {
     setSelectedCategory(categoryId);
     
-    router.push(`/productos/${categoryId}`, { scroll: false });
+    // Construir URL con el parámetro categories
+    const currentParams = new URLSearchParams(
+      Array.from(searchParams.entries())
+    );
+    currentParams.set("categories", categoryId);
+    // Limpiar página cuando se cambia de categoría
+    currentParams.delete("page");
+    
+    router.push(`/productos?${currentParams.toString()}`, { scroll: false });
+    const container = document.getElementById("product-container");
+    container?.scrollIntoView({
+      block: "start",
+      behavior: "smooth",
+    });
   };
 
   const clearCategory = () => {
@@ -59,9 +75,11 @@ export default function CategoryDropdown() {
     const currentParams = new URLSearchParams(
       Array.from(searchParams.entries())
     );
-    currentParams.delete("category");
+    currentParams.delete("categories");
+    // Limpiar página cuando se limpia la categoría
+    currentParams.delete("page");
 
-    router.push(`/productos`, { scroll: false });
+    router.push(`/productos?${currentParams.toString()}`, { scroll: false });
     const container = document.getElementById("product-container");
     container?.scrollIntoView({
       block: "start",

@@ -26,9 +26,9 @@ export default function RelatedProducts({ products, category }: Props) {
     <Box sx={{ marginY: 2 }}>
       <Stack direction="row" sx={{ marginBottom: 4 }} spacing={2} alignItems="baseline" justifyContent="space-between">
         <Typography variant="h3" >
-          Otros productos en <Link href={`/categorias/${category._id}`} style={{ color: "inherit", textDecoration: "underline" }}>{category.name}</Link>
+          Otros productos en <Link href={`/productos?categories=${category._id}`} style={{ color: "inherit", textDecoration: "underline" }}>{category.name}</Link>
         </Typography>
-        <Link href={`/categorias/${category._id}`} style={{ color: "inherit" }}>Ver más</Link>
+        <Link href={`/productos?categories=${category._id}`} style={{ color: "inherit" }}>Ver más</Link>
       </Stack>
       <Box sx={{ paddingX: { md: 10 }, position: "relative" }}>
         <Swiper
@@ -105,7 +105,7 @@ export default function RelatedProducts({ products, category }: Props) {
           <Typography variant="body1" sx={{ marginBottom: 2 }}>
             Explorá todos los productos en {category.name} y encontrá tu próximo favorito.
           </Typography>
-          <Button variant="contained" component={Link} href={`/categorias/${category._id}`}>
+          <Button variant="contained" component={Link} href={`/productos?categories=${category._id}`}>
             Ver todos los productos en {category.name}
           </Button>
         </>

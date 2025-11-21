@@ -10,7 +10,7 @@ const CategoriesOptions = ({ actionProvider }: any) => {
   const [options, setOptions] = useState<any[]>([]);
   const params = useParams();
   const handleOptionClick = (id: string) => {
-    router.push(`/productos/${id}`, { scroll: false });
+    router.push(`/productos?categories=${id}`, { scroll: false });
     actionProvider.handleCategorySelection(id);
   };
   useEffect(() => {

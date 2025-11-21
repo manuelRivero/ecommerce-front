@@ -57,7 +57,7 @@ export default function Header() {
     if (suggestion.type === 'product') {
       router.push(`/detalle-producto/${suggestion.metadata?.productId}`);
     } else if (suggestion.type === 'category') {
-      router.push(`/productos/${suggestion.metadata?.categoryId}`);
+      router.push(`/productos?categories=${suggestion.metadata?.categoryId}`);
     }
     setShowMobileSearch(false);
   };

@@ -63,7 +63,7 @@ function Categories({ data }: Props) {
               style={{ position: "relative", zIndex: 0, height: 300 }}
             >
               <Link
-                href={`/productos/${category._id}`}
+                href={`/productos?categories=${category._id}`}
                 style={{ width: "100%", height: "100%" }}
               >
                 <Paper

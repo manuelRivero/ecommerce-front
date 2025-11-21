@@ -32,7 +32,10 @@ export default function MainProducts({
     const getData = async () => {
       if (page) {
         try {
-          router.push(`/productos/${params.id ?? ""}?page=${page}`);
+          // Construir URL manteniendo todos los parámetros de búsqueda actuales
+          const params = new URLSearchParams(searchParams.toString());
+          params.set('page', page.toString());
+          router.push(`/productos?${params.toString()}`);
         } catch (error: any) {
           console.log("error", error);
         }
@@ -41,7 +44,7 @@ export default function MainProducts({
     if (page) {
       getData();
     }
-  }, [page]);
+  }, [page, router, searchParams]);
 
   return (
     <Box

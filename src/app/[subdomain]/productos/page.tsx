@@ -9,8 +9,12 @@ import Breadcrumb from "@/components/shared/Breadcrumb";
 import { Category, Search, ShoppingBag } from "@mui/icons-material";
 import ProductFiltersWrapper from "@/components/shared/ProductFilters/ProductFiltersWrapper";
 
-const getData = async (subdomain: string, category: string, page = '1', search?: string, searchParams?: any) => {
+const getData = async (subdomain: string, page = '1', search?: string, searchParams?: any) => {
   console.log('get data page', page, 'search', search, 'searchParams', searchParams);
+
+  // Extraer categorías de los parámetros de URL
+  const categories = searchParams?.categories ? searchParams.categories.split(',').filter(Boolean) : [];
+  const firstCategory = categories.length > 0 ? categories[0] : undefined;
 
   // Extraer filtros de los parámetros de URL
   const filters = {
@@ -18,17 +22,18 @@ const getData = async (subdomain: string, category: string, page = '1', search?:
     maxPrice: searchParams?.maxPrice ? Number(searchParams.maxPrice) : undefined,
     colors: searchParams?.colors ? searchParams.colors.split(',').filter(Boolean) : undefined,
     sizes: searchParams?.sizes ? searchParams.sizes.split(',').filter(Boolean) : undefined,
-    categories: searchParams?.categories ? searchParams.categories.split(',').filter(Boolean) : undefined,
+    categories: categories.length > 0 ? categories : undefined,
     hasDiscount: searchParams?.hasDiscount === 'true',
   };
 
   try {
     const [mainProductData, categoryDetailData, filtersData] = await Promise.all([
-      getProducts(subdomain, (Number(page) - 1), 6, category ?? undefined, search, filters),
-      category
-        ? getCategoryDetail(subdomain, category)
+      getProducts(subdomain, (Number(page) - 1), 6, undefined, search, filters),
+      // Solo obtener detalle de categoría si hay exactamente una categoría
+      firstCategory && categories.length === 1
+        ? getCategoryDetail(subdomain, firstCategory)
         : Promise.resolve({ data: { category: null } }),
-      getProductFilters(subdomain, category ?? undefined, search),
+      getProductFilters(subdomain, firstCategory ?? undefined, search),
     ]);
     return {
       mainProducts: {
@@ -37,6 +42,7 @@ const getData = async (subdomain: string, category: string, page = '1', search?:
         categoryDetail: categoryDetailData.data.category,
       },
       filters: filtersData.data.filters,
+      categories,
     };
   } catch (error: any) {
     console.log("error", error);
@@ -52,10 +58,20 @@ export default async function Categories({
   params: Promise<any>;
 }) {
   const parseParams = await searchParams;
-  const { subdomain, id } = await params;
+  const { subdomain } = await params;
   const search = parseParams.search as string;
   const page = (parseParams.page as string) || '1';
-  const data = await getData(subdomain, id, page, search, parseParams);
+  const data = await getData(subdomain, page, search, parseParams);
+  
+  // Obtener categorías de searchParams
+  const categories = parseParams.categories 
+    ? (typeof parseParams.categories === 'string' 
+        ? parseParams.categories.split(',').filter(Boolean)
+        : Array.isArray(parseParams.categories) 
+          ? parseParams.categories.filter(Boolean)
+          : [])
+    : [];
+  const hasCategories = categories.length > 0;
 
   return (
     <Container sx={{ marginY: 4 }}>
@@ -76,8 +92,8 @@ export default async function Categories({
         ]}
       />
 
-      {/* Selector de categorías - solo cuando hay id en la ruta y no hay búsqueda */}
-      {id && !search && (
+      {/* Selector de categorías - solo cuando hay categorías en searchParams y no hay búsqueda */}
+      {hasCategories && !search && (
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
           <CategoryDropdown />
         </Box>
@@ -86,7 +102,7 @@ export default async function Categories({
       <ProductFiltersWrapper
         filters={data.filters}
         subdomain={subdomain}
-        category={id}
+        category={categories.length === 1 ? categories[0] : undefined}
         search={search}
       >
         <MainProducts

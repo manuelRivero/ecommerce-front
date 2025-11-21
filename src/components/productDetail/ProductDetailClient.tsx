@@ -111,7 +111,7 @@ export default function ProductDetailClient({
           items={[
             { 
               label: categoryDetail?.name || 'Categoría', 
-              href: `/productos/${detail.category}`,
+              href: `/productos?categories=${detail.category}`,
               icon: <Category sx={{ fontSize: 16 }} />
             },
             { 
