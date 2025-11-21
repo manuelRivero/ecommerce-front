@@ -25,10 +25,13 @@ export const useProductFilters = (defaultPriceRange?: { min: number; max: number
   const [isLoading, setIsLoading] = useState(false);
   // Ref para asegurar que solo se inicialice desde URL una vez
   const initializedFromURLRef = useRef(false);
+  // Ref para evitar actualizar la URL durante la inicialización
+  const isInitializingRef = useRef(false);
 
   // Inicializar filtros desde URL solo la primera vez
   useEffect(() => {
     if (!initializedFromURLRef.current) {
+      isInitializingRef.current = true;
       const urlFilters: FilterState = {
         priceRange: {
           min: Number(searchParams.get('minPrice')) || defaultMin,
@@ -42,11 +45,20 @@ export const useProductFilters = (defaultPriceRange?: { min: number; max: number
       
       setFilters(urlFilters);
       initializedFromURLRef.current = true;
+      // Permitir actualizaciones de URL después de la inicialización
+      setTimeout(() => {
+        isInitializingRef.current = false;
+      }, 100);
     }
   }, []);
 
-  // Actualizar URL cuando cambien los filtros
+  // Actualizar URL cuando cambien los filtros (solo si no está inicializando)
   const updateURL = useCallback((newFilters: FilterState) => {
+    // No actualizar la URL durante la inicialización para evitar loops
+    if (isInitializingRef.current) {
+      return;
+    }
+
     const params = new URLSearchParams(searchParams.toString());
     
     // Limpiar parámetros de filtros existentes
@@ -77,10 +89,15 @@ export const useProductFilters = (defaultPriceRange?: { min: number; max: number
       params.set('hasDiscount', 'true');
     }
     
-    // Actualizar URL
+    // Actualizar URL y forzar re-render del componente del servidor
     const newURL = `${window.location.pathname}?${params.toString()}`;
     router.push(newURL, { scroll: false });
-  }, [router, searchParams]);
+    // Forzar re-render del componente del servidor para que se actualicen los productos
+    // Usar setTimeout para asegurar que el push se complete antes del refresh
+    setTimeout(() => {
+      router.refresh();
+    }, 0);
+  }, [router, searchParams, defaultMin, defaultMax]);
 
   const handleFiltersChange = useCallback((newFilters: FilterState) => {
     setFilters(newFilters);

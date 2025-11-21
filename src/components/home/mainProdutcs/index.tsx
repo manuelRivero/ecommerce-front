@@ -62,7 +62,7 @@ export default function MainProducts({
             ? `Resultados para "${searchQuery}"`
             : categoryDetail
             ? "Productos en" + " " + categoryDetail.name
-            : "Todos nuestros productos"
+            : "Productos"
         } `}</Typography>
       </Stack>
 

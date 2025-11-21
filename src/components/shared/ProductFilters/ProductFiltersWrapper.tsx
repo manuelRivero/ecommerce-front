@@ -3,8 +3,9 @@
 import React, { useState, useRef } from 'react';
 import { Box, Grid, IconButton, Fab, useMediaQuery, useTheme, Button } from '@mui/material';
 import { FilterList as FilterListIcon } from '@mui/icons-material';
+import { useSearchParams } from 'next/navigation';
 import ProductFiltersComponent from './index';
-import { ProductFilters } from '@/interfaces/filters';
+import { ProductFilters, FilterState } from '@/interfaces/filters';
 import { useProductFilters } from '@/hooks/useProductFilters';
 
 interface ProductFiltersWrapperProps {
@@ -25,6 +26,7 @@ export default function ProductFiltersWrapper({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const searchParams = useSearchParams();
 
   const { filters: filterState, handleFiltersChange } = useProductFilters({
     min: filters.priceRange.min,
@@ -32,9 +34,22 @@ export default function ProductFiltersWrapper({
   });
   
   // Preparar initialFilters solo una vez cuando se monta el componente
-  const initialFiltersRef = useRef<typeof filterState | null>(null);
+  // Leer directamente de los parámetros de la URL para asegurar que se inicialicen correctamente
+  const initialFiltersRef = useRef<FilterState | null>(null);
   if (initialFiltersRef.current === null) {
-    initialFiltersRef.current = filterState;
+    const defaultMin = filters.priceRange.min || 0;
+    const defaultMax = filters.priceRange.max || 100000;
+    
+    initialFiltersRef.current = {
+      priceRange: {
+        min: Number(searchParams.get('minPrice')) || defaultMin,
+        max: Number(searchParams.get('maxPrice')) || defaultMax,
+      },
+      selectedColors: searchParams.get('colors')?.split(',').filter(Boolean) || [],
+      selectedSizes: searchParams.get('sizes')?.split(',').filter(Boolean) || [],
+      selectedCategories: searchParams.get('categories')?.split(',').filter(Boolean) || [],
+      hasDiscount: searchParams.get('hasDiscount') === 'true',
+    };
   }
   const initialFilters = initialFiltersRef.current;
 

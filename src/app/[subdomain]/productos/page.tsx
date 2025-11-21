@@ -92,13 +92,6 @@ export default async function Categories({
         ]}
       />
 
-      {/* Selector de categorías - solo cuando hay categorías en searchParams y no hay búsqueda */}
-      {hasCategories && !search && (
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-          <CategoryDropdown />
-        </Box>
-      )}
-
       <ProductFiltersWrapper
         filters={data.filters}
         subdomain={subdomain}
