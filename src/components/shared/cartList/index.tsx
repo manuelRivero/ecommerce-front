@@ -1,8 +1,8 @@
 "use client";
 import { useCart } from "@/context/cart";
 import { CartProduct } from "@/interfaces/products";
-import { Box, Divider, Stack, Tooltip, Typography } from "@mui/material";
-import React, { useMemo } from "react";
+import { Box, Divider, Stack, Tooltip, Typography, RadioGroup, Radio, FormControlLabel, FormControl } from "@mui/material";
+import React, { useMemo, useState, useEffect } from "react";
 import CartItemCard from "../CartItemCard";
 import HelpIcon from "@mui/icons-material/Help";
 import Link from "next/link";
@@ -19,12 +19,19 @@ interface CartListProps {
     maximumDiscount?: number;
     minimumAmount?: number;
   } | null;
+  onDeliveryTypeChange?: (deliveryType: 'DELIVERY' | 'PICK-UP') => void;
 }
 
-export default function CartList({ appliedCoupon }: CartListProps) {
+export default function CartList({ appliedCoupon, onDeliveryTypeChange }: CartListProps) {
   const { state: { config } } = useITheme();
-  const { defaultDeliveryType, locality, province, postalCode, address } = config
+  const { locality, province, postalCode, address } = config
   const [{ products }] = useCart();
+  const [deliveryType, setDeliveryType] = useState<'DELIVERY' | 'PICK-UP'>('PICK-UP');
+
+  // Notificar cambios en deliveryType al componente padre
+  useEffect(() => {
+    onDeliveryTypeChange?.(deliveryType);
+  }, [deliveryType, onDeliveryTypeChange]);
   // Calcular subtotal
   const subtotal = useMemo(() => {
     return products.reduce(
@@ -68,7 +75,26 @@ export default function CartList({ appliedCoupon }: CartListProps) {
           spacing={1}
           sx={{ marginTop: 2 }}
         >
-          {defaultDeliveryType === 'PICK-UP' && (
+          <FormControl component="fieldset">
+            <RadioGroup
+              row
+              value={deliveryType}
+              onChange={(e) => setDeliveryType(e.target.value as 'DELIVERY' | 'PICK-UP')}
+            >
+              <FormControlLabel
+                value="PICK-UP"
+                control={<Radio />}
+                label="RETIRO EN LOCAL"
+              />
+              <FormControlLabel
+                value="DELIVERY"
+                control={<Radio />}
+                label="DELIVERY"
+              />
+            </RadioGroup>
+          </FormControl>
+
+          {deliveryType === 'PICK-UP' && (
             <>
               <Typography>
                 Metodo de entrega: Retiro en la tienda
@@ -83,6 +109,13 @@ export default function CartList({ appliedCoupon }: CartListProps) {
           </Tooltip>*/}
         </Stack>
         <Box sx={{ marginTop: 2 }}>
+
+          {deliveryType === 'DELIVERY' && <Link target="_blank" href="/como-funciona-el-envio">
+            <Typography sx={{ marginTop: 2 }}>
+              ¿Como funciona el delivery?
+            </Typography>
+          </Link>}
+
           {/* Subtotal */}
           <Typography textAlign="right" sx={{ mb: appliedCoupon ? 1 : 0 }}>
             Subtotal:{" "}
@@ -128,11 +161,7 @@ export default function CartList({ appliedCoupon }: CartListProps) {
             Total:{" "}
             <strong>{formatCurrency(total)}</strong>
           </Typography>
-          {defaultDeliveryType === 'DELIVERY' && <Link href="/como-funciona-el-envio">
-            <Typography sx={{ textAlign: "right", marginTop: 2 }}>
-              ¿Como funciona el envío?
-            </Typography>
-          </Link>}
+
         </Box>
       </>
     </>

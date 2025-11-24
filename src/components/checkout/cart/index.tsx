@@ -29,9 +29,10 @@ interface CheckoutCartProps {
     maximumDiscount?: number;
     minimumAmount?: number;
   } | null) => void;
+  onDeliveryTypeChange?: (deliveryType: 'DELIVERY' | 'PICK-UP') => void;
 }
 
-export default function CheckoutCart({ appliedCoupon, onCouponApplied }: CheckoutCartProps) {
+export default function CheckoutCart({ appliedCoupon, onCouponApplied, onDeliveryTypeChange }: CheckoutCartProps) {
   const [{ products }, dispatch] = useCart();
   const [hasChanges, setHasChanges] = useState<boolean>(false);
   const params = useParams();
@@ -320,7 +321,7 @@ export default function CheckoutCart({ appliedCoupon, onCouponApplied }: Checkou
               asegurate de estar conforme antes de continuar con tu compra.
             </Typography>
           )}
-          <CartList appliedCoupon={appliedCoupon} />
+          <CartList appliedCoupon={appliedCoupon} onDeliveryTypeChange={onDeliveryTypeChange} />
 
           <Typography color="#97a2aa" sx={{ marginTop: 2 }}>
             Asegúrate de que todos los detalles de tu compra sean correctos

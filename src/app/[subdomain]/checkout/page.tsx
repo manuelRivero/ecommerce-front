@@ -16,6 +16,7 @@ export default function Checkout() {
     maximumDiscount?: number;
     minimumAmount?: number;
   } | null>(null);
+  const [deliveryType, setDeliveryType] = useState<'DELIVERY' | 'PICK-UP'>('PICK-UP');
 
   return (
     <Container sx={{ marginY: 4 }}>
@@ -33,7 +34,7 @@ export default function Checkout() {
         >
           <Grid item xs={12} md={6}>
             <Paper sx={{ padding: { xs: 2, md: 4 }, marginBottom:{xs: 2} }}>
-              <Form appliedCoupon={appliedCoupon} />
+              <Form appliedCoupon={appliedCoupon} deliveryType={deliveryType} />
             </Paper>
           </Grid>
           <Grid item xs={12} md={6} sx={{ position: "relative" }}>
@@ -43,6 +44,7 @@ export default function Checkout() {
               <CheckoutCart 
                 appliedCoupon={appliedCoupon}
                 onCouponApplied={setAppliedCoupon}
+                onDeliveryTypeChange={setDeliveryType}
               />
             </Paper>
           </Grid>

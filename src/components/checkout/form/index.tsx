@@ -35,9 +35,10 @@ interface FormProps {
     maximumDiscount?: number;
     minimumAmount?: number;
   } | null;
+  deliveryType?: 'DELIVERY' | 'PICK-UP';
 }
 
-export default function Form({ appliedCoupon }: FormProps) {
+export default function Form({ appliedCoupon, deliveryType }: FormProps) {
   const params = useParams();
   const router = useRouter();
   const [{ products }, dispatch] = useCart();
@@ -61,6 +62,11 @@ export default function Form({ appliedCoupon }: FormProps) {
       // Agregar couponCode si hay un cupón aplicado
       if (appliedCoupon) {
         saleData.couponCode = appliedCoupon.code;
+      }
+      
+      // Agregar deliveryType
+      if (deliveryType) {
+        saleData.deliveryType = deliveryType;
       }
       
       const response = await createSale(
@@ -103,7 +109,7 @@ export default function Form({ appliedCoupon }: FormProps) {
   return products.length > 0 ? (
     <form onSubmit={handleSubmit(submit)}>
       <Typography variant="h4" sx={{ marginBottom: 2 }}>
-        Datos de facturación
+        {deliveryType === 'DELIVERY' ? 'Datos de facturación y envío' : 'Datos de facturación'}
       </Typography>
       <Box sx={{ marginBottom: 3 }}>
         <Controller

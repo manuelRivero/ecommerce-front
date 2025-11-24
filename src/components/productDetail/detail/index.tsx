@@ -15,8 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import ShareIcon from "@mui/icons-material/Share";
-import { finalPrice } from "@/utils/products";
-import { formatNumber } from "@/utils/products";
+import { finalPrice, formatCurrency } from "@/utils/products";
 import { ProductReviewsResponse } from "@/client/reviews";
 import { Rating } from "@mui/material";
 
@@ -32,9 +31,15 @@ export default function Detail({ data, reviews }: Props) {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [stock, setStock] = useState<string | null>(null);
-  console.log("data", data.features[0].stock);
 
-  const groupedFeatures = data.features.reduce((acc, feature) => {
+  // Verificar si es un producto único (sin features válidas con variantes)
+  // El backend puede enviar features con keys nulas, por lo que verificamos si alguna feature tiene color o size
+  const hasFeaturesWithVariants = data.features?.some(
+    (feature) => feature.color || feature.size
+  ) || false;
+  const isUniqueProduct = !hasFeaturesWithVariants;
+
+  const groupedFeatures = (data.features || []).reduce((acc, feature) => {
     // Extraer el nombre del color (puede ser string o objeto)
     const colorName = typeof feature.color === 'string'
       ? feature.color
@@ -51,7 +56,7 @@ export default function Detail({ data, reviews }: Props) {
         acc[colorName] = [];
       }
 
-      acc[colorName].push({ size: sizeName, stock, _id });
+      acc[colorName].push({ size: sizeName, stock: String(stock), _id });
     }
 
     return acc;
@@ -60,10 +65,15 @@ export default function Detail({ data, reviews }: Props) {
   const isColorOnlyProduct = Object.keys(groupedFeatures).every((color) =>
     groupedFeatures[color].every((feature) => !feature.size)
   );
-  const isUniqueProduct = Object.keys(groupedFeatures).length === 0;
 
   const updateStock = () => {
-    if (!selectedColor && !isUniqueProduct) {
+    // Si es un producto único (sin features), usar el stock de la raíz del objeto
+    if (isUniqueProduct) {
+      setStock(data.stock !== undefined && data.stock !== null ? String(data.stock) : null);
+      return;
+    }
+
+    if (!selectedColor) {
       setStock(null);
       return;
     }
@@ -72,21 +82,29 @@ export default function Detail({ data, reviews }: Props) {
       const selectedFeature = groupedFeatures[selectedColor].find(
         (feature) => feature.size === selectedSize
       );
-      console.log("selectedFeature", selectedFeature);
-      setStock(selectedFeature ? selectedFeature.stock : null);
-    } else if (isUniqueProduct) {
-      const selectedFeature = data.features[0];
       setStock(selectedFeature ? selectedFeature.stock : null);
     }
   };
 
+  // Inicializar el stock cuando el componente se monta o cuando cambia el producto
   useEffect(() => {
-    updateStock();
+    if (isUniqueProduct) {
+      setStock(data.stock !== undefined && data.stock !== null ? String(data.stock) : null);
+    }
+  }, [isUniqueProduct, data.stock]);
+
+  // Actualizar el stock cuando cambian las selecciones (solo para productos con features)
+  useEffect(() => {
+    if (!isUniqueProduct) {
+      updateStock();
+    }
   }, [selectedSize, selectedColor]);
 
   const handleAddToCart = () => {
-    // Validar que se haya seleccionado un color (y talla si aplica)
-    setStock((Number(stock) - Number(quantity)).toString());
+    // Actualizar el stock localmente (esto es solo visual, el stock real se maneja en el backend)
+    if (stock) {
+      setStock((Number(stock) - Number(quantity)).toString());
+    }
     setFormAlert(true);
     if (isUniqueProduct) {
       setProductToCart(dispatch, {
@@ -106,10 +124,15 @@ export default function Detail({ data, reviews }: Props) {
   };
 
   const isFormValid = () => {
-    if (isUniqueProduct && Number(stock) < 0) return false;
-    if (isColorOnlyProduct && !selectedColor && !isUniqueProduct) return false; // El color es obligatorio
-    if (!isColorOnlyProduct && !selectedSize && !isUniqueProduct) return false;
-    if (Number(stock) <= 0) return false; // La talla es obligatoria si no es solo color
+    // Si es un producto único, solo validar que haya stock
+    if (isUniqueProduct) {
+      return stock !== null && Number(stock) > 0;
+    }
+    
+    // Para productos con features, validar selecciones y stock
+    if (isColorOnlyProduct && !selectedColor) return false; // El color es obligatorio
+    if (!isColorOnlyProduct && !selectedSize) return false; // La talla es obligatoria si no es solo color
+    if (stock === null || Number(stock) <= 0) return false; // Debe haber stock disponible
     return true;
   };
 
@@ -189,7 +212,7 @@ export default function Detail({ data, reviews }: Props) {
       >
         {(data.discount ?? 0) > 0 && (
           <Typography variant="body1" sx={{ textDecoration: "line-through" }}>
-            ${formatNumber(data.price)}
+            {formatCurrency(data.price)}
           </Typography>
         )}
         <Box sx={{ position: "relative" }}>
@@ -201,9 +224,9 @@ export default function Detail({ data, reviews }: Props) {
               color: theme.palette.primary.main,
             })}
           >
-            ${formatNumber(finalPrice(data.price, data.discount ?? 0 + (data.offerDiscount ?? 0)))}
+            {formatCurrency(finalPrice(data.price, data.discount ?? 0 + (data.offerDiscount ?? 0)))}
           </Typography>
-          {(data.discount ?? 0) && (!data.offerDiscount) && (
+          {(data.discount ?? 0) > 0 && (!data.offerDiscount) && (
             <Box
               sx={(theme) => ({
                 position: "absolute",
@@ -309,22 +332,24 @@ export default function Detail({ data, reviews }: Props) {
           </>
         )}
       </Box>
-      {Number(stock) > 0 && (
+      {stock !== null && (
         <Box sx={{ marginTop: 2 }}>
           <Typography variant="body1" textAlign="right">
             Stock disponible: <strong>{stock || "N/A"} unidades</strong>
           </Typography>
-          <Stack
-            direction="row"
-            justifyContent="flex-end"
-            sx={{ marginTop: 2 }}
-          >
-            <QuantitySelector
-              setValue={setQuantity}
-              value={quantity}
-              max={Number(stock) || 0}
-            />
-          </Stack>
+          {Number(stock) > 0 && (
+            <Stack
+              direction="row"
+              justifyContent="flex-end"
+              sx={{ marginTop: 2 }}
+            >
+              <QuantitySelector
+                setValue={setQuantity}
+                value={quantity}
+                max={Number(stock) || 0}
+              />
+            </Stack>
+          )}
         </Box>
       )}
       <Divider sx={{ marginTop: 4 }} />
