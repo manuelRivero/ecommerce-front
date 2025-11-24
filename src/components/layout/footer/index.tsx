@@ -206,48 +206,50 @@ export default function Footer() {
         </Grid>
 
         {/* Nueva sección de feedback */}
-        <Box sx={{
-          borderTop: "1px solid rgba(255, 255, 255, 0.2)",
-          marginTop: 4,
-          paddingTop: 4,
-          textAlign: "center"
-        }}>
-          <Typography
-            color="#fff"
-            variant="h2"
-            sx={{
-              marginBottom: 2,
-              fontWeight: "medium"
-            }}
-          >
-            ¿Te gustó nuestra tienda?
-          </Typography>
-          <Typography
-            color="#fff"
-            variant="body1"
-            sx={{
-              marginBottom: 3,
-              opacity: 0.9,
-              maxWidth: 600,
-              margin: "0 auto 24px auto"
-            }}
-          >
-            Si te gustó lo que viste, te invitamos a crear tu propia tienda online con nosotros
-          </Typography>
-          <Box >
-
-            <Button
-              variant="contained"
-              color="inherit"
-              href="https://tiendapro.com.ar"
-              target="_blank"
-              sx={(theme) => ({ backgroundColor: theme.palette.primary.contrastText, color: theme.palette.primary.main, marginBottom: 3 })}
-
+        {state.config.hasStoreAds && (
+          <Box sx={{
+            borderTop: "1px solid rgba(255, 255, 255, 0.2)",
+            marginTop: 4,
+            paddingTop: 4,
+            textAlign: "center"
+          }}>
+            <Typography
+              color="#fff"
+              variant="h2"
+              sx={{
+                marginBottom: 2,
+                fontWeight: "medium"
+              }}
             >
-              Crear mi tienda online
-            </Button>
+              ¿Te gustó nuestra tienda?
+            </Typography>
+            <Typography
+              color="#fff"
+              variant="body1"
+              sx={{
+                marginBottom: 3,
+                opacity: 0.9,
+                maxWidth: 600,
+                margin: "0 auto 24px auto"
+              }}
+            >
+              Si te gustó lo que viste, te invitamos a crear tu propia tienda online con nosotros
+            </Typography>
+            <Box >
+
+              <Button
+                variant="contained"
+                color="inherit"
+                href="https://tiendapro.com.ar"
+                target="_blank"
+                sx={(theme) => ({ backgroundColor: theme.palette.primary.contrastText, color: theme.palette.primary.main, marginBottom: 3 })}
+
+              >
+                Crear mi tienda online
+              </Button>
+            </Box>
           </Box>
-        </Box>
+        )}
       </Box>
     </footer>
   );
