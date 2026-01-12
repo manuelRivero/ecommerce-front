@@ -36,7 +36,7 @@ axiosInstance.interceptors.request.use(
     }
 );
 
-// Interceptor para respuestas (para logging de errores)
+// Interceptor para respuestas (manejo de errores y logging)
 axiosInstance.interceptors.response.use(
     (response) => {
         console.log('[Axios Interceptor] Response interceptor - Status:', response.status);
@@ -48,6 +48,31 @@ axiosInstance.interceptors.response.use(
         console.error('[Axios Interceptor] Response interceptor - Error message:', error?.message);
         console.error('[Axios Interceptor] Response interceptor - Error response status:', error?.response?.status);
         console.error('[Axios Interceptor] Response interceptor - Error response data:', error?.response?.data);
+        
+        // Si el error es 401 (No autorizado), el token puede estar expirado o ser inválido
+        if (error?.response?.status === 401) {
+            console.warn('[Axios Interceptor] Response interceptor - Error 401: Token inválido o expirado');
+            
+            // Limpiar el token del localStorage si está presente
+            if (typeof window !== 'undefined') {
+                const token = localStorage.getItem('super-admin-token');
+                if (token) {
+                    console.log('[Axios Interceptor] Response interceptor - Eliminando token inválido del localStorage');
+                    localStorage.removeItem('super-admin-token');
+                    
+                    // Si estamos en una página del super-admin, redirigir al login
+                    if (window.location.pathname.startsWith('/super-admin') && 
+                        !window.location.pathname.includes('/auth')) {
+                        console.log('[Axios Interceptor] Response interceptor - Redirigiendo al login');
+                        // Usar un pequeño delay para evitar problemas de navegación
+                        setTimeout(() => {
+                            window.location.href = '/super-admin/auth';
+                        }, 100);
+                    }
+                }
+            }
+        }
+        
         return Promise.reject(error);
     }
 );
@@ -58,6 +83,3 @@ export * from './super-admin/plans';
 export * from './super-admin/tenants';
 export * from './super-admin/announcements';
 export * from './tenants';
-
-// Export super-admin plans
-export * from './super-admin/plans';

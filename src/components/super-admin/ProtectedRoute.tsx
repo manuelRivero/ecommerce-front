@@ -16,9 +16,17 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   useEffect(() => {
     console.log('ProtectedRoute - State:', { isClient, isLoading, isAuthenticated });
     
+    // Solo redirigir si estamos completamente en el cliente, 
+    // la carga ha terminado Y no hay autenticación
+    // Además, verificar que no estamos ya en la página de auth para evitar loops
     if (isClient && !isLoading && !isAuthenticated) {
-      console.log('ProtectedRoute - Redirecting to auth');
-      router.replace('/super-admin/auth');
+      const currentPath = window.location.pathname;
+      if (!currentPath.includes('/super-admin/auth')) {
+        console.log('ProtectedRoute - Redirecting to auth from:', currentPath);
+        router.replace('/super-admin/auth');
+      } else {
+        console.log('ProtectedRoute - Already on auth page, skipping redirect');
+      }
     }
   }, [isAuthenticated, isLoading, isClient, router]);
 
