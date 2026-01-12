@@ -7,6 +7,7 @@ import SidebarLinkButton from "../sidebarLinkButton";
 import SidebarDropdown from "../sidebarDropdown";
 import { useSuperAdminAuth } from "@/context/super-admin-auth";
 import { useRouter } from "next/navigation";
+import { sidebarRoutes } from '@/config/super-admin-routes';
 
 const drawerWidth = 240;
 
@@ -30,9 +31,30 @@ const Sidebar = () => {
     >
       <Box sx={{ overflow: 'auto', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <List>
-          <SidebarLinkButton label="Inicio" href="/super-admin" />
+          {sidebarRoutes.map((route, index) => {
+            // Si tiene href, es un enlace simple
+            if (route.href) {
+              return (
+                <SidebarLinkButton 
+                  key={route.href || index} 
+                  label={route.label} 
+                  href={route.href} 
+                />
+              );
+            }
+            // Si tiene items, es un dropdown
+            if (route.items && route.items.length > 0) {
+              return (
+                <SidebarDropdown 
+                  key={route.label} 
+                  title={route.label} 
+                  items={route.items} 
+                />
+              );
+            }
+            return null;
+          })}
         </List>
-        <SidebarDropdown />
         
         {/* User info and logout */}
         <Box sx={{ p: 2, mt: 'auto' }}>
