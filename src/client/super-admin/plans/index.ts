@@ -78,6 +78,23 @@ export const getAllPlans = async ({searchAvailable}:{searchAvailable:boolean}): 
   return axiosInstance.get<{plans: Plan[]}>('/plans/get-plans/', {params: {searchAvailable}});
 };
 
+export interface ValidatePlanKeyResponse {
+  available: boolean;
+  planKey: string;
+}
+
+export const validatePlanKey = async (
+  planKey: string,
+): Promise<AxiosResponse<ValidatePlanKeyResponse>> => {
+  return axiosInstance.get<ValidatePlanKeyResponse>('/api/plans/validate-plan-key', {
+    params: { planKey },
+  });
+};
+
+export const setDefaultPlan = async (planId: string): Promise<AxiosResponse<{ plan: Plan }>> => {
+  return axiosInstance.patch<{ plan: Plan }>(`/api/plans/set-default/${planId}`);
+};
+
 /**
  * Obtiene un plan específico por ID
  * @param planId - ID del plan

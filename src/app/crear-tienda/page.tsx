@@ -37,6 +37,8 @@ import StoreInformationStep from '@/components/landingComponents/storeInformatio
 import ContactInformationStep from '@/components/landingComponents/contactInformationStep';
 import AddressInformationStep from '@/components/landingComponents/addressInformationStep';
 import ReviewAndCreateStep from '@/components/landingComponents/reviewAndCreateStep';
+import InvitationGate from '@/components/landingComponents/invitationGate';
+import { useInvitationGate } from '@/components/landingComponents/invitationGate/useInvitationGate';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 
@@ -59,6 +61,19 @@ const CreateStorePage = () => {
   const [subdomainVerified, setSubdomainVerified] = useState(false);
   const [subdomainError, setSubdomainError] = useState<string | null>(null);
   const [provinces, setProvinces] = useState<Array<{ id: string; nombre: string }>>([]);
+  const {
+    isCheckingAccess,
+    shouldShowGate,
+    inviteCode,
+    checkError,
+    validationError,
+    isValidating,
+    showSuccessModal: showInviteSuccessModal,
+    handleInviteCodeChange,
+    handleValidateCode,
+    handleProceedToForm,
+    handleRetryCheck,
+  } = useInvitationGate();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -403,405 +418,420 @@ const CreateStorePage = () => {
   return (
     <>
       <Header />
-      <Box
-        sx={{
-          minHeight: '100vh',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          pt: { xs: 8, md: 10 },
-          pb: 4,
-        }}
-      >
-      <Container maxWidth="md">
-        <Box sx={{ mb: { xs: 2, md: 4 }, textAlign: 'center' }}>
-          <Box
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 2,
-              mb: 2,
-            }}
-          >
-            <Box
-              sx={{
-                width: { xs: 50, md: 60 },
-                height: { xs: 50, md: 60 },
-                borderRadius: '50%',
-                background: 'rgba(255, 255, 255, 0.2)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backdropFilter: 'blur(10px)',
-              }}
-            >
-              <Store sx={{ fontSize: { xs: 24, md: 30 }, color: 'white' }} />
-            </Box>
-            <Typography
-              variant="h3"
-              sx={{
-                fontWeight: 700,
-                color: 'white',
-                fontSize: { xs: '1.75rem', md: '3rem' },
-              }}
-            >
-              Crea tu Tienda
-            </Typography>
-          </Box>
-          <Typography
-            variant="h6"
-            sx={{
-              color: 'rgba(255, 255, 255, 0.9)',
-              maxWidth: 600,
-              mx: 'auto',
-              fontSize: { xs: '1rem', md: '1.25rem' },
-            }}
-          >
-            Configura tu tienda online en minutos y comienza a vender
-          </Typography>
-        </Box>
-
-        <Card
-          elevation={24}
+      {isCheckingAccess || shouldShowGate ? (
+        <InvitationGate
+          isChecking={isCheckingAccess}
+          checkError={checkError}
+          inviteCode={inviteCode}
+          validationError={validationError}
+          isValidating={isValidating}
+          showSuccessModal={showInviteSuccessModal}
+          onInviteCodeChange={handleInviteCodeChange}
+          onValidate={handleValidateCode}
+          onProceed={handleProceedToForm}
+          onRetryCheck={handleRetryCheck}
+        />
+      ) : (
+        <Box
           sx={{
-            borderRadius: 3,
-            background: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            minHeight: '100vh',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            pt: { xs: 8, md: 10 },
+            pb: 4,
           }}
         >
-          <CardContent sx={{ p: { xs: 2, md: 4 } }}>
-            {/* Mobile Stepper */}
-            <MobileStepper
-              steps={steps}
-              activeStep={activeStep}
-              onStepClick={handleStepClick}
-              onBack={handleBack}
-              isStepComplete={isStepComplete}
-              showBackButton={activeStep > 0}
-            />
-            
-            {/* Desktop Stepper */}
-            <Box sx={{ mb: 4, display: { xs: 'none', md: 'block' } }}>
-               <Stepper activeStep={activeStep} alternativeLabel>
-                 {steps.map((label, index) => (
-                   <Step key={label}>
-                     <StepLabel
-                       onClick={() => handleStepClick(index)}
-                       sx={{
-                         cursor: (index <= activeStep || isStepComplete(index)) ? 'pointer' : 'default',
-                         '&:hover': {
-                           color: (index <= activeStep || isStepComplete(index)) ? 'primary.main' : 'inherit',
-                         },
-                         '& .MuiStepLabel-label': {
+        <Container maxWidth="md">
+          <Box sx={{ mb: { xs: 2, md: 4 }, textAlign: 'center' }}>
+            <Box
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 2,
+                mb: 2,
+              }}
+            >
+              <Box
+                sx={{
+                  width: { xs: 50, md: 60 },
+                  height: { xs: 50, md: 60 },
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backdropFilter: 'blur(10px)',
+                }}
+              >
+                <Store sx={{ fontSize: { xs: 24, md: 30 }, color: 'white' }} />
+              </Box>
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 700,
+                  color: 'white',
+                  fontSize: { xs: '1.75rem', md: '3rem' },
+                }}
+              >
+                Crea tu Tienda
+              </Typography>
+            </Box>
+            <Typography
+              variant="h6"
+              sx={{
+                color: 'rgba(255, 255, 255, 0.9)',
+                maxWidth: 600,
+                mx: 'auto',
+                fontSize: { xs: '1rem', md: '1.25rem' },
+              }}
+            >
+              Configura tu tienda online en minutos y comienza a vender
+            </Typography>
+          </Box>
+
+          <Card
+            elevation={24}
+            sx={{
+              borderRadius: 3,
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+            }}
+          >
+            <CardContent sx={{ p: { xs: 2, md: 4 } }}>
+              {/* Mobile Stepper */}
+              <MobileStepper
+                steps={steps}
+                activeStep={activeStep}
+                onStepClick={handleStepClick}
+                onBack={handleBack}
+                isStepComplete={isStepComplete}
+                showBackButton={activeStep > 0}
+              />
+              
+              {/* Desktop Stepper */}
+              <Box sx={{ mb: 4, display: { xs: 'none', md: 'block' } }}>
+                 <Stepper activeStep={activeStep} alternativeLabel>
+                   {steps.map((label, index) => (
+                     <Step key={label}>
+                       <StepLabel
+                         onClick={() => handleStepClick(index)}
+                         sx={{
                            cursor: (index <= activeStep || isStepComplete(index)) ? 'pointer' : 'default',
                            '&:hover': {
                              color: (index <= activeStep || isStepComplete(index)) ? 'primary.main' : 'inherit',
                            },
-                         },
-                       }}
-                     >
-                       {label}
-                     </StepLabel>
-                   </Step>
-                 ))}
-               </Stepper>
-             </Box>
+                           '& .MuiStepLabel-label': {
+                             cursor: (index <= activeStep || isStepComplete(index)) ? 'pointer' : 'default',
+                             '&:hover': {
+                               color: (index <= activeStep || isStepComplete(index)) ? 'primary.main' : 'inherit',
+                             },
+                           },
+                         }}
+                       >
+                         {label}
+                       </StepLabel>
+                     </Step>
+                   ))}
+                 </Stepper>
+               </Box>
 
-            {error && (
-              <Alert severity="error" sx={{ mb: 3 }}>
-                {error}
-              </Alert>
-            )}
+              {error && (
+                <Alert severity="error" sx={{ mb: 3 }}>
+                  {error}
+                </Alert>
+              )}
 
-            {success && (
-              <Alert severity="success" sx={{ mb: 3 }}>
-                {success}
-              </Alert>
-            )}
+              {success && (
+                <Alert severity="success" sx={{ mb: 3 }}>
+                  {success}
+                </Alert>
+              )}
 
-            {/* Step Content */}
-            <Box sx={{ mb: { xs: 2, md: 4 } }}>
-              {renderStepContent(activeStep)}
-            </Box>
+              {/* Step Content */}
+              <Box sx={{ mb: { xs: 2, md: 4 } }}>
+                {renderStepContent(activeStep)}
+              </Box>
 
-            <Divider sx={{ my: 3 }} />
+              <Divider sx={{ my: 3 }} />
 
-            {/* Navigation Buttons */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Button
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                startIcon={<ArrowBack />}
-                sx={{ visibility: activeStep === 0 ? 'hidden' : 'visible' }}
+              {/* Navigation Buttons */}
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Button
+                  disabled={activeStep === 0}
+                  onClick={handleBack}
+                  startIcon={<ArrowBack />}
+                  sx={{ visibility: activeStep === 0 ? 'hidden' : 'visible' }}
+                >
+                  Anterior
+                </Button>
+
+                <Box>
+                  {activeStep === steps.length - 1 ? (
+                    <Button
+                      variant="contained"
+                      onClick={handleSubmit}
+                      disabled={loading}
+                      startIcon={loading ? <CircularProgress size={20} /> : <CheckCircle />}
+                      endIcon={<ArrowForward />}
+                      sx={{
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        px: 4,
+                        py: 1.5,
+                        fontSize: '1.1rem',
+                        fontWeight: 600,
+                        textTransform: 'none',
+                        '&:hover': {
+                          background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+                        },
+                      }}
+                    >
+                      {loading ? 'Creando Tienda...' : 'Crear Mi Tienda'}
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      onClick={handleNext}
+                      disabled={activeStep === 0 && !subdomainVerified}
+                      endIcon={<ArrowForward />}
+                      sx={{
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        px: 4,
+                        py: 1.5,
+                        fontSize: '1.1rem',
+                        fontWeight: 600,
+                        textTransform: 'none',
+                        '&:hover': {
+                          background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+                        },
+                        '&:disabled': {
+                          background: 'rgba(0, 0, 0, 0.12)',
+                          color: 'rgba(0, 0, 0, 0.38)',
+                        },
+                      }}
+                    >
+                      {activeStep === 0 && !subdomainVerified ? 'Verifica el subdominio primero' : 'Siguiente'}
+                    </Button>
+                  )}
+                </Box>
+              </Box>
+            </CardContent>
+                   </Card>
+         </Container>
+
+                 {/* Modal de Error */}
+          <Dialog
+            open={showErrorModal}
+            onClose={() => setShowErrorModal(false)}
+            maxWidth="sm"
+            fullWidth
+            PaperProps={{
+              sx: {
+                borderRadius: 2,
+                border: '2px solid #f44336',
+              }
+            }}
+          >
+            <DialogTitle sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 1,
+              color: '#f44336',
+              fontWeight: 600,
+              pb: 1
+            }}>
+              <Error sx={{ fontSize: 28 }} />
+              Error al Crear la Tienda
+              <IconButton
+                onClick={() => setShowErrorModal(false)}
+                sx={{ ml: 'auto', color: 'text.secondary' }}
               >
-                Anterior
-              </Button>
-
-              <Box>
-                {activeStep === steps.length - 1 ? (
-                  <Button
-                    variant="contained"
-                    onClick={handleSubmit}
-                    disabled={loading}
-                    startIcon={loading ? <CircularProgress size={20} /> : <CheckCircle />}
-                    endIcon={<ArrowForward />}
-                    sx={{
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                      px: 4,
-                      py: 1.5,
-                      fontSize: '1.1rem',
-                      fontWeight: 600,
-                      textTransform: 'none',
-                      '&:hover': {
-                        background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
-                      },
-                    }}
-                  >
-                    {loading ? 'Creando Tienda...' : 'Crear Mi Tienda'}
-                  </Button>
-                ) : (
-                  <Button
-                    variant="contained"
-                    onClick={handleNext}
-                    disabled={activeStep === 0 && !subdomainVerified}
-                    endIcon={<ArrowForward />}
-                    sx={{
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                      px: 4,
-                      py: 1.5,
-                      fontSize: '1.1rem',
-                      fontWeight: 600,
-                      textTransform: 'none',
-                      '&:hover': {
-                        background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
-                      },
-                      '&:disabled': {
-                        background: 'rgba(0, 0, 0, 0.12)',
-                        color: 'rgba(0, 0, 0, 0.38)',
-                      },
-                    }}
-                  >
-                    {activeStep === 0 && !subdomainVerified ? 'Verifica el subdominio primero' : 'Siguiente'}
-                  </Button>
-                )}
-              </Box>
-            </Box>
-          </CardContent>
-                 </Card>
-       </Container>
-
-               {/* Modal de Error */}
-        <Dialog
-          open={showErrorModal}
-          onClose={() => setShowErrorModal(false)}
-          maxWidth="sm"
-          fullWidth
-          PaperProps={{
-            sx: {
-              borderRadius: 2,
-              border: '2px solid #f44336',
-            }
-          }}
-        >
-          <DialogTitle sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 1,
-            color: '#f44336',
-            fontWeight: 600,
-            pb: 1
-          }}>
-            <Error sx={{ fontSize: 28 }} />
-            Error al Crear la Tienda
-            <IconButton
-              onClick={() => setShowErrorModal(false)}
-              sx={{ ml: 'auto', color: 'text.secondary' }}
-            >
-              <Close />
-            </IconButton>
-          </DialogTitle>
-          <DialogContent sx={{ pt: 0 }}>
-            <Typography variant="body1" sx={{ mb: 2 }}>
-              {error}
-            </Typography>
-          </DialogContent>
-          <DialogActions sx={{ p: 3, pt: 1 }}>
-            <Button
-              onClick={() => setShowErrorModal(false)}
-              variant="outlined"
-              sx={{ mr: 1 }}
-            >
-              Cerrar
-            </Button>
-            <Button
-              onClick={() => {
-                setShowErrorModal(false);
-                setError(null);
-              }}
-              variant="contained"
-              sx={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                '&:hover': {
-                  background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
-                },
-              }}
-            >
-              Intentar de Nuevo
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        {/* Modal de Éxito */}
-        <Dialog
-          open={showSuccessModal}
-          onClose={() => {
-            setShowSuccessModal(false);
-            window.location.href = '/#pricing';
-          }}
-          maxWidth="sm"
-          fullWidth
-          PaperProps={{
-            sx: {
-              borderRadius: 2,
-              border: '2px solid #4caf50',
-            }
-          }}
-        >
-          <DialogTitle sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 1,
-            color: '#4caf50',
-            fontWeight: 600,
-            pb: 1
-          }}>
-            <CheckCircle sx={{ fontSize: 28 }} />
-            ¡Tienda Creada Exitosamente!
-            <IconButton
-              onClick={() => {
-                setShowSuccessModal(false);
-                window.location.href = '/#pricing';
-              }}
-              sx={{ ml: 'auto', color: 'text.secondary' }}
-            >
-              <Close />
-            </IconButton>
-          </DialogTitle>
-          <DialogContent sx={{ pt: 0 }}>
-            <Typography variant="body1" sx={{ mb: 2 }}>
-              ¡Felicitaciones! Tu tienda <strong>{formData.config.metadata.title}</strong> ha sido creada exitosamente.
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
-              Tu tienda estará disponible en:
-            </Typography>
-            <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Box>
-                <Typography variant="body2" sx={{ mb: 1, fontWeight: 600, color: 'text.secondary' }}>
-                  🛍️ Tienda Pública (Vista para Clientes)
-                </Typography>
-                <Button
-                  variant="outlined"
-                  startIcon={<OpenInNew />}
-                  onClick={() => {
-                    window.open(`https://${formData.subdomain}.tiendapro.com.ar`, '_self');
-                  }}
-                  sx={{
-                    justifyContent: 'flex-start',
-                    textTransform: 'none',
-                    borderColor: 'primary.main',
-                    color: 'primary.main',
-                    width: '100%',
-                    '&:hover': {
-                      borderColor: 'primary.dark',
-                      backgroundColor: 'primary.light',
-                      color: 'primary.dark',
-                    },
-                  }}
-                >
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    {formData.subdomain}.tiendapro.com.ar
-                  </Typography>
-                </Button>
-              </Box>
-              
-              <Box>
-                <Typography variant="body2" sx={{ mb: 1, fontWeight: 600, color: 'text.secondary' }}>
-                  ⚙️ Dashboard de Administración (Vista para Tienda)
-                </Typography>
-                <Button
-                  variant="outlined"
-                  startIcon={<OpenInNew />}
-                  onClick={() => {
-                    window.open(`https://${formData.subdomain}.admin.tiendapro.com.ar`, '_self');
-                  }}
-                  sx={{
-                    justifyContent: 'flex-start',
-                    textTransform: 'none',
-                    borderColor: 'secondary.main',
-                    color: 'secondary.main',
-                    width: '100%',
-                    '&:hover': {
-                      borderColor: 'secondary.dark',
-                      backgroundColor: 'secondary.light',
-                      color: 'secondary.dark',
-                    },
-                  }}
-                >
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    {formData.subdomain}.admin.tiendapro.com.ar
-                  </Typography>
-                </Button>
-              </Box>
-            </Box>
-            <Alert severity="info" sx={{ mt: 2 }}>
-              <Typography variant="body2">
-                <strong>Próximos pasos:</strong>
+                <Close />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent sx={{ pt: 0 }}>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                {error}
               </Typography>
-              <Box component="ul" sx={{ mt: 1, pl: 2, mb: 0 }}>
-                <Box component="li">
-                  <Typography variant="body2">Configura tus productos y categorías</Typography>
+            </DialogContent>
+            <DialogActions sx={{ p: 3, pt: 1 }}>
+              <Button
+                onClick={() => setShowErrorModal(false)}
+                variant="outlined"
+                sx={{ mr: 1 }}
+              >
+                Cerrar
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowErrorModal(false);
+                  setError(null);
+                }}
+                variant="contained"
+                sx={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  '&:hover': {
+                    background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+                  },
+                }}
+              >
+                Intentar de Nuevo
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* Modal de Éxito */}
+          <Dialog
+            open={showSuccessModal}
+            onClose={() => {
+              setShowSuccessModal(false);
+              window.location.href = '/#pricing';
+            }}
+            maxWidth="sm"
+            fullWidth
+            PaperProps={{
+              sx: {
+                borderRadius: 2,
+                border: '2px solid #4caf50',
+              }
+            }}
+          >
+            <DialogTitle sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 1,
+              color: '#4caf50',
+              fontWeight: 600,
+              pb: 1
+            }}>
+              <CheckCircle sx={{ fontSize: 28 }} />
+              ¡Tienda Creada Exitosamente!
+              <IconButton
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  window.location.href = '/#pricing';
+                }}
+                sx={{ ml: 'auto', color: 'text.secondary' }}
+              >
+                <Close />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent sx={{ pt: 0 }}>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                ¡Felicitaciones! Tu tienda <strong>{formData.config.metadata.title}</strong> ha sido creada exitosamente.
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                Tu tienda estará disponible en:
+              </Typography>
+              <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Box>
+                  <Typography variant="body2" sx={{ mb: 1, fontWeight: 600, color: 'text.secondary' }}>
+                    🛍️ Tienda Pública (Vista para Clientes)
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    startIcon={<OpenInNew />}
+                    onClick={() => {
+                      window.open(`https://${formData.subdomain}.tiendapro.com.ar`, '_self');
+                    }}
+                    sx={{
+                      justifyContent: 'flex-start',
+                      textTransform: 'none',
+                      borderColor: 'primary.main',
+                      color: 'primary.main',
+                      width: '100%',
+                      '&:hover': {
+                        borderColor: 'primary.dark',
+                        backgroundColor: 'primary.light',
+                        color: 'primary.dark',
+                      },
+                    }}
+                  >
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      {formData.subdomain}.tiendapro.com.ar
+                    </Typography>
+                  </Button>
                 </Box>
-                <Box component="li">
-                  <Typography variant="body2">Personaliza el diseño de tu tienda</Typography>
-                </Box>
-                <Box component="li">
-                  <Typography variant="body2">Configura métodos de envío y pago</Typography>
-                </Box>
-                <Box component="li">
-                  <Typography variant="body2">¡Comienza a vender!</Typography>
+                
+                <Box>
+                  <Typography variant="body2" sx={{ mb: 1, fontWeight: 600, color: 'text.secondary' }}>
+                    ⚙️ Dashboard de Administración (Vista para Tienda)
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    startIcon={<OpenInNew />}
+                    onClick={() => {
+                      window.open(`https://${formData.subdomain}.admin.tiendapro.com.ar`, '_self');
+                    }}
+                    sx={{
+                      justifyContent: 'flex-start',
+                      textTransform: 'none',
+                      borderColor: 'secondary.main',
+                      color: 'secondary.main',
+                      width: '100%',
+                      '&:hover': {
+                        borderColor: 'secondary.dark',
+                        backgroundColor: 'secondary.light',
+                        color: 'secondary.dark',
+                      },
+                    }}
+                  >
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      {formData.subdomain}.admin.tiendapro.com.ar
+                    </Typography>
+                  </Button>
                 </Box>
               </Box>
-            </Alert>
-          </DialogContent>
-          <DialogActions sx={{ p: 3, pt: 1 }}>
-            <Button
-              onClick={() => {
-                setShowSuccessModal(false);
-                window.location.href = '/#pricing';
-              }}
-              variant="outlined"
-              sx={{ mr: 1 }}
-            >
-              Cerrar
-            </Button>
-            <Button
-              onClick={() => {
-                setShowSuccessModal(false);
-                window.open(`https://${formData.subdomain}.admin.tiendapro.com.ar`, '_self');
-              }}
-              variant="contained"
-              startIcon={<OpenInNew />}
-              sx={{
-                background: 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)',
-                '&:hover': {
-                  background: 'linear-gradient(135deg, #45a049 0%, #3d8b40 100%)',
-                },
-              }}
-            >
-              Ir al Panel de Administración
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Box>
+              <Alert severity="info" sx={{ mt: 2 }}>
+                <Typography variant="body2">
+                  <strong>Próximos pasos:</strong>
+                </Typography>
+                <Box component="ul" sx={{ mt: 1, pl: 2, mb: 0 }}>
+                  <Box component="li">
+                    <Typography variant="body2">Configura tus productos y categorías</Typography>
+                  </Box>
+                  <Box component="li">
+                    <Typography variant="body2">Personaliza el diseño de tu tienda</Typography>
+                  </Box>
+                  <Box component="li">
+                    <Typography variant="body2">Configura métodos de envío y pago</Typography>
+                  </Box>
+                  <Box component="li">
+                    <Typography variant="body2">¡Comienza a vender!</Typography>
+                  </Box>
+                </Box>
+              </Alert>
+            </DialogContent>
+            <DialogActions sx={{ p: 3, pt: 1 }}>
+              <Button
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  window.location.href = '/#pricing';
+                }}
+                variant="outlined"
+                sx={{ mr: 1 }}
+              >
+                Cerrar
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  window.open(`https://${formData.subdomain}.admin.tiendapro.com.ar`, '_self');
+                }}
+                variant="contained"
+                startIcon={<OpenInNew />}
+                sx={{
+                  background: 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)',
+                  '&:hover': {
+                    background: 'linear-gradient(135deg, #45a049 0%, #3d8b40 100%)',
+                  },
+                }}
+              >
+                Ir al Panel de Administración
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Box>
+      )}
       <Footer />
     </>
   );

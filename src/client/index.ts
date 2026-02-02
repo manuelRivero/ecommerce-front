@@ -82,4 +82,5 @@ export * from './super-admin/features';
 export * from './super-admin/plans';
 export * from './super-admin/tenants';
 export * from './super-admin/announcements';
+export * from './super-admin/invitation-codes';
 export * from './tenants';

@@ -64,5 +64,13 @@ export const sidebarRoutes: SidebarRouteConfig[] = [
     label: 'Webhook Events',
     href: '/super-admin/webhook-events',
   },
+  // Invitaciones (grupo con múltiples opciones)
+  {
+    label: 'Invitaciones',
+    items: [
+      { label: 'Listar Lotes', href: '/super-admin/invitations' },
+      { label: 'Crear Lote', href: '/super-admin/invitations/create' },
+    ],
+  },
 ];
 
