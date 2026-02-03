@@ -3,12 +3,10 @@
 import React from 'react';
 import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import { useInvitationBatches } from '@/hooks/super-admin/useInvitationBatches';
 import InvitationBatchCreateForm from '@/components/super-admin/invitations/InvitationBatchCreateForm';
 
 const CreateInvitationBatchPage = () => {
   const router = useRouter();
-  const { addBatch } = useInvitationBatches();
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Stack spacing={3}>
@@ -26,9 +24,7 @@ const CreateInvitationBatchPage = () => {
           </Button>
         </Box>
 
-        <InvitationBatchCreateForm
-          onBatchCreated={addBatch}
-        />
+        <InvitationBatchCreateForm />
       </Stack>
     </Container>
   );

@@ -4,6 +4,7 @@ import {
   getInvitationBatchCodes,
   InvitationBatch,
   InvitationBatchStats,
+  InvitationBatchStatsEntry,
   InvitationCode,
   InvitationCodeStatus,
   Pagination,
@@ -30,20 +31,48 @@ export const useInvitationBatchDetail = (batchId: string) => {
   const [pendingRevokeCode, setPendingRevokeCode] = useState<string | null>(null);
   const [isRevoking, setIsRevoking] = useState(false);
 
+  const buildStatsFromEntries = useCallback((entries: InvitationBatchStatsEntry[]) => {
+    const summary: InvitationBatchStats = {
+      unused: 0,
+      used: 0,
+      revoked: 0,
+      expired: 0,
+    };
+
+    entries.forEach((entry) => {
+      summary[entry._id] = entry.count;
+    });
+
+    return summary;
+  }, []);
+
   const loadBatch = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await getInvitationBatchById(batchId);
       setBatch(response.data.batch);
-      setStats(response.data.stats);
+      if (Array.isArray(response.data.stats)) {
+        setStats(buildStatsFromEntries(response.data.stats));
+      } else if (response.data.stats) {
+        setStats(response.data.stats);
+      } else if (response.data.batch?.counts) {
+        setStats({
+          unused: response.data.batch.counts.unused ?? 0,
+          used: response.data.batch.counts.used ?? 0,
+          revoked: response.data.batch.counts.revoked ?? 0,
+          expired: response.data.batch.counts.expired ?? 0,
+        });
+      } else {
+        setStats(null);
+      }
     } catch (err) {
       console.error('Error cargando lote:', err);
       setError('No se pudo cargar el lote.');
     } finally {
       setLoading(false);
     }
-  }, [batchId]);
+  }, [batchId, buildStatsFromEntries]);
 
   const loadCodes = useCallback(async () => {
     setCodesLoading(true);

@@ -16,6 +16,7 @@ import {
   Typography,
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import moment from 'moment-timezone';
 import { InvitationBatch, InvitationBatchListPagination } from '@/client';
 
 interface InvitationBatchesTableProps {
@@ -29,13 +30,8 @@ interface InvitationBatchesTableProps {
 
 const formatDate = (value?: string | null) => {
   if (!value) return 'No disponible';
-  return new Date(value).toLocaleDateString('es-AR', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  const date = moment(value);
+  return date.isValid() ? date.format('DD-MM-YYYY') : 'No disponible';
 };
 
 const InvitationBatchesTable: React.FC<InvitationBatchesTableProps> = ({
@@ -56,8 +52,7 @@ const InvitationBatchesTable: React.FC<InvitationBatchesTableProps> = ({
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>planKey</TableCell>
+                <TableCell>Plan</TableCell>
                 <TableCell>Cantidad</TableCell>
                 <TableCell>Sin usar</TableCell>
                 <TableCell>Usados</TableCell>
@@ -71,13 +66,13 @@ const InvitationBatchesTable: React.FC<InvitationBatchesTableProps> = ({
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={10} align="center" sx={{ py: 4 }}>
+                  <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
                     <CircularProgress size={28} />
                   </TableCell>
                 </TableRow>
               ) : batches.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={10} align="center" sx={{ py: 4 }}>
+                  <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
                     <Typography variant="body2" color="text.secondary">
                       No hay lotes cargados todavía.
                     </Typography>
@@ -86,12 +81,7 @@ const InvitationBatchesTable: React.FC<InvitationBatchesTableProps> = ({
               ) : (
                 batches.map((batch) => (
                   <TableRow key={batch._id} hover>
-                    <TableCell>
-                      <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
-                        {batch._id}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>{batch.planKey}</TableCell>
+                    <TableCell>{batch.planName || '-'}</TableCell>
                     <TableCell>{batch.quantity}</TableCell>
                     <TableCell>{batch.counts?.unused ?? '-'}</TableCell>
                     <TableCell>{batch.counts?.used ?? '-'}</TableCell>

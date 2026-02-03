@@ -29,6 +29,7 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import BlockIcon from '@mui/icons-material/Block';
+import moment from 'moment-timezone';
 import { InvitationBatch, InvitationBatchStats, InvitationCode, InvitationCodeStatus, Pagination } from '@/client';
 
 interface InvitationBatchDetailViewProps {
@@ -56,13 +57,8 @@ interface InvitationBatchDetailViewProps {
 
 const formatDate = (value?: string | null) => {
   if (!value) return 'No disponible';
-  return new Date(value).toLocaleString('es-AR', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  const date = moment(value);
+  return date.isValid() ? date.format('DD-MM-YYYY') : 'No disponible';
 };
 
 const statusColorMap: Record<InvitationCodeStatus, 'default' | 'success' | 'warning' | 'error'> = {
@@ -94,6 +90,7 @@ const InvitationBatchDetailView: React.FC<InvitationBatchDetailViewProps> = ({
   onCloseRevoke,
   onConfirmRevoke,
 }) => {
+  const summary = stats ?? batch?.counts ?? null;
   return (
     <Box sx={{ maxWidth: 1400, margin: '0 auto' }}>
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
@@ -143,9 +140,17 @@ const InvitationBatchDetailView: React.FC<InvitationBatchDetailViewProps> = ({
             </Grid>
             <Grid item xs={12} md={3}>
               <Typography variant="subtitle2" color="text.secondary">
-                planKey
+                Plan
               </Typography>
-              <Typography variant="body2">{batch?.planKey || '-'}</Typography>
+              <Typography variant="body2">{batch?.planName || '-'}</Typography>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <Typography variant="subtitle2" color="text.secondary">
+                ID del plan
+              </Typography>
+              <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                {batch?.planId || '-'}
+              </Typography>
             </Grid>
             <Grid item xs={12} md={3}>
               <Typography variant="subtitle2" color="text.secondary">
@@ -183,7 +188,7 @@ const InvitationBatchDetailView: React.FC<InvitationBatchDetailViewProps> = ({
                 Sin usar
               </Typography>
               <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                {stats?.unused ?? 0}
+                {summary?.unused ?? 0}
               </Typography>
             </CardContent>
           </Card>
@@ -195,7 +200,7 @@ const InvitationBatchDetailView: React.FC<InvitationBatchDetailViewProps> = ({
                 Usados
               </Typography>
               <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                {stats?.used ?? 0}
+                {summary?.used ?? 0}
               </Typography>
             </CardContent>
           </Card>
@@ -207,7 +212,7 @@ const InvitationBatchDetailView: React.FC<InvitationBatchDetailViewProps> = ({
                 Revocados
               </Typography>
               <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                {stats?.revoked ?? 0}
+                {summary?.revoked ?? 0}
               </Typography>
             </CardContent>
           </Card>
@@ -219,7 +224,7 @@ const InvitationBatchDetailView: React.FC<InvitationBatchDetailViewProps> = ({
                 Expirados
               </Typography>
               <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                {stats?.expired ?? 0}
+                {summary?.expired ?? 0}
               </Typography>
             </CardContent>
           </Card>

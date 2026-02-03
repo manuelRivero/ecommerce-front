@@ -49,6 +49,31 @@ export interface Plan {
   updatedAt: string;
 }
 
+export interface PlanSearchResult {
+  _id?: string;
+  name?: string;
+}
+
+export interface PlanSearchPagination {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface PlanSearchResponse {
+  ok: boolean;
+  plans: PlanSearchResult[];
+  pagination?: PlanSearchPagination;
+}
+
+export interface SearchPlansParams {
+  search: string;
+  page?: number;
+  limit?: number;
+  signal?: AbortSignal;
+}
+
 export interface CreatePlanResponse {
   success: boolean;
   data: Plan;
@@ -78,21 +103,20 @@ export const getAllPlans = async ({searchAvailable}:{searchAvailable:boolean}): 
   return axiosInstance.get<{plans: Plan[]}>('/plans/get-plans/', {params: {searchAvailable}});
 };
 
-export interface ValidatePlanKeyResponse {
-  available: boolean;
-  planKey: string;
-}
-
-export const validatePlanKey = async (
-  planKey: string,
-): Promise<AxiosResponse<ValidatePlanKeyResponse>> => {
-  return axiosInstance.get<ValidatePlanKeyResponse>('/api/plans/validate-plan-key', {
-    params: { planKey },
+export const searchPlans = async ({
+  search,
+  page = 0,
+  limit = 10,
+  signal,
+}: SearchPlansParams): Promise<AxiosResponse<PlanSearchResponse>> => {
+  return axiosInstance.get<PlanSearchResponse>('/plans/search', {
+    params: { search, page, limit },
+    signal,
   });
 };
 
 export const setDefaultPlan = async (planId: string): Promise<AxiosResponse<{ plan: Plan }>> => {
-  return axiosInstance.patch<{ plan: Plan }>(`/api/plans/set-default/${planId}`);
+  return axiosInstance.patch<{ plan: Plan }>(`/plans/set-default/${planId}`);
 };
 
 /**

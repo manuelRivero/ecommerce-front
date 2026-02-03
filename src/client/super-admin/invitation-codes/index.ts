@@ -5,7 +5,8 @@ export type InvitationCodeStatus = 'unused' | 'used' | 'revoked' | 'expired';
 
 export interface InvitationBatch {
   _id: string;
-  planKey: string;
+  planId: string;
+  planName?: string;
   quantity: number;
   prefix?: string;
   expiresAt?: string | null;
@@ -40,6 +41,11 @@ export interface InvitationBatchStats {
   expired: number;
 }
 
+export interface InvitationBatchStatsEntry {
+  _id: InvitationCodeStatus;
+  count: number;
+}
+
 export interface Pagination {
   page: number;
   limit: number;
@@ -48,7 +54,7 @@ export interface Pagination {
 }
 
 export interface CreateInvitationBatchRequest {
-  planKey: string;
+  planId: string;
   quantity: number;
   prefix?: string;
   expiresAt?: string;
@@ -62,7 +68,7 @@ export interface CreateInvitationBatchResponse {
 
 export interface InvitationBatchDetailResponse {
   batch: InvitationBatch;
-  stats: InvitationBatchStats;
+  stats?: InvitationBatchStats | InvitationBatchStatsEntry[];
 }
 
 export interface InvitationBatchCodesResponse {
@@ -86,7 +92,7 @@ export interface InvitationBatchListResponse {
 export const createInvitationBatch = async (
   payload: CreateInvitationBatchRequest,
 ): Promise<AxiosResponse<CreateInvitationBatchResponse>> => {
-  return axiosInstance.post<CreateInvitationBatchResponse>('/invitation-codes/batches', payload);
+  return axiosInstance.post<CreateInvitationBatchResponse>('/api/invitation-codes/batches', payload);
 };
 
 export const getInvitationBatchById = async (

@@ -5,11 +5,7 @@ import {
   InvitationBatch,
 } from '@/client';
 
-interface UseInvitationBatchCreationOptions {
-  onBatchCreated?: (batch: InvitationBatch) => void;
-}
-
-export const useInvitationBatchCreation = ({ onBatchCreated }: UseInvitationBatchCreationOptions) => {
+export const useInvitationBatchCreation = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,7 +15,6 @@ export const useInvitationBatchCreation = ({ onBatchCreated }: UseInvitationBatc
       setError(null);
       try {
         const response = await createInvitationBatch(payload);
-        onBatchCreated?.(response.data.batch);
         return response.data.batch;
       } catch (err) {
         console.error('Error creando lote:', err);
@@ -29,7 +24,7 @@ export const useInvitationBatchCreation = ({ onBatchCreated }: UseInvitationBatc
         setIsSubmitting(false);
       }
     },
-    [onBatchCreated],
+    [],
   );
 
   const clearError = useCallback(() => {
